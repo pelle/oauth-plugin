@@ -1,0 +1,47 @@
+= OAuth Plugin
+
+This is the beginning of a plugin for implementing both OAuth clients and servers in Rails applications.
+
+See the OAuth specs at:
+
+http://oauth.googlecode.com/svn/spec/branches/1.0/drafts/7/spec.html
+
+and the OAuth site at:
+
+http://oauth.net
+
+== Requirements
+
+You need to install the oauth gem
+  
+  sudo gem install oauth
+
+This is a change from earlier versions that had the code within the plugin. 
+
+The Generator currently creates code (in particular views) that only work in Rails 2.
+
+It should not be difficult to manually modify the code to work on Rails 1.2.x
+
+I think the only real issue is that the views have .html.erb extensions. So these could theoretically just be renamed to .rhtml.
+
+Please let me know if this works and I will see if I can make the generator conditionally create .rhtml for pre 2.0 versions of RAIL.
+
+== OAuth Provider generator
+
+While it isn't very flexible at the moment there is an oauth_provider generator which you can use like this:
+
+./script/generate oauth_provider
+
+This generates an oauth_controller as well as the required models.
+
+It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
+
+== More
+
+The Google Code project is http://code.google.com/p/oauth-plugin/
+
+The OAuth Ruby Gem home page is http://oauth.rubyforge.org
+
+Please help documentation, patches and testing.
+
+Copyright (c) 2007 Pelle Braendgaard, released under the MIT license
