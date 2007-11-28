@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 module OAuthSpecHelpers
-  include OAuth::TestHelper
+  include OAuth::OAuthTestHelper
   
   def create_consumer
     @consumer=OAuth::Consumer.new({
