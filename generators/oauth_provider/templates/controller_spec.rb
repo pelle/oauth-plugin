@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module OAuthControllerSpecHelpers
   def login
+    controller.stub!(:local_request?).and_return(true)
     @user=mock_model(User)
     controller.stub!(:current_user).and_return(@user)
     @tokens=[]
@@ -19,6 +20,8 @@ module OAuthControllerSpecHelpers
   end
   
   def setup_oauth
+    controller.stub!(:local_request?).and_return(true)
+    
     @server=OAuth::Server.new "http://test.host"
     @consumer=@server.create_consumer
 
@@ -29,11 +32,12 @@ module OAuthControllerSpecHelpers
     @client_application.stub!(:secret).and_return(@consumer.secret)
     @client_application.stub!(:name).and_return("Client Application name")
     @client_application.stub!(:callback_url).and_return("http://application/callback")
-    @token=mock_model(OauthToken,:token=>'hh5s93j4hdidpola',:client_application=>@client_application)
+    @token=mock_model(OauthToken,:token=>'hh5s93j4hdidpola',:client_application=>@client_application,:secret=>"hdhd0244k9j7ao03")
     @token.stub!(:invalidated?).and_return(false)
     
     @token_string="oauth_token=hh5s93j4hdidpola&oauth_token_secret=hdhd0244k9j7ao03"
     @token.stub!(:to_query).and_return(@token_string)
+
     @client_application.stub!(:authorize_request?).and_return(true)
     @client_application.stub!(:create_request_token).and_return(@token)
     @client_application.stub!(:exchange_for_access_token).and_return(@token)
@@ -54,6 +58,14 @@ module OAuthControllerSpecHelpers
   
   def create_token_request(http_method=:get)
     create_request(http_method,@server.request_token_url)
+  end
+  
+  def setup_to_authorize_request
+    setup_oauth
+    AccessToken.stub!(:find_by_token).with( @token.token).and_return(@token)
+    @token.stub!(:authorized?).and_return(true)
+    @user=mock_model(User)
+    @token.stub!(:user).and_return(@user)
   end
 end
 
@@ -212,8 +224,90 @@ describe OauthController, "getting an access token" do
   end
 end
 
+class OauthorizedController<ApplicationController
+  before_filter :login_or_oauth_required,:only=>:both
+  before_filter :login_required,:only=>:interactive
+  before_filter :oauth_required,:only=>:token_only
+  
+  def interactive
+  end
+  
+  def token_only
+  end
+  
+  def both
+  end
+end
 
+describe OauthorizedController," access control" do
+  include OAuthControllerSpecHelpers
+  
+  before(:each) do
+  end
+  
+  it "should return false for oauth? by default" do
+    controller.send(:oauth?).should==false
+  end
 
+  it "should return nil for current_token  by default" do
+    controller.send(:current_token).should be_nil
+  end
+  
+  it "should allow oauth when using login_or_oauth_required" do
+    setup_to_authorize_request
+    ClientApplication.should_receive(:authorize_request?).and_return(@token)
+    @oauth_request=create_request(:get,"/oauthorized/both",{},@token.secret)
+    get :both,@oauth_request.to_hash
+    controller.send(:current_token).should==@token
+    controller.send(:current_user).should==@user
+    response.should be_success
+  end
+
+  it "should allow interactive when using login_or_oauth_required" do
+    login
+    get :both
+    response.should be_success
+    controller.send(:current_user).should==@user
+    controller.send(:current_token).should be_nil
+  end
+
+  
+  it "should allow oauth when using oauth_required" do
+    setup_to_authorize_request
+    ClientApplication.should_receive(:authorize_request?).and_return(@token)    
+    @oauth_request=create_request(:get,"/oauthorized/token_only",{},@token.secret)
+    get :token_only,@oauth_request.to_hash
+    response.should be_success
+    controller.send(:current_user).should==@user
+    controller.send(:current_token).should==@token
+  end
+
+  it "should disallow interactive when using oauth_required" do
+    login
+    get :token_only
+    response.should be_redirect
+    controller.send(:current_user).should==@user
+    controller.send(:current_token).should be_nil
+  end
+
+  it "should disallow oauth when using login_required" do
+    setup_to_authorize_request
+    @oauth_request=create_request(:get,"/oauthorized/interactive",{},@token.secret)
+    get :interactive,@oauth_request.to_hash
+    response.code.should=="302"
+    controller.send(:current_user).should==:false
+    controller.send(:current_token).should be_nil
+  end
+
+  it "should allow interactive when using login_required" do
+    login
+    get :interactive
+    response.should be_success
+    controller.send(:current_user).should==@user
+    controller.send(:current_token).should be_nil
+  end
+
+end
 
 describe OauthController, "revoke" do
   include OAuthControllerSpecHelpers

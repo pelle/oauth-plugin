@@ -9,9 +9,10 @@ module OAuth
       end
       
       def oauthenticate
-        @current_token=ClientApplication.authorize_request?(request)
-        return false unless @current_token
-        current_user=@current_token.user
+        token=ClientApplication.authorize_request?(request)
+        return false unless token
+        @current_token=token
+        @current_user=@current_token.user
         @current_token
       end
       
