@@ -15,6 +15,10 @@ module OAuth
         @current_token
       end
       
+      def oauth?
+        current_token!=nil
+      end
+      
       # use in a before_filter
       def oauth_required
         if oauthenticate&&authorized?
