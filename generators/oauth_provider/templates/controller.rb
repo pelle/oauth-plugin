@@ -1,13 +1,13 @@
 class OauthController < ApplicationController
   before_filter :login_required,:except=>[:request_token,:access_token,:test_request]
-  before_filter :oauth_required,:only=>[:test_request]
-  
+  before_filter :login_or_oauth_required,:only=>[:test_request]
+  before_filter :verify_oauth_consumer_signature, :only=>[:request_token]
+  before_filter :verify_oauth_request_token, :only=>[:access_token]
   # Uncomment the following if you are using restful_open_id_authentication
 #  skip_before_filter :verify_authenticity_token
 
   def request_token
-    @client_application=ClientApplication.find_for_request( request)
-    @token=@client_application.create_request_token(request)
+    @token=current_client_application.create_request_token
     if @token
       render :text=>@token.to_query
     else
@@ -16,8 +16,7 @@ class OauthController < ApplicationController
   end 
   
   def access_token
-    @client_application=ClientApplication.find_for_request( request)
-    @token=@client_application.exchange_for_access_token(request)
+    @token=current_token.exchange!
     if @token
       render :text=>@token.to_query
     else
@@ -26,7 +25,7 @@ class OauthController < ApplicationController
   end
 
   def test_request
-    render :text=>request.env.inspect
+    render :text=>params.collect{|k,v|"#{k}=#{v}"}.join("&")
   end
   
   def authorize

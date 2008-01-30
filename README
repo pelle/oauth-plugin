@@ -1,10 +1,10 @@
 = OAuth Plugin
 
-This is the beginning of a plugin for implementing both OAuth clients and servers in Rails applications.
+This is the beginning of a plugin for implementing OAuth Providers in Rails applications.
 
 See the OAuth specs at:
 
-http://oauth.googlecode.com/svn/spec/branches/1.0/drafts/7/spec.html
+http://oauth.net/core/1.0/
 
 and the OAuth site at:
 
@@ -12,11 +12,9 @@ http://oauth.net
 
 == Requirements
 
-You need to install the oauth gem
+You need to install the oauth gem (0.2.1) which is the core OAuth ruby library. It will NOT work on any previous version of the gem.
   
   sudo gem install oauth
-
-This is a change from earlier versions that had the code within the plugin. 
 
 The Generator currently creates code (in particular views) that only work in Rails 2.
 
@@ -36,12 +34,77 @@ This generates an oauth_controller as well as the required models.
 
 It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
 
+=== Routes
+
+You need to add the following to your routes (config/routes.rb)
+
+	map.oauth '/oauth',:controller=>'oauth',:action=>'index'
+	map.authorize '/oauth/authorize',:controller=>'oauth',:action=>'authorize'
+	map.request_token '/oauth/request_token',:controller=>'oauth',:action=>'request_token'
+	map.access_token '/oauth/access_token',:controller=>'oauth',:action=>'access_token'
+	map.test_request '/oauth/test_request',:controller=>'oauth',:action=>'test_request'
+
+=== User Model
+
+Add the following lines to your user model:
+
+  has_many :client_applications
+  has_many :tokens, :class_name=>"OauthToken",:order=>"authorized_at desc",:include=>[:client_application]
+
+=== Migrate database
+
+The database is defined in:
+	
+	db/migrate/XXX_create_oauth_tables.rb
+
+Run them as any other normal migration in rails with:
+
+  rake db:migrate
+
+=== RSpec
+
+The generator installs a collection of RSpec (http://rspec.info) specs instead of normal unit_tests. If you don't use RSpec (and really why aren't you?) feel free to remove the spec folder.
+	
+If you would like to contribute regular unit tests I will accept them with a smile.
+
+== Protecting your actions
+
+I recommend that you think about what your users would want to provide access to and limit oauth for those only. For example in a CRUD controller you may think about if you want to let consumer applications do the create, update or delete actions. For your application this might make sense, but for others maybe not.
+
+If you want to give oauth access to everything a registered user can do, just replace the filter you have in your controllers with:
+
+	before_filter :login_or_oauth_required
+	
+If you want to restrict consumers to the index and show methods of your controller do the following:
+
+	before_filter :login_required,:except=>[:show,:index]
+	before_filter :login_or_oauth_required,:only=>[:show,:index]
+
+If you have an action you only want used via oauth:
+
+	before_filter :oauth_required
+
+All of these places the tokens user in current_user as you would expect. It also exposes the following methods:
+
+* current_token - for accessing the token used to authorize the current request
+* current_client_application - for accessing information about which consumer is currently accessing your request
+
+You could add application specific information to the OauthToken and ClientApplication model for such things as object level access control, billing, expiry etc. Be creative and you can create some really cool applications here.
+
 == More
 
 The Google Code project is http://code.google.com/p/oauth-plugin/
+
+The Mailing List for all things OAuth in Ruby is:
+
+http://groups.google.com/group/oauth-ruby
+
+The Mailing list for everything else OAuth is:
+
+http://groups.google.com/group/oauth
 
 The OAuth Ruby Gem home page is http://oauth.rubyforge.org
 
 Please help documentation, patches and testing.
 
-Copyright (c) 2007 Pelle Braendgaard, released under the MIT license
+Copyright (c) 2007-2008 Pelle Braendgaard, released under the MIT license

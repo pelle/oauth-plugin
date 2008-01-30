@@ -20,7 +20,7 @@ class OauthToken < ActiveRecord::Base
   def to_query
     "oauth_token=#{token}&oauth_token_secret=#{secret}"
   end
-  
+    
   protected
   
   def generate_keys

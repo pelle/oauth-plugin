@@ -6,20 +6,27 @@ class ClientApplication < ActiveRecord::Base
   validates_uniqueness_of :key
   before_validation_on_create :generate_keys
   
-  def self.find_for_request(request)
-    consumer_key=OAuth::Request.extract_consumer_key(request)
-    find_by_key consumer_key if consumer_key
+  def self.find_token(token_key)
+    token=OauthToken.find_by_token(token_key, :include => :client_application)
+    logger.info "Loaded #{token.token} which was authorized by (user_id=#{token.user_id}) on the #{token.authorized_at}"
+    return token if token.authorized?
+    nil
   end
   
-  def self.authorize_request?(request)
-    oauth_request=OAuth::Request.incoming(request)
-    return false unless OauthNonce.remember(oauth_request.nonce,oauth_request.timestamp)
-    return false unless oauth_request.token
-    token=AccessToken.find_by_token oauth_request.token
-    return false unless token
-    return false unless token.authorized?
-    return false unless oauth_request.verify?(token.client_application.secret,token.secret)
-    token
+  def self.verify_request(request, options = {}, &block)
+    begin
+      signature=OAuth::Signature.build(request,options,&block)
+      logger.info "Signature Base String: #{signature.signature_base_string}"
+      logger.info "Consumer: #{signature.send :consumer_key}"
+      logger.info "Token: #{signature.send :token}"
+      return false unless OauthNonce.remember(signature.request.nonce,signature.request.timestamp)
+      value=signature.verify
+      logger.info "Signature verification returned: #{value.to_s}"
+      value
+    rescue OAuth::Signature::UnknownSignatureMethod=>e
+      logger.info "ERROR"+e.to_s
+     false
+    end
   end
   
   def oauth_server
@@ -27,29 +34,13 @@ class ClientApplication < ActiveRecord::Base
   end
   
   def credentials
-    @oauth_client||=OAuth::ConsumerCredentials.new key,secret
+    @oauth_client||=OAuth::Consumer.new key,secret
   end
     
-  def create_request_token(request)
-    oauth_request=OAuth::Request.incoming(request)
-    return false unless OauthNonce.remember(oauth_request.nonce,oauth_request.timestamp)
-    return false if oauth_request.token
-    return false unless oauth_request.verify?(secret)
+  def create_request_token
     RequestToken.create :client_application=>self
   end
   
-  def exchange_for_access_token(request)
-    oauth_request=OAuth::Request.incoming(request)
-    return false unless OauthNonce.remember(oauth_request.nonce,oauth_request.timestamp)
-    return false unless oauth_request.token
-    token=tokens.find_by_token oauth_request.token
-    return false unless token
-    return false unless token.is_a?(RequestToken)
-    return false unless token.authorized?
-    return false unless oauth_request.verify?(secret,token.secret)
-    token.exchange!
-  end
-
   protected
   
   def generate_keys
