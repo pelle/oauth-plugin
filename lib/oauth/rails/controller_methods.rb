@@ -17,7 +17,7 @@ module OAuth
         logger.info "entering oauthenticate"
         verified=verify_oauth_signature 
         logger.info "verified=#{verified.to_s}"
-        return verified #&& current_token.is_a?(AccessToken)
+        return verified && current_token.is_a?(::AccessToken)
       end
       
       def oauth?
@@ -27,7 +27,7 @@ module OAuth
       # use in a before_filter
       def oauth_required
         logger.info "Current_token=#{@current_token.inspect}"
-        if verify_oauth_signature&&@current_token.is_a?(AccessToken)
+        if oauthenticate
           logger.info "passed oauthenticate"
           if authorized?
             logger.info "passed authorized"

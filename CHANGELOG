@@ -1,3 +1,12 @@
+revision 31
+
+- patch that fixes a problem in oauth_required from Hannes Tyden and Sean Treadway from SoundCloud. Thanks.
+
+revision 30
+
+- updated to use oauth gem 0.2.1
+
+
 revision 23
 
 - removed all core libraries from plugin. They are now in the oauth gem.
