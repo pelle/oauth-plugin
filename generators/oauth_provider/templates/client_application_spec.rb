@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-require 'oauth/rails/test_helper'
 module OAuthSpecHelpers
   
   def create_consumer
