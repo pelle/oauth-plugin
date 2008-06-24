@@ -27,7 +27,9 @@ class OauthProviderGenerator < Rails::Generator::Base
       # Check for class naming collisions.
       # Check for class naming collisions.
       m.class_collisions controller_class_path,       "#{controller_class_name}Controller", # Oauth Controller
-                                                      "#{controller_class_name}Helper"
+                                                      "#{controller_class_name}Helper",
+                                                      "#{controller_class_name}ClientsController",
+                                                      "#{controller_class_name}ClientsHelper"
       m.class_collisions class_path,                  "ClientApplication","OauthNonce","RequestToken","AccessToken","OauthToken"
 
       # Controller, helper, views, and test directories.
@@ -35,6 +37,7 @@ class OauthProviderGenerator < Rails::Generator::Base
       m.directory File.join('app/controllers', controller_class_path)
       m.directory File.join('app/helpers', controller_class_path)
       m.directory File.join('app/views', controller_class_path, controller_file_name)
+      m.directory File.join('app/views', controller_class_path, 'oauth_clients')
       m.directory File.join('spec')
       m.directory File.join('spec/models')
       m.directory File.join('spec/fixtures', class_path)
@@ -57,15 +60,21 @@ class OauthProviderGenerator < Rails::Generator::Base
       
       m.template 'controller.rb',File.join('app/controllers',controller_class_path,"#{controller_file_name}_controller.rb")
       m.template 'helper.rb',File.join('app/helpers',controller_class_path,"#{controller_file_name}_helper.rb")
+      m.template 'controller_spec_helper.rb', File.join('spec/controllers', controller_class_path,"#{controller_file_name}_controller_spec_helper.rb")
       m.template 'controller_spec.rb',File.join('spec/controllers',controller_class_path,"#{controller_file_name}_controller_spec.rb")
+      
+      m.template 'clients_controller.rb',File.join('app/controllers',controller_class_path,"#{controller_file_name}_clients_controller.rb")
+      m.template 'clients_helper.rb',File.join('app/helpers',controller_class_path,"#{controller_file_name}_clients_helper.rb")
+      m.template 'clients_controller_spec.rb',File.join('spec/controllers',controller_class_path,"#{controller_file_name}_clients_controller_spec.rb")
 
-      m.template 'new.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "new.html.erb")
-      m.template 'index.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "index.html.erb")
-      m.template 'show.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "show.html.erb")
+      m.template '_form.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "_form.html.erb")
+      m.template 'new.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "new.html.erb")
+      m.template 'index.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "index.html.erb")
+      m.template 'show.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.erb")
       m.template 'authorize.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize.html.erb")
       m.template 'authorize_success.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize_success.html.erb")
       m.template 'authorize_failure.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize_failure.html.erb")
-      m.template '_form.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "_form.html.erb")
+      
 
       unless options[:skip_migration]
         m.migration_template 'migration.rb', 'db/migrate', :assigns => {

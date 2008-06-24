@@ -1,3 +1,7 @@
+6/23/2008
+
+- Split OAuth controller into two parts: OAuth and OAuth clients. [jcrosby]
+
 revision 31
 
 - patch that fixes a problem in oauth_required from Hannes Tyden and Sean Treadway from SoundCloud. Thanks.

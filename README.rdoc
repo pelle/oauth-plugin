@@ -30,7 +30,7 @@ While it isn't very flexible at the moment there is an oauth_provider generator 
 
 ./script/generate oauth_provider
 
-This generates an oauth_controller as well as the required models.
+This generates OAuth and OAuth client controllers as well as the required models.
 
 It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
 
@@ -38,7 +38,7 @@ It requires an authentication framework such as acts_as_authenticated, restful_a
 
 You need to add the following to your routes (config/routes.rb)
 
-	map.oauth '/oauth',:controller=>'oauth',:action=>'index'
+	map.resources :oauth_clients
 	map.authorize '/oauth/authorize',:controller=>'oauth',:action=>'authorize'
 	map.request_token '/oauth/request_token',:controller=>'oauth',:action=>'request_token'
 	map.access_token '/oauth/access_token',:controller=>'oauth',:action=>'access_token'
