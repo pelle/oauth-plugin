@@ -36,7 +36,7 @@ class OauthController < ApplicationController
           @token.authorize!(current_user)
           redirect_url = params[:oauth_callback] || @token.client_application.callback_url
           if redirect_url
-            redirect_to redirect_url + "?oauth_token=#{@token.token}"
+            redirect_to "#{redirect_url}?oauth_token=#{@token.token}"
           else
             render :action => "authorize_success"
           end
