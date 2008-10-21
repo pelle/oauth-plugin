@@ -33,8 +33,8 @@
 	</p>
 	<%%@client_applications.each do |client|%>
 		<%%div_for client do %>
-			<%%= link_to client.name, :action=>:show, :id => client.id %>
+			<%%= link_to client.name, :action => :show, :id => client.id %>
 		<%%end %>
 	<%%end %>
 <%%end %>
-<h3><%%= link_to "Register your application", :action=>:new %></h3>
+<h3><%%= link_to "Register your application", :action => :new %></h3>

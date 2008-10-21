@@ -4,7 +4,7 @@ module OAuthSpecHelpers
   def create_consumer
     @consumer=OAuth::Consumer.new(@application.key,@application.secret,
       {
-        :site=>@application.oauth_server.base_url
+        :site => @application.oauth_server.base_url
       })
   end
   
@@ -13,7 +13,7 @@ module OAuthSpecHelpers
   end
   
   def create_oauth_request
-    @token=AccessToken.create :client_application=>@application, :user => users(:quentin)
+    @token=AccessToken.create :client_application => @application, :user => users(:quentin)
     @request=@consumer.create_signed_request( :get, "/hello",@token)
   end
   
@@ -22,7 +22,7 @@ module OAuthSpecHelpers
   end
   
   def create_access_token_request
-    @token=RequestToken.create :client_application=>@application
+    @token=RequestToken.create :client_application => @application
     @request=@consumer.create_signed_request( :get,@application.oauth_server.request_token_path,@token)
   end
   

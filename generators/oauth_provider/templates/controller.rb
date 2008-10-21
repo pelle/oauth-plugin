@@ -9,7 +9,7 @@ class OauthController < ApplicationController
   def request_token
     @token=current_client_application.create_request_token
     if @token
-      render :text=>@token.to_query
+      render :text => @token.to_query
     else
       render :nothing => true, :status => 401
     end
@@ -18,7 +18,7 @@ class OauthController < ApplicationController
   def access_token
     @token=current_token.exchange!
     if @token
-      render :text=>@token.to_query
+      render :text => @token.to_query
     else
       render :nothing => true, :status => 401
     end

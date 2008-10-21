@@ -44,28 +44,28 @@ describe OauthController, "token authorization" do
   end
   
   def do_get
-    get :authorize, :oauth_token=>@request_token.token
+    get :authorize, :oauth_token => @request_token.token
   end
 
   def do_post
     @request_token.should_receive(:authorize!).with(@user)
-    post :authorize, :oauth_token=>@request_token.token, :authorize => "1"
+    post :authorize, :oauth_token => @request_token.token, :authorize => "1"
   end
 
   def do_post_without_user_authorization
     @request_token.should_receive(:invalidate!)
-    post :authorize, :oauth_token=>@request_token.token, :authorize => "0"
+    post :authorize, :oauth_token => @request_token.token, :authorize => "0"
   end
 
   def do_post_with_callback
     @request_token.should_receive(:authorize!).with(@user)
-    post :authorize, :oauth_token=>@request_token.token, :oauth_callback => "http://application/alternative", :authorize => "1"
+    post :authorize, :oauth_token => @request_token.token, :oauth_callback => "http://application/alternative", :authorize => "1"
   end
 
   def do_post_with_no_application_callback
     @request_token.should_receive(:authorize!).with(@user)
     @client_application.stub!(:callback_url).and_return(nil)
-    post :authorize, :oauth_token=>@request_token.token, :authorize => "1"
+    post :authorize, :oauth_token => @request_token.token, :authorize => "1"
   end
   
   it "should be successful" do
@@ -159,9 +159,9 @@ describe OauthController, "getting an access token" do
 end
 
 class OauthorizedController<ApplicationController
-  before_filter :login_or_oauth_required, :only=>:both
-  before_filter :login_required, :only=>:interactive
-  before_filter :oauth_required, :only=>:token_only
+  before_filter :login_or_oauth_required, :only => :both
+  before_filter :login_required, :only => :interactive
+  before_filter :oauth_required, :only => :token_only
   
   def interactive
   end

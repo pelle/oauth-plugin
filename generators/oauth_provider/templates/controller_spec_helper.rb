@@ -34,14 +34,14 @@ module OAuthControllerSpecHelper
     @client_application.stub!(:secret).and_return(@consumer.secret)
     @client_application.stub!(:name).and_return("Client Application name")
     @client_application.stub!(:callback_url).and_return("http://application/callback")
-    @request_token=mock_model(RequestToken, :token => 'request_token', :client_application=>@client_application, :secret => "request_secret", :user=>@user)
+    @request_token=mock_model(RequestToken, :token => 'request_token', :client_application => @client_application, :secret => "request_secret", :user => @user)
     @request_token.stub!(:invalidated?).and_return(false)
     ClientApplication.stub!(:find_token).and_return(@request_token)
     
     @request_token_string="oauth_token=request_token&oauth_token_secret=request_secret"
     @request_token.stub!(:to_query).and_return(@request_token_string)
 
-    @access_token=mock_model(AccessToken, :token => 'access_token', :client_application=>@client_application, :secret => "access_secret", :user=>@user)
+    @access_token=mock_model(AccessToken, :token => 'access_token', :client_application => @client_application, :secret => "access_secret", :user => @user)
     @access_token.stub!(:invalidated?).and_return(false)
     @access_token.stub!(:authorized?).and_return(true)
     @access_token_string="oauth_token=access_token&oauth_token_secret=access_secret"
