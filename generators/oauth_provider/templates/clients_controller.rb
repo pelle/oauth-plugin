@@ -14,7 +14,7 @@ class OauthClientsController < ApplicationController
     @client_application=current_user.client_applications.build(params[:client_application])
     if @client_application.save
       flash[:notice]="Registered the information successfully"
-      redirect_to :action => "show",:id=>@client_application.id
+      redirect_to :action => "show", :id=>@client_application.id
     else
       render :action => "new"
     end
@@ -32,7 +32,7 @@ class OauthClientsController < ApplicationController
     @client_application=current_user.client_applications.find(params[:id])
     if @client_application.update_attributes(params[:client_application])
       flash[:notice]="Updated the client information successfully"
-      redirect_to :action => "show",:id=>@client_application.id
+      redirect_to :action => "show", :id=>@client_application.id
     else
       render :action => "edit"
     end

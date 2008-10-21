@@ -9,7 +9,7 @@
 			<td><%%= link_to token.client_application.name,token.client_application.url %></td>
 			<td><%%= token.authorized_at %></td>
 			<td>
-				<%%form_tag :controller => 'oauth',:action => 'revoke' do %>
+				<%%form_tag :controller => 'oauth', :action => 'revoke' do %>
 				<%%= hidden_field_tag 'token',token.token %>
 				<%%= submit_tag "Revoke!" %>
 				<%%end %>
@@ -33,8 +33,8 @@
 	</p>
 	<%%@client_applications.each do |client|%>
 		<%%div_for client do %>
-			<%%= link_to client.name,:action=>:show,:id => client.id %>
+			<%%= link_to client.name, :action=>:show, :id => client.id %>
 		<%%end %>
 	<%%end %>
 <%%end %>
-<h3><%%= link_to "Register your application",:action=>:new %></h3>
+<h3><%%= link_to "Register your application", :action=>:new %></h3>

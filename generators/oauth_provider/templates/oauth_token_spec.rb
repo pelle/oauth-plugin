@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe RequestToken do
-  fixtures :client_applications,:users,:oauth_tokens
+  fixtures :client_applications, :users, :oauth_tokens
   before(:each) do
     @token = RequestToken.create :client_application => client_applications(:one)
   end

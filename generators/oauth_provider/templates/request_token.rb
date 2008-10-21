@@ -10,7 +10,7 @@ class RequestToken<OauthToken
   def exchange!
     return false unless authorized?
     RequestToken.transaction do
-      access_token=AccessToken.create(:user => user,:client_application => client_application)
+      access_token=AccessToken.create(:user => user, :client_application => client_application)
       invalidate!
       access_token
     end
