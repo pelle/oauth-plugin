@@ -1,8 +1,8 @@
 class OauthController < ApplicationController
-  before_filter :login_required,:except=>[:request_token,:access_token,:test_request]
-  before_filter :login_or_oauth_required,:only=>[:test_request]
-  before_filter :verify_oauth_consumer_signature, :only=>[:request_token]
-  before_filter :verify_oauth_request_token, :only=>[:access_token]
+  before_filter :login_required,:except => [:request_token,:access_token,:test_request]
+  before_filter :login_or_oauth_required,:only => [:test_request]
+  before_filter :verify_oauth_consumer_signature, :only => [:request_token]
+  before_filter :verify_oauth_request_token, :only => [:access_token]
   # Uncomment the following if you are using restful_open_id_authentication
   # skip_before_filter :verify_authenticity_token
 
@@ -25,7 +25,7 @@ class OauthController < ApplicationController
   end
 
   def test_request
-    render :text=>params.collect{|k,v|"#{k}=#{v}"}.join("&")
+    render :text => params.collect{|k,v|"#{k}=#{v}"}.join("&")
   end
   
   def authorize
@@ -38,15 +38,15 @@ class OauthController < ApplicationController
           if redirect_url
             redirect_to redirect_url+"?oauth_token=#{@token.token}"
           else
-            render :action=>"authorize_success"
+            render :action => "authorize_success"
           end
         elsif params[:authorize]=="0"
           @token.invalidate!
-          render :action=>"authorize_failure"
+          render :action => "authorize_failure"
         end
       end
     else
-      render :action=>"authorize_failure"
+      render :action => "authorize_failure"
     end
   end
   

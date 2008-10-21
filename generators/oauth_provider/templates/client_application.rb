@@ -1,7 +1,7 @@
 require 'oauth'
 class ClientApplication < ActiveRecord::Base
   belongs_to :user
-  has_many :tokens,:class_name=>"OauthToken"
+  has_many :tokens,:class_name => "OauthToken"
   validates_presence_of :name,:url,:key,:secret
   validates_uniqueness_of :key
   before_validation_on_create :generate_keys
@@ -23,7 +23,7 @@ class ClientApplication < ActiveRecord::Base
       value=signature.verify
       logger.info "Signature verification returned: #{value.to_s}"
       value
-    rescue OAuth::Signature::UnknownSignatureMethod=>e
+    rescue OAuth::Signature::UnknownSignatureMethod => e
       logger.info "ERROR"+e.to_s
      false
     end
@@ -38,7 +38,7 @@ class ClientApplication < ActiveRecord::Base
   end
     
   def create_request_token
-    RequestToken.create :client_application=>self
+    RequestToken.create :client_application => self
   end
   
   protected

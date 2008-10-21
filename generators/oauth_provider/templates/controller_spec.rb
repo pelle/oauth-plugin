@@ -49,23 +49,23 @@ describe OauthController, "token authorization" do
 
   def do_post
     @request_token.should_receive(:authorize!).with(@user)
-    post :authorize,:oauth_token=>@request_token.token,:authorize=>"1"
+    post :authorize,:oauth_token=>@request_token.token,:authorize => "1"
   end
 
   def do_post_without_user_authorization
     @request_token.should_receive(:invalidate!)
-    post :authorize,:oauth_token=>@request_token.token,:authorize=>"0"
+    post :authorize,:oauth_token=>@request_token.token,:authorize => "0"
   end
 
   def do_post_with_callback
     @request_token.should_receive(:authorize!).with(@user)
-    post :authorize,:oauth_token=>@request_token.token,:oauth_callback=>"http://application/alternative",:authorize=>"1"
+    post :authorize,:oauth_token=>@request_token.token,:oauth_callback => "http://application/alternative",:authorize => "1"
   end
 
   def do_post_with_no_application_callback
     @request_token.should_receive(:authorize!).with(@user)
     @client_application.stub!(:callback_url).and_return(nil)
-    post :authorize,:oauth_token=>@request_token.token,:authorize=>"1"
+    post :authorize,:oauth_token=>@request_token.token,:authorize => "1"
   end
   
   it "should be successful" do
@@ -274,7 +274,7 @@ describe OauthController, "revoke" do
   end
   
   def do_post
-    post :revoke,:token=>"TOKEN STRING"
+    post :revoke,:token => "TOKEN STRING"
   end
   
   it "should redirect to index" do
