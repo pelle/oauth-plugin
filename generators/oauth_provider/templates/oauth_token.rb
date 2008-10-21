@@ -6,27 +6,26 @@ class OauthToken < ActiveRecord::Base
   before_validation_on_create :generate_keys
   
   def invalidated?
-    invalidated_at!=nil
+    invalidated_at != nil
   end
   
   def invalidate!
-    update_attribute(:invalidated_at,Time.now)
+    update_attribute(:invalidated_at, Time.now)
   end
   
   def authorized?
-    authorized_at!=nil && !invalidated?
+    authorized_at != nil && !invalidated?
   end
   
   def to_query
     "oauth_token=#{token}&oauth_token_secret=#{secret}"
   end
     
-  protected
+protected
   
   def generate_keys
-    @oauth_token=client_application.oauth_server.generate_credentials
-    self.token=@oauth_token[0]
-    self.secret=@oauth_token[1]
+    @oauth_token = client_application.oauth_server.generate_credentials
+    self.token = @oauth_token[0]
+    self.secret = @oauth_token[1]
   end
-  
 end

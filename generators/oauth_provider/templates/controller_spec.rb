@@ -31,7 +31,7 @@ describe OauthController, "getting a request token" do
   
   it "should return token string" do
     do_get
-    response.body.should==@request_token_string
+    response.body.should == @request_token_string
   end
 end
 
@@ -154,7 +154,7 @@ describe OauthController, "getting an access token" do
   
   it "should return token string" do
     do_get
-    response.body.should==@access_token_string
+    response.body.should == @access_token_string
   end
 end
 
@@ -181,15 +181,15 @@ describe OauthorizedController, " access control" do
   
   it "should have access_token set up correctly" do
     setup_to_authorize_request
-    @access_token.is_a?(AccessToken).should==true
+    @access_token.is_a?(AccessToken).should == true
     @access_token.should be_authorized
     @access_token.should_not be_invalidated
-    @access_token.user.should==@user
-    @access_token.client_application.should==@client_application
+    @access_token.user.should == @user
+    @access_token.client_application.should == @client_application
   end
   
   it "should return false for oauth? by default" do
-    controller.send(:oauth?).should==false
+    controller.send(:oauth?).should == false
   end
 
   it "should return nil for current_token  by default" do
@@ -201,11 +201,11 @@ describe OauthorizedController, " access control" do
     sign_request_with_oauth(@access_token)
     ClientApplication.should_receive(:find_token).with(@access_token.token).and_return(@access_token)
     get :both
-    controller.send(:current_token).should==@access_token
-    controller.send(:current_token).is_a?(AccessToken).should==true 
-    controller.send(:current_user).should==@user
-    controller.send(:current_client_application).should==@client_application
-    response.code.should=='200'
+    controller.send(:current_token).should == @access_token
+    controller.send(:current_token).is_a?(AccessToken).should == true 
+    controller.send(:current_user).should == @user
+    controller.send(:current_client_application).should == @client_application
+    response.code.should == '200'
     response.should be_success
   end
 
@@ -213,7 +213,7 @@ describe OauthorizedController, " access control" do
     login
     get :both
     response.should be_success
-    controller.send(:current_user).should==@user
+    controller.send(:current_user).should == @user
     controller.send(:current_token).should be_nil
   end
 
@@ -223,10 +223,10 @@ describe OauthorizedController, " access control" do
     sign_request_with_oauth(@access_token)
     ClientApplication.should_receive(:find_token).with(@access_token.token).and_return(@access_token)
     get :token_only
-    controller.send(:current_token).should==@access_token
-    controller.send(:current_client_application).should==@client_application
-    controller.send(:current_user).should==@user 
-    response.code.should=='200' 
+    controller.send(:current_token).should == @access_token
+    controller.send(:current_client_application).should == @client_application
+    controller.send(:current_user).should == @user 
+    response.code.should == '200' 
     response.should be_success 
   end
 
@@ -235,15 +235,15 @@ describe OauthorizedController, " access control" do
     ClientApplication.should_receive(:find_token).with(@request_token.token).and_return(@request_token)
     sign_request_with_oauth(@request_token)
     get :token_only
-    response.code.should=='401'
+    response.code.should == '401'
   end
 
   it "should disallow interactive when using oauth_required" do
     login
     get :token_only
-    response.code.should=='401'
+    response.code.should == '401'
     
-    controller.send(:current_user).should==@user
+    controller.send(:current_user).should == @user
     controller.send(:current_token).should be_nil
   end
 
@@ -251,7 +251,7 @@ describe OauthorizedController, " access control" do
     setup_to_authorize_request
     sign_request_with_oauth(@access_token)
     get :interactive
-    response.code.should=="302"
+    response.code.should == "302"
     controller.send(:current_user).should be_nil
     controller.send(:current_token).should be_nil
   end
@@ -260,7 +260,7 @@ describe OauthorizedController, " access control" do
     login
     get :interactive
     response.should be_success
-    controller.send(:current_user).should==@user
+    controller.send(:current_user).should == @user
     controller.send(:current_token).should be_nil
   end
 

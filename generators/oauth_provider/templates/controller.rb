@@ -7,7 +7,7 @@ class OauthController < ApplicationController
   # skip_before_filter :verify_authenticity_token
 
   def request_token
-    @token=current_client_application.create_request_token
+    @token = current_client_application.create_request_token
     if @token
       render :text => @token.to_query
     else
@@ -16,7 +16,7 @@ class OauthController < ApplicationController
   end 
   
   def access_token
-    @token=current_token.exchange!
+    @token = current_token.exchange!
     if @token
       render :text => @token.to_query
     else
@@ -29,18 +29,18 @@ class OauthController < ApplicationController
   end
   
   def authorize
-    @token=RequestToken.find_by_token params[:oauth_token]
+    @token = RequestToken.find_by_token params[:oauth_token]
     unless @token.invalidated?    
       if request.post? 
-        if params[:authorize]=='1'
+        if params[:authorize] == '1'
           @token.authorize!(current_user)
-          redirect_url=params[:oauth_callback]||@token.client_application.callback_url
+          redirect_url = params[:oauth_callback] || @token.client_application.callback_url
           if redirect_url
-            redirect_to redirect_url+"?oauth_token=#{@token.token}"
+            redirect_to redirect_url + "?oauth_token=#{@token.token}"
           else
             render :action => "authorize_success"
           end
-        elsif params[:authorize]=="0"
+        elsif params[:authorize] == "0"
           @token.invalidate!
           render :action => "authorize_failure"
         end
@@ -51,10 +51,10 @@ class OauthController < ApplicationController
   end
   
   def revoke
-    @token=current_user.tokens.find_by_token params[:token]
+    @token = current_user.tokens.find_by_token params[:token]
     if @token
       @token.invalidate!
-      flash[:notice]="You've revoked the token for #{@token.client_application.name}"
+      flash[:notice] = "You've revoked the token for #{@token.client_application.name}"
     end
     redirect_to oauth_clients_url
   end

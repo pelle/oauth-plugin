@@ -11,7 +11,7 @@ describe RequestToken do
   end
   
   it "should not have errors" do
-    @token.errors.should_not==[]
+    @token.errors.should_not == []
   end
   
   it "should have a token" do
@@ -34,21 +34,21 @@ describe RequestToken do
     @token.authorize!(users(:quentin))
     @token.should be_authorized
     @token.authorized_at.should_not be_nil
-    @token.user.should==users(:quentin)
+    @token.user.should == users(:quentin)
   end
   
   it "should not exchange without approval" do
-    @token.exchange!.should==false
+    @token.exchange!.should == false
     @token.should_not be_invalidated
   end
   
   it "should not exchange without approval" do
     @token.authorize!(users(:quentin))
-    @access=@token.exchange!
-    @access.should_not==false
+    @access = @token.exchange!
+    @access.should_not == false
     @token.should be_invalidated
     
-    @access.user.should==users(:quentin)
+    @access.user.should == users(:quentin)
     @access.should be_authorized
   end
   
