@@ -86,6 +86,7 @@ class OauthProviderGenerator < Rails::Generator::Base
       m.template 'new.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "new.html.erb")
       m.template 'index.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "index.html.erb")
       m.template 'show.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.erb")
+      m.template 'edit.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.erb")
       m.template 'authorize.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize.html.erb")
       m.template 'authorize_success.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize_success.html.erb")
       m.template 'authorize_failure.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize_failure.html.erb")
