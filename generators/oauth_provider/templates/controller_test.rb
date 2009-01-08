@@ -165,12 +165,10 @@ class OauthControllerGetAccessTokenTest < ActionController::TestCase
 end
 
 class OauthorizedController < ApplicationController
-  # Since we have login_or_oauth_required in ApplicationController, 
-  # bypass it except on the both action.
-  skip_before_filter :login_or_oauth_required, :except => :both
-  before_filter :login_required,          :only => :interactive
-  before_filter :oauth_required,          :only => :token_only
-  
+  before_filter :login_or_oauth_required,:only=>:both
+  before_filter :login_required,:only=>:interactive
+  before_filter :oauth_required,:only=>:token_only
+    
   def interactive
     render :text => "interactive"
   end
@@ -183,15 +181,7 @@ class OauthorizedController < ApplicationController
     render :text => "both"
   end
 end
-# 
-# # Add the routes
-# ActionController::Routing::Routes.draw do |map|
-#   map.with_options :controller => 'oauthorized' do |opt|
-#     opt.interactive '/oauthorized/interactive', :action => 'interactive'
-#     opt.token_only '/oauthorized/token_only', :action => 'token_only'
-#     opt.both '/oauthorized/both', :action => 'both'
-#   end
-# end
+ 
 
 class OauthControllerAccessControlTest < ActionController::TestCase
   include OAuthControllerTestHelper
