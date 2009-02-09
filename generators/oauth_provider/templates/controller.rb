@@ -16,7 +16,7 @@ class OauthController < ApplicationController
   end 
   
   def access_token
-    @token = current_token.exchange!
+    @token = current_token && current_token.exchange!
     if @token
       render :text => @token.to_query
     else
