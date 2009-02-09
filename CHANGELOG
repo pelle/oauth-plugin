@@ -1,7 +1,12 @@
-1/8/2009
-- Added Test:Unit tests to generator
-- added missing oauth_clients/edit.html.erb view template
-- added missing :oauth_clients resource route in USAGE
+2/9/2009
+- Fixed compatibility issue with OAuth Gem 3.1 (wr0ngway and aeden)
+- Added Test:Unit tests to generator (Ed Hickey)
+- added missing oauth_clients/edit.html.erb view template (Ed Hickey)
+- added missing :oauth_clients resource route in USAGE (Ed Hickey)
+- Don't throw NPE it token is not in db (Haruska)
+- Cleaned up whitespace (bricolage, Nicholas Nam)
+- Fixed bug in default verify_oauth_signature (igrigorik)
+- Doc fixes (skippy)
 
 6/23/2008
 
