@@ -102,14 +102,13 @@ module OAuth
             # return the token secret and the consumer secret
             [(current_token.nil? ? nil : current_token.secret), (current_client_application.nil? ? nil : current_client_application.secret)]
           end
-	  # reset @current_user to clear state for restful_...._authentication
-	  @current_user = nil if (!valid)
+          # reset @current_user to clear state for restful_...._authentication
+          @current_user = nil if (!valid)
           valid
-	rescue
-	  false
+        rescue
+          false
         end
       end
-      
     end
   end
 end
