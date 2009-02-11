@@ -59,7 +59,7 @@ class OauthProviderGenerator < Rails::Generator::Base
         
         m.template 'client_application_spec.rb',File.join('spec/models',"client_application_spec.rb")
         m.template 'oauth_token_spec.rb',    File.join('spec/models',"oauth_token_spec.rb")
-        m.template 'oauth_nonce_spec.rb',    File.join('test/unit',"oauth_nonce_spec.rb")
+        m.template 'oauth_nonce_spec.rb',    File.join('spec/models',"oauth_nonce_spec.rb")
         m.template 'client_applications.yml',File.join('spec/fixtures',"client_applications.yml")
         m.template 'oauth_tokens.yml',    File.join('spec/fixtures',"oauth_tokens.yml")
         m.template 'oauth_nonces.yml',    File.join('spec/fixtures',"oauth_nonces.yml")
