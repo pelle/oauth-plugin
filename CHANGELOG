@@ -1,3 +1,6 @@
+2/11/2009
+- Fixed escaping error and file path error in the generator simultaneously reported and fixed by Ivan Valdes and Mike Demers thanks
+
 2/9/2009
 - Fixed compatibility issue with OAuth Gem 3.1 (wr0ngway and aeden)
 - Added Test:Unit tests to generator (Ed Hickey)
