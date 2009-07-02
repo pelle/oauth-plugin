@@ -1,5 +1,6 @@
 class OauthClientsController < ApplicationController
   before_filter :login_required
+  before_filter :get_client_application, :only => [:show, :edit, :update, :destroy]
   
   def index
     @client_applications = current_user.client_applications
@@ -21,15 +22,12 @@ class OauthClientsController < ApplicationController
   end
   
   def show
-    @client_application = current_user.client_applications.find(params[:id])
   end
 
   def edit
-    @client_application = current_user.client_applications.find(params[:id])
   end
   
   def update
-    @client_application = current_user.client_applications.find(params[:id])
     if @client_application.update_attributes(params[:client_application])
       flash[:notice] = "Updated the client information successfully"
       redirect_to :action => "show", :id => @client_application.id
@@ -39,9 +37,16 @@ class OauthClientsController < ApplicationController
   end
 
   def destroy
-    @client_application = current_user.client_applications.find(params[:id])
     @client_application.destroy
     flash[:notice] = "Destroyed the client application registration"
     redirect_to :action => "index"
+  end
+  
+  private
+  def get_client_application
+    unless @client_application = current_user.client_applications.find(params[:id])
+      flash.now[:error] = "Wrong application id"
+      raise ActiveRecord::RecordNotFound
+    end
   end
 end
