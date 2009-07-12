@@ -7,8 +7,9 @@ class ClientApplication < ActiveRecord::Base
   before_validation_on_create :generate_keys
 
   validates_format_of :url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
-  validates_format_of :support_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
-  validates_format_of :callback_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
+  validates_format_of :support_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i, :allow_blank=>true
+  validates_format_of :callback_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i, :allow_blank=>true
+
   attr_accessor :token_callback_url
   
   def self.find_token(token_key)
@@ -41,6 +42,8 @@ class ClientApplication < ActiveRecord::Base
   end
     
   def create_request_token
+    # we can't use oob so we convert it to nil. OOB will have been setup before hand.
+    token_callback_url=nil if token_callback_url=='oob'
     RequestToken.create :client_application => self,:callback_url=>token_callback_url
   end
   
