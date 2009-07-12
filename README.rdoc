@@ -38,11 +38,11 @@ It requires an authentication framework such as acts_as_authenticated, restful_a
 
 You need to add the following to your routes (config/routes.rb)
 
-	map.resources :oauth_clients
-	map.authorize '/oauth/authorize',:controller=>'oauth',:action=>'authorize'
-	map.request_token '/oauth/request_token',:controller=>'oauth',:action=>'request_token'
-	map.access_token '/oauth/access_token',:controller=>'oauth',:action=>'access_token'
-	map.test_request '/oauth/test_request',:controller=>'oauth',:action=>'test_request'
+  map.resources :oauth_clients
+  map.authorize '/oauth/authorize',:controller=>'oauth',:action=>'authorize'
+  map.request_token '/oauth/request_token',:controller=>'oauth',:action=>'request_token'
+  map.access_token '/oauth/access_token',:controller=>'oauth',:action=>'access_token'
+  map.test_request '/oauth/test_request',:controller=>'oauth',:action=>'test_request'
 
 === User Model
 
@@ -54,8 +54,8 @@ Add the following lines to your user model:
 === Migrate database
 
 The database is defined in:
-	
-	db/migrate/XXX_create_oauth_tables.rb
+  
+  db/migrate/XXX_create_oauth_tables.rb
 
 Run them as any other normal migration in rails with:
 
@@ -64,7 +64,7 @@ Run them as any other normal migration in rails with:
 === RSpec
 
 The generator installs a collection of RSpec (http://rspec.info) specs instead of normal unit_tests. If you don't use RSpec (and really why aren't you?) feel free to remove the spec folder.
-	
+  
 If you would like to contribute regular unit tests I will accept them with a smile.
 
 == Protecting your actions
@@ -73,16 +73,16 @@ I recommend that you think about what your users would want to provide access to
 
 If you want to give oauth access to everything a registered user can do, just replace the filter you have in your controllers with:
 
-	before_filter :login_or_oauth_required
-	
+  before_filter :login_or_oauth_required
+  
 If you want to restrict consumers to the index and show methods of your controller do the following:
 
-	before_filter :login_required,:except=>[:show,:index]
-	before_filter :login_or_oauth_required,:only=>[:show,:index]
+  before_filter :login_required,:except=>[:show,:index]
+  before_filter :login_or_oauth_required,:only=>[:show,:index]
 
 If you have an action you only want used via oauth:
 
-	before_filter :oauth_required
+  before_filter :oauth_required
 
 All of these places the tokens user in current_user as you would expect. It also exposes the following methods:
 
