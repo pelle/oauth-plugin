@@ -6,6 +6,10 @@ class ClientApplication < ActiveRecord::Base
   validates_uniqueness_of :key
   before_validation_on_create :generate_keys
   
+  validates_format_of :url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
+  validates_format_of :support_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
+  validates_format_of :callback_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
+    
   def self.find_token(token_key)
     token = OauthToken.find_by_token(token_key, :include => :client_application)
     if token && token.authorized?
