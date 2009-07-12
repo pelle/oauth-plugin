@@ -56,7 +56,7 @@ module OAuth
             @current_client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
             
             # Store this temporarily in client_application object for use in request token generation 
-            @current_client_application.token_callback_url=request_proxy.oauth_callback
+            @current_client_application.token_callback_url=request_proxy.oauth_callback if request_proxy.oauth_callback
             
             # return the token secret and the consumer secret
             [nil, @current_client_application.secret]
