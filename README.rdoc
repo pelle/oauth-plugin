@@ -28,11 +28,19 @@ Please let me know if this works and I will see if I can make the generator cond
 
 While it isn't very flexible at the moment there is an oauth_provider generator which you can use like this:
 
-./script/generate oauth_provider
+  ./script/generate oauth_provider
 
 This generates OAuth and OAuth client controllers as well as the required models.
 
 It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
+
+=== Generator Options
+
+By default the generator generates RSpec and ERB templates. The generator can instead create Test::Unit and/or HAML templates. To do this use the following options:
+
+  ./script/generate oauth_provider --test-unit --haml
+  
+These can of course be used individually as well.
 
 === Routes
 
@@ -60,12 +68,6 @@ The database is defined in:
 Run them as any other normal migration in rails with:
 
   rake db:migrate
-
-=== RSpec
-
-The generator installs a collection of RSpec (http://rspec.info) specs instead of normal unit_tests. If you don't use RSpec (and really why aren't you?) feel free to remove the spec folder.
-  
-If you would like to contribute regular unit tests I will accept them with a smile.
 
 == Protecting your actions
 
@@ -107,4 +109,4 @@ The OAuth Ruby Gem home page is http://oauth.rubyforge.org
 
 Please help documentation, patches and testing.
 
-Copyright (c) 2007-2008 Pelle Braendgaard, released under the MIT license
+Copyright (c) 2007-2009 Pelle Braendgaard, released under the MIT license
