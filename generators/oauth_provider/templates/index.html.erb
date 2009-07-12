@@ -33,8 +33,11 @@
   </p>
   <%% @client_applications.each do |client|%>
     <%% div_for client do %>
-      <%%= link_to client.name, :action => :show, :id => client.id %>
+      <%%= link_to client.name, oauth_client_path(client) %>- 
+        <%%= link_to 'Edit', edit_oauth_client_path(client) %>
+        <%%= link_to 'Delete', oauth_client_path(client), :confirm => "Are you sure?", :method => :delete %>
     <%% end %>
   <%% end %>
 <%% end %>
+<br />
 <h3><%%= link_to "Register your application", :action => :new %></h3>
