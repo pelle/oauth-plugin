@@ -10,7 +10,9 @@ and the OAuth site at:
 
 http://oauth.net
 
-For more about the changes made to OAuth1.0a please see <a href="http://mojodna.net/2009/05/20/an-idiots-guide-to-oauth-10a.html">Seth's Idiot's Guide to OAuth 1.0a</a>.
+For more about the changes made to OAuth1.0a please see Seth's Idiot's Guide to OAuth 1.0a.
+
+http://mojodna.net/2009/05/20/an-idiots-guide-to-oauth-10a.html
 
 == Requirements
 
@@ -117,7 +119,9 @@ Then change the create_request_token method to the following:
 
 === Changes in request_token.rb
 
-We need to add support for the oauth_verifier parameter. Make sure it looks like this:
+The RequestToken contains the bulk of the changes so it's easiest to list it in it's entirety. Mainly we need to add support for the oauth_verifier parameter and also tell the client that we support OAuth 1.0a. 
+
+Make sure it looks like this:
 
   class RequestToken < OauthToken
   
@@ -173,6 +177,8 @@ All you need to do here is the change the authorize action to use the request_to
         render :action => "authorize_failure"
       end
     end
+
+The rest of the changes are in the plugin and will be automatically be included.
 
 *Note* OAuth 1.0a removes support for callback url's passed to the authorize page, clients must either define a callback url in their client application or pass one on the token request page.
 
