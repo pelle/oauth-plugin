@@ -1,18 +1,20 @@
 = OAuth Plugin
 
-This is the beginning of a plugin for implementing OAuth Providers in Rails applications.
+This is a plugin for implementing OAuth Providers in Rails applications.
 
-See the OAuth specs at:
+We support the revised OAuth 1.0a specs at:
 
-http://oauth.net/core/1.0/
+http://oauth.net/core/1.0a
 
 and the OAuth site at:
 
 http://oauth.net
 
+For more about the changes made to OAuth1.0a please see <a href="http://mojodna.net/2009/05/20/an-idiots-guide-to-oauth-10a.html">Seth's Idiot's Guide to OAuth 1.0a</a>.
+
 == Requirements
 
-You need to install the oauth gem (0.2.1) which is the core OAuth ruby library. It will NOT work on any previous version of the gem.
+You need to install the oauth gem (0.3.5) which is the core OAuth ruby library. It will NOT work on any previous version of the gem.
   
   sudo gem install oauth
 
@@ -68,6 +70,111 @@ The database is defined in:
 Run them as any other normal migration in rails with:
 
   rake db:migrate
+
+== Upgrading from OAuth 1.0 to OAuth 1.0a
+
+As the flow has changed slightly and there are a couple of database changes it isn't as simple as just updating the plugin. Please follow these steps closely:
+
+=== Add a migration
+
+You need to add a migration:
+
+  script/generate migration upgrade_oauth
+  
+Make it look like this:
+
+  class UpgradeOauth < ActiveRecord::Migration
+    def self.up
+      add_column :oauth_tokens,:callback_url,:string
+      add_column :oauth_tokens,:verifier,:string,:limit => 20
+    end
+
+    def self.down
+      remove_column :oauth_tokens,:callback_url
+      remove_column :oauth_tokens,:verifier
+    end
+  end
+
+=== Change code
+
+There are changes to the following files:
+  
+  app/models/client_application.rb
+  app/models/request_token.rb
+  app/controllers/oauth_controller.rb
+
+=== Changes in client_application.rb
+
+Add the following towards the top of the model class
+
+  attr_accessor :token_callback_url
+
+Then change the create_request_token method to the following:
+
+  def create_request_token
+    RequestToken.create :client_application =>self,:callback_url=>token_callback_url
+  end
+
+=== Changes in request_token.rb
+
+We need to add support for the oauth_verifier parameter. Make sure it looks like this:
+
+  class RequestToken < OauthToken
+  
+    attr_accessor :provided_oauth_verifier
+  
+    def authorize!(user)
+      return false if authorized?
+      self.user = user
+      self.authorized_at = Time.now
+      self.verifier=OAuth::Helper.generate_key(16)
+      self.save
+    end
+  
+    def exchange!
+      return false unless authorized?
+      return false unless verifier==provided_oauth_verifier
+    
+      RequestToken.transaction do
+        access_token = AccessToken.create(:user => user, :client_application => client_application)
+        invalidate!
+        access_token
+      end
+    end
+  
+    def to_query
+      "#{super}&oauth_callback_confirmed=true"
+    end
+
+  end
+
+=== Changes in oauth_controller
+
+All you need to do here is the change the authorize action to use the request_token callback url and add the oauth_verifier to the callback url. 
+
+  def authorize
+      @token = RequestToken.find_by_token params[:oauth_token]
+      unless @token.invalidated?    
+        if request.post? 
+          if params[:authorize] == '1'
+            @token.authorize!(current_user)
+            redirect_url = @token.callback_url || @token.client_application.callback_url
+            if redirect_url
+              redirect_to "#{redirect_url}?oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
+            else
+              render :action => "authorize_success"
+            end
+          elsif params[:authorize] == "0"
+            @token.invalidate!
+            render :action => "authorize_failure"
+          end
+        end
+      else
+        render :action => "authorize_failure"
+      end
+    end
+
+*Note* OAuth 1.0a removes support for callback url's passed to the authorize page, clients must either define a callback url in their client application or pass one on the token request page.
 
 == Protecting your actions
 
