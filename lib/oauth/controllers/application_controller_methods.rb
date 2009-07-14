@@ -1,8 +1,8 @@
 require 'oauth/signature'
 module OAuth
-  module Rails
+  module Controllers
    
-    module ControllerMethods
+    module ApplicationControllerMethods
       protected
       
       def current_token

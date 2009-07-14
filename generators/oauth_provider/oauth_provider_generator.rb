@@ -50,7 +50,8 @@ class OauthProviderGenerator < Rails::Generator::Base
 
       m.template 'clients_controller.rb',File.join('app/controllers',controller_class_path,"#{controller_file_name}_clients_controller.rb")
       m.template 'clients_helper.rb',File.join('app/helpers',controller_class_path,"#{controller_file_name}_clients_helper.rb")
-
+      m.route_resources "#{controller_file_name}_clients".to_sym
+      
       if !options[:test_unit]
         m.directory File.join('spec')
         m.directory File.join('spec/models')
