@@ -7,9 +7,4 @@ It requires an authentication framework such as acts_as_authenticated, restful_a
 If you generated the migration file (true by default), make sure you run
 rake db:migrate
 
-You need to add the following routes to your config/routes.rb file:
-
-If you have already installed the oauth_provider OAuthConsumer will use it's oauth_tokens table.
-
-If not it will create a new table oauth_consumers to store the tokens.
-
+See README.rdoc for more.

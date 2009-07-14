@@ -232,7 +232,9 @@ Add entries to OAUTH_CREDENTIALS for all OAuth Applications you wish to connect 
     :hour_feed=>{
       :key=>"",
       :secret=>"",
-      :site=>"http://hourfeed.com" 
+      :options={
+        :site=>"http://hourfeed.com" 
+      }
     },
     :nu_bux=>{
       :key=>"",
@@ -240,13 +242,15 @@ Add entries to OAUTH_CREDENTIALS for all OAuth Applications you wish to connect 
       :super_class=>"OpenTransactToken",  # if a OAuth service follows a particular standard 
                                           # with a token implementation you can set the superclass
                                           # to use
-      :site=>"http://nubux.heroku.com" 
+      :options=>{
+        :site=>"http://nubux.heroku.com"
+      }
     }
   }
 
-You can add any of the options that the OAuth::Consumer.new accepts: http://oauth.rubyforge.org/rdoc/classes/OAuth/Consumer.html
+You can add any of the options that the OAuth::Consumer.new accepts to the options hash: http://oauth.rubyforge.org/rdoc/classes/OAuth/Consumer.html
 
-:key, :secret  and :site are required. :site can be left out for Agree2 and Twitter.
+:key, :secret are required as well as :options[:site] etc. for non custom ConsumerToken services.
 
 === ConsumerToken models
 

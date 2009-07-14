@@ -15,7 +15,9 @@
 #   :hour_feed=>{
 #     :key=>"",
 #     :secret=>"",
-#     :site=>"http://hourfeed.com" # Remember to add a site for a generic OAuth site
+#     :options=>{ # OAuth::Consumer options
+#       :site=>"http://hourfeed.com" # Remember to add a site for a generic OAuth site
+#     }
 #   },
 #   :nu_bux=>{
 #     :key=>"",
@@ -23,7 +25,9 @@
 #     :super_class=>"OpenTransactToken",  # if a OAuth service follows a particular standard 
 #                                         # with a token implementation you can set the superclass
 #                                         # to use
-#     :site=>"http://nubux.heroku.com" 
+#     :options=>{ # OAuth::Consumer options
+#       :site=>"http://nubux.heroku.com" 
+#     }
 #   }
 # }
 # 
