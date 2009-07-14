@@ -1,3 +1,10 @@
+7/14/2009
+  - Added OAuth Consumer generator
+  - Moved oauth controller code to a module to make it easier to upgrade in the future
+7/11/2009
+  - Added support for OAuth version 1.0a
+  - Added haml support
+  - Improved OAuth Client Controller gui (alec-c4)
 2/11/2009
 - Fixed escaping error and file path error in the generator simultaneously reported and fixed by Ivan Valdes and Mike Demers thanks
 

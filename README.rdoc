@@ -1,6 +1,6 @@
 = OAuth Plugin
 
-This is a plugin for implementing OAuth Providers in Rails applications.
+This is a plugin for implementing OAuth Providers and Consumers in Rails applications.
 
 We support the revised OAuth 1.0a specs at:
 
@@ -72,7 +72,7 @@ As the flow has changed slightly and there are a couple of database changes it i
 You need to add a migration:
 
   script/generate migration upgrade_oauth
-  
+
 Make it look like this:
 
   class UpgradeOauth < ActiveRecord::Migration
@@ -90,7 +90,7 @@ Make it look like this:
 === Change code
 
 There are changes to the following files:
-  
+
   app/models/client_application.rb
   app/models/request_token.rb
   app/controllers/oauth_controller.rb
@@ -114,9 +114,9 @@ The RequestToken contains the bulk of the changes so it's easiest to list it in 
 Make sure it looks like this:
 
   class RequestToken < OauthToken
-  
+
     attr_accessor :provided_oauth_verifier
-  
+
     def authorize!(user)
       return false if authorized?
       self.user = user
@@ -124,18 +124,18 @@ Make sure it looks like this:
       self.verifier=OAuth::Helper.generate_key(16)
       self.save
     end
-  
+
     def exchange!
       return false unless authorized?
       return false unless verifier==provided_oauth_verifier
-    
+
       RequestToken.transaction do
         access_token = AccessToken.create(:user => user, :client_application => client_application)
         invalidate!
         access_token
       end
     end
-  
+
     def to_query
       "#{super}&oauth_callback_confirmed=true"
     end
@@ -179,7 +179,7 @@ I recommend that you think about what your users would want to provide access to
 If you want to give oauth access to everything a registered user can do, just replace the filter you have in your controllers with:
 
   before_filter :login_or_oauth_required
-  
+
 If you want to restrict consumers to the index and show methods of your controller do the following:
 
   before_filter :login_required,:except=>[:show,:index]
@@ -195,6 +195,107 @@ All of these places the tokens user in current_user as you would expect. It also
 * current_client_application - for accessing information about which consumer is currently accessing your request
 
 You could add application specific information to the OauthToken and ClientApplication model for such things as object level access control, billing, expiry etc. Be creative and you can create some really cool applications here.
+
+== OAuth Consumer generator
+
+The oauth_consumer generator creates a controller to manage the authentication flow between your application and any number of external OAuth secured applications that you wish to connect to.
+
+To run it simply run:
+
+  ./script/generate oauth_consumer
+
+This generates the OauthConsumerController as well as the ConsumerToken model.
+
+=== Generator Options
+
+By default the generator generates ERB templates. The generator can instead create HAML templates. To do this use the following options:
+
+  ./script/generate oauth_consumer --haml
+
+=== Configuration
+
+All configuration of applications is done in
+
+  config/initializers/oauth_consumers.rb
+
+Add entries to OAUTH_CREDENTIALS for all OAuth Applications you wish to connect to. Get this information by registering your application at the particular applications developer page.
+
+  OAUTH_CREDENTIALS={
+    :twitter=>{
+      :key=>"key",
+      :secret=>"secret"
+    },
+    :agree2=>{
+      :key=>"key",
+      :secret=>"secret"
+    },
+    :hour_feed=>{
+      :key=>"",
+      :secret=>"",
+      :site=>"http://hourfeed.com" 
+    },
+    :nu_bux=>{
+      :key=>"",
+      :secret=>"",
+      :super_class=>"OpenTransactToken",  # if a OAuth service follows a particular standard 
+                                          # with a token implementation you can set the superclass
+                                          # to use
+      :site=>"http://nubux.heroku.com" 
+    }
+  }
+
+You can add any of the options that the OAuth::Consumer.new accepts: http://oauth.rubyforge.org/rdoc/classes/OAuth/Consumer.html
+
+:key, :secret  and :site are required. :site can be left out for Agree2 and Twitter.
+
+=== ConsumerToken models
+
+For each site setup in the OAUTH_CREDENTIALS hash the plugin goes through and loads or creates a new model class that subclasses ConsumerToken.
+
+eg. If you connect to Yahoo's FireEagle you would add the :fire_eagle entry to OAUTH_CREDENTIALS and a new FireEagleToken model class will be created on the fly.
+
+This allows you to add a has_one association in your user model:
+
+  has_one  :fire_eagle,:class_name=>"FireEagleToken", :dependent=>:destroy
+
+And you could do:
+
+  @location=@user.fire_eagle.client.get "/api/0.1/user.json"
+
+The client method gives you a OAuth::AccessToken which you can use to perform rest operations on the client site - see http://oauth.rubyforge.org/rdoc/classes/OAuth/AccessToken.html
+
+=== Custom ConsumerToken models
+
+Before creating the FireEagleToken model the plugin checks if a class already exists by that name or if we provide an api wrapper for it. This allows you to create a better token model that uses an existing ruby gem.
+
+Currently we provide the following untested tokens:
+
+* Twitter (Will work when the twitter gem is updated to support OAuth 0.3.5)
+* Agree2
+
+These can be found in lib/oauth/models/consulers/services. Contributions will be warmly accepted for your favorite OAuth service.
+
+=== The OauthConsumerController
+
+To connect a user to an external service link or redirect them to:
+
+  /oauth_consumers/[SERVICE_NAME]
+  
+Where SERVICE_NAME is the name you set in the OAUTH_CREDENTIALS hash. This will request the request token and redirect the user to the services authorization screen. When the user accepts the get redirected back to:
+
+  /oauth_consumers/[SERVICE_NAME]/callback
+  
+You can specify this url to the service you're calling when you register, but it will automatically be sent along anyway.
+
+=== Migrate database
+
+The database is defined in:
+
+  db/migrate/XXX_create_oauth_consumer_tokens.rb
+
+Run them as any other normal migration in rails with:
+
+  rake db:migrate
 
 == More
 

@@ -24,7 +24,7 @@
 #                                         # with a token implementation you can set the superclass
 #                                         # to use
 #     :site=>"http://nubux.heroku.com" 
-#   },
+#   }
 # }
 # 
 OAUTH_CREDENTIALS={
