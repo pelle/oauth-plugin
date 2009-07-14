@@ -1,3 +1,4 @@
+require File.expand_path(File.dirname(__FILE__) + "/lib/insert_routes.rb")
 class OauthProviderGenerator < Rails::Generator::Base
   default_options :skip_migration => false
   attr_reader   :class_path,
@@ -35,7 +36,6 @@ class OauthProviderGenerator < Rails::Generator::Base
       # Controller, helper, views, and test directories.
       m.directory File.join('app/models', class_path)
       m.directory File.join('app/controllers', controller_class_path)
-      m.directory File.join('app/helpers', controller_class_path)
       m.directory File.join('app/views', controller_class_path, controller_file_name)
       m.directory File.join('app/views', controller_class_path, 'oauth_clients')
 
@@ -46,11 +46,15 @@ class OauthProviderGenerator < Rails::Generator::Base
       m.template 'oauth_nonce.rb',    File.join('app/models',"oauth_nonce.rb")
 
       m.template 'controller.rb',File.join('app/controllers',controller_class_path,"#{controller_file_name}_controller.rb")
-      m.template 'helper.rb',File.join('app/helpers',controller_class_path,"#{controller_file_name}_helper.rb")
 
       m.template 'clients_controller.rb',File.join('app/controllers',controller_class_path,"#{controller_file_name}_clients_controller.rb")
-      m.template 'clients_helper.rb',File.join('app/helpers',controller_class_path,"#{controller_file_name}_clients_helper.rb")
-
+      m.route_name 'oauth', '/oauth',:controller=>'oauth',:action=>'index'
+      m.route_name 'authorize', '/oauth/authorize',:controller=>'oauth',:action=>'authorize'
+      m.route_name 'request_token', '/oauth/request_token',:controller=>'oauth',:action=>'request_token'
+      m.route_name 'access_token', '/oauth/access_token',:controller=>'oauth',:action=>'access_token'
+      m.route_name 'test_request', '/oauth/test_request',:controller=>'oauth',:action=>'test_request'
+      m.route_resources "#{controller_file_name}_clients".to_sym
+      
       if !options[:test_unit]
         m.directory File.join('spec')
         m.directory File.join('spec/models')
@@ -81,17 +85,19 @@ class OauthProviderGenerator < Rails::Generator::Base
         m.template 'controller_test.rb',File.join('test/functional',controller_class_path,"#{controller_file_name}_controller_test.rb")
         m.template 'clients_controller_test.rb',File.join('test/functional',controller_class_path,"#{controller_file_name}_clients_controller_test.rb")
       end
-
-      m.template '_form.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "_form.html.erb")
-      m.template 'new.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "new.html.erb")
-      m.template 'index.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "index.html.erb")
-      m.template 'show.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.erb")
-      m.template 'edit.html.erb',  File.join('app/views', controller_class_path, 'oauth_clients', "edit.html.erb")
-      m.template 'authorize.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize.html.erb")
-      m.template 'authorize_success.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize_success.html.erb")
-      m.template 'authorize_failure.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "authorize_failure.html.erb")
       
-
+      
+      @template_extension= options[:haml] ? "haml" : "erb"
+      
+      m.template "_form.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "_form.html.#{@template_extension}")
+      m.template "new.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "new.html.#{@template_extension}")
+      m.template "index.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "index.html.#{@template_extension}")
+      m.template "show.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.#{@template_extension}")
+      m.template "edit.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "edit.html.#{@template_extension}")
+      m.template "authorize.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize.html.#{@template_extension}")
+      m.template "authorize_success.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize_success.html.#{@template_extension}")
+      m.template "authorize_failure.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize_failure.html.#{@template_extension}")
+      
       unless options[:skip_migration]
         m.migration_template 'migration.rb', 'db/migrate', :assigns => {
           :migration_name => "CreateOauthTables"
@@ -112,5 +118,7 @@ class OauthProviderGenerator < Rails::Generator::Base
              "Don't generate a migration file") { |v| options[:skip_migration] = v }
       opt.on("--test-unit", 
              "Generate the Test::Unit compatible tests instead of RSpec") { |v| options[:test_unit] = v }
+      opt.on("--haml", 
+            "Templates use haml") { |v| options[:haml] = v }
     end
 end

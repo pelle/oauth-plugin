@@ -16,7 +16,7 @@ class OauthToken < ActiveRecord::Base
   def authorized?
     authorized_at != nil && !invalidated?
   end
-  
+    
   def to_query
     "oauth_token=#{token}&oauth_token_secret=#{secret}"
   end
