@@ -1,3 +1,4 @@
+require File.expand_path(File.dirname(__FILE__) + "/lib/insert_routes.rb")
 class OauthProviderGenerator < Rails::Generator::Base
   default_options :skip_migration => false
   attr_reader   :class_path,
