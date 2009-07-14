@@ -12,7 +12,6 @@ module OAuth
         end
       end
       
-
       def request_token
         @token = current_client_application.create_request_token
         if @token
