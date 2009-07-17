@@ -43,8 +43,8 @@ class ClientApplication < ActiveRecord::Base
     
   def create_request_token
     # we can't use oob so we convert it to nil. OOB will have been setup before hand.
-    token_callback_url=nil if token_callback_url=='oob'
-    RequestToken.create :client_application => self,:callback_url=>token_callback_url
+    self.token_callback_url=nil if self.token_callback_url=='oob'
+    RequestToken.create :client_application => self,:callback_url=>self.token_callback_url
   end
   
 protected
