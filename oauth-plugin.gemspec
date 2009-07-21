@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth-plugin}
-  s.version = "0.3.6"
+  s.version = "0.3.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
@@ -71,6 +71,7 @@ Gem::Specification.new do |s|
      "generators/oauth_provider/templates/show.html.haml",
      "init.rb",
      "install.rb",
+     "lib/oauth-plugin.rb",
      "lib/oauth/controllers/application_controller_methods.rb",
      "lib/oauth/controllers/consumer_controller.rb",
      "lib/oauth/controllers/provider_controller.rb",
