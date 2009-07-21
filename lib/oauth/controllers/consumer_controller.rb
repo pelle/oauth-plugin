@@ -15,7 +15,11 @@ module Oauth
         unless @token
           @request_token=@consumer.get_request_token(callback_oauth_consumer_url(params[:id]))
           session[@request_token.token]=@request_token.secret
-          redirect_to @request_token.authorize_url
+          if @request_token.callback_confirmed?
+            redirect_to @request_token.authorize_url
+          else
+            redirect_to(@request_token.authorize_url + "&oauth_callback=#{callback_oauth_consumer_url(params[:id])}")
+          end
         end
       end
 
