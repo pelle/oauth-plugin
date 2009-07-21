@@ -78,12 +78,14 @@ Gem::Specification.new do |s|
      "lib/oauth/models/consumers/services/agree2_token.rb",
      "lib/oauth/models/consumers/services/twitter_token.rb",
      "lib/oauth/models/consumers/token.rb",
+     "oauth-plugin.gemspec",
      "tasks/oauth_tasks.rake",
      "uninstall.rb"
   ]
   s.homepage = %q{http://github.com/pelle/oauth-plugin/tree/master}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
+  s.rubyforge_project = %q{oauth}
   s.rubygems_version = %q{1.3.4}
   s.summary = %q{Ruby on Rails Plugin for OAuth Provider and Consumer}
 

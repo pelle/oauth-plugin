@@ -1,5 +1,5 @@
 7/21/2009
-  - made a github gem
+  - made it a gem
   - more thorough tests of OAuth 1.0 consumer
   - Add support for a OAUTH_10_SUPPORT constant to switch on support for OAuth 1.0 in provider
 7/19/2009

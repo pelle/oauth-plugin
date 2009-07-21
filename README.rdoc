@@ -24,12 +24,12 @@ You need to install the oauth gem (0.3.5) which is the core OAuth ruby library. 
 
 The plugin can now be installed as an gem from github, which is the easiest way to keep it up to date.
 
-  sudo gem install pelle-oauth-plugin
+  sudo gem install oauth-plugin
   
 You should add the following in the gem dependency section of environment.rb
 
   config.gem "oauth"
-  config.gem "pelle-oauth-plugin", :source => "http://gems.github.com"
+  config.gem "oauth-plugin"
 
 Alternatively you can install it in vendors/plugin:
 

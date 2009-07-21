@@ -31,6 +31,7 @@ begin
     gemspec.homepage = "http://github.com/pelle/oauth-plugin/tree/master"
     gemspec.authors = ["Pelle Braendgaard"]
     gemspec.add_dependency('oauth', '>= 0.3.5')
+    gemspec.rubyforge_project = 'oauth'
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
