@@ -33,7 +33,7 @@ class OauthProviderGenerator < Rails::Generator::Base
                                                       "#{controller_class_name}ClientsHelper"
       m.class_collisions class_path,                  "ClientApplication","OauthNonce","RequestToken","AccessToken","OauthToken"
 
-      # Controller, helper, views, and test directories.
+      # Controller, model, views, and test directories.
       m.directory File.join('app/models', class_path)
       m.directory File.join('app/controllers', controller_class_path)
       m.directory File.join('app/views', controller_class_path, controller_file_name)

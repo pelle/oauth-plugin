@@ -42,16 +42,14 @@ class ClientApplication < ActiveRecord::Base
   end
     
   def create_request_token
-    # we can't use oob so we convert it to nil. OOB will have been setup before hand.
-    self.token_callback_url=nil if self.token_callback_url=='oob'
     RequestToken.create :client_application => self,:callback_url=>self.token_callback_url
   end
   
 protected
   
   def generate_keys
-    @oauth_client = oauth_server.generate_consumer_credentials
-    self.key = @oauth_client.key
-    self.secret = @oauth_client.secret
+    oauth_client = oauth_server.generate_consumer_credentials
+    self.key = oauth_client.key[0,20]
+    self.secret = oauth_client.secret[0,40]
   end
 end

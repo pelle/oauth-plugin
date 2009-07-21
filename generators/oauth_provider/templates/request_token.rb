@@ -6,13 +6,13 @@ class RequestToken < OauthToken
     return false if authorized?
     self.user = user
     self.authorized_at = Time.now
-    self.verifier=OAuth::Helper.generate_key[0,20]
+    self.verifier=OAuth::Helper.generate_key(16)[0,20] unless oauth10?
     self.save
   end
   
   def exchange!
     return false unless authorized?
-    return false unless self.callback_url.blank? || verifier==provided_oauth_verifier
+    return false unless oauth10? || verifier==provided_oauth_verifier
     
     RequestToken.transaction do
       access_token = AccessToken.create(:user => user, :client_application => client_application)
@@ -22,7 +22,19 @@ class RequestToken < OauthToken
   end
   
   def to_query
-    "#{super}&oauth_callback_confirmed=true"
+    if oauth10?
+      super
+    else
+      "#{super}&oauth_callback_confirmed=true"
+    end
+  end
+  
+  def oob?
+    self.callback_url=='oob'
+  end
+  
+  def oauth10?
+    self.callback_url.blank?
   end
 
 end

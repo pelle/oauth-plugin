@@ -35,14 +35,23 @@ module OAuth
       end
 
       def authorize
-        @token = RequestToken.find_by_token params[:oauth_token]
+        @token = ::RequestToken.find_by_token params[:oauth_token]
         unless @token.invalidated?    
           if request.post? 
             if params[:authorize] == '1'
               @token.authorize!(current_user)
-              redirect_url = @token.callback_url || @token.client_application.callback_url
-              if redirect_url
-                redirect_to "#{redirect_url}?oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
+              if @token.oauth10?
+                @redirect_url = params[:oauth_callback] || @token.client_application.callback_url
+              else
+                @redirect_url = @token.oob? ? @token.client_application.callback_url : @token.callback_url
+              end
+              
+              if @redirect_url
+                if @token.oauth10?
+                  redirect_to "#{@redirect_url}?oauth_token=#{@token.token}"
+                else
+                  redirect_to "#{@redirect_url}?oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
+                end
               else
                 render :action => "authorize_success"
               end
