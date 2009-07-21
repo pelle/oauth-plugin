@@ -20,6 +20,21 @@ You need to install the oauth gem (0.3.5) which is the core OAuth ruby library. 
   
   sudo gem install oauth
 
+== Installation
+
+The plugin can now be installed as an gem from github, which is the easiest way to keep it up to date.
+
+  sudo gem install pelle-oauth-plugin
+  
+You should add the following in the gem dependency section of environment.rb
+
+  config.gem "oauth"
+  config.gem "pelle-oauth-plugin", :source => "http://gems.github.com"
+
+Alternatively you can install it in vendors/plugin:
+
+  script/plugin install git://github.com/pelle/oauth-plugin.git
+
 The Generator currently creates code (in particular views) that only work in Rails 2.
 
 It should not be difficult to manually modify the code to work on Rails 1.2.x
