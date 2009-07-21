@@ -1,17 +1,16 @@
+gem 'paulsingh-twitter' # go back to regular twitter gem when it is bumped to oauth 0.3.5
 require 'twitter'
 class TwitterToken < ConsumerToken
-  def self.twitter
-    @twitter||=Twitter::OAuth.new( OAUTH_CREDENTIALS[:twitter][:key],OAUTH_CREDENTIALS[:twitter][:secret]).consumer
-  end
-  
+  TWITTER_SETTINGS={:site=>"http://twitter.com"}
   def self.consumer
-    @twitter.consumer
+    @consumer||=OAuth::Consumer.new credentials[:key],credentials[:secret],TWITTER_SETTINGS
   end
   
   def client
     unless @client
-      @client=TwitterToken.twitter.clone
-      @client.authorize_from_access token,secret
+      @twitter_oauth=Twitter::OAuth.new TwitterToken.consumer.key,TwitterToken.consumer.secret
+      @twitter_oauth.authorize_from_access token,secret
+      @client=Twitter::Base.new(@twitter_oauth)
     end
     
     @client

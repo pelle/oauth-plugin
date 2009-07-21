@@ -12,6 +12,10 @@
 #     :key=>"",
 #     :secret=>""
 #   },
+#   :fireeagle=>{
+#     :key=>"",
+#     :secret=>""
+#   },
 #   :hour_feed=>{
 #     :key=>"",
 #     :secret=>"",

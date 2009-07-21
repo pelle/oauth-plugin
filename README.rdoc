@@ -319,7 +319,7 @@ This allows you to add a has_one association in your user model:
 
 And you could do:
 
-  @location=@user.fire_eagle.client.get "/api/0.1/user.json"
+  @location=@user.fire_eagle.client.location
 
 The client method gives you a OAuth::AccessToken which you can use to perform rest operations on the client site - see http://oauth.rubyforge.org/rdoc/classes/OAuth/AccessToken.html
 
@@ -327,9 +327,10 @@ The client method gives you a OAuth::AccessToken which you can use to perform re
 
 Before creating the FireEagleToken model the plugin checks if a class already exists by that name or if we provide an api wrapper for it. This allows you to create a better token model that uses an existing ruby gem.
 
-Currently we provide the following untested tokens:
+Currently we provide the following semi tested tokens wrappers:
 
-* Twitter (Will work when the twitter gem is updated to support OAuth 0.3.5)
+* FireEagle
+* Twitter (requires Paul Singh's version of twitter gem until main gem is updated to 0.3.5 - sudo gem install paulsingh-twitter)
 * Agree2
 
 These can be found in lib/oauth/models/consulers/services. Contributions will be warmly accepted for your favorite OAuth service.

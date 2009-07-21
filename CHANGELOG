@@ -1,4 +1,5 @@
 7/21/2009
+  - Twitter, Agree2 and FireEagle tokens are working in consumer.
   - made it a gem
   - more thorough tests of OAuth 1.0 consumer
   - Add support for a OAUTH_10_SUPPORT constant to switch on support for OAuth 1.0 in provider

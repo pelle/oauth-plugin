@@ -37,7 +37,7 @@ module Oauth
             create :user_id=>user.id,:token=>access_token.token,:secret=>access_token.secret
           end
           
-          private
+          protected
           
           def credentials
             @credentials||=OAUTH_CREDENTIALS[service_name]
