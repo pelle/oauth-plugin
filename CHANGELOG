@@ -1,3 +1,10 @@
+7/21/2009
+  - more thorough tests of OAuth 1.0 consumer
+  - Add support for a OAUTH_10_SUPPORT constant to switch on support for OAuth 1.0 in provider
+7/19/2009
+  - Added support for OAuth 1.0 consumers (nov)
+7/17/2009
+  - Added back support for OAuth 1.0 for providers (nov)
 7/14/2009
   - Added OAuth Consumer generator
   - Moved oauth controller code to a module to make it easier to upgrade in the future
