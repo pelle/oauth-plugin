@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth-plugin}
-  s.version = "0.3.7"
+  s.version = "0.3.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
-  s.date = %q{2009-07-21}
+  s.date = %q{2009-07-23}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
@@ -81,6 +81,7 @@ Gem::Specification.new do |s|
      "lib/oauth/models/consumers/services/twitter_token.rb",
      "lib/oauth/models/consumers/token.rb",
      "oauth-plugin.gemspec",
+     "rails/init.rb",
      "tasks/oauth_tasks.rake",
      "uninstall.rb"
   ]
@@ -88,7 +89,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{oauth}
-  s.rubygems_version = %q{1.3.4}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Ruby on Rails Plugin for OAuth Provider and Consumer}
 
   if s.respond_to? :specification_version then
