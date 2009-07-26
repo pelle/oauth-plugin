@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth-plugin}
-  s.version = "0.3.8"
+  s.version = "0.3.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
-  s.date = %q{2009-07-23}
+  s.date = %q{2009-07-26}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
@@ -23,6 +23,8 @@ Gem::Specification.new do |s|
      "generators/oauth_consumer/oauth_consumer_generator.rb",
      "generators/oauth_consumer/templates/consumer_token.rb",
      "generators/oauth_consumer/templates/controller.rb",
+     "generators/oauth_consumer/templates/index.html.erb",
+     "generators/oauth_consumer/templates/index.html.haml",
      "generators/oauth_consumer/templates/migration.rb",
      "generators/oauth_consumer/templates/oauth_config.rb",
      "generators/oauth_consumer/templates/show.html.erb",

@@ -4,10 +4,17 @@ module Oauth
       def self.included(controller)
         controller.class_eval do  
           before_filter :login_required
-          before_filter :load_consumer
-          skip_before_filter :verify_authenticity_token
+          before_filter :load_consumer, :except=>:index
+          skip_before_filter :verify_authenticity_token,:only=>:callback
         end
       end
+      
+      def index
+        @consumer_tokens=ConsumerToken.all :conditions=>{:user_id=>current_user.id}
+        # The services the user hasn't already connected to
+        @services=OAUTH_CREDENTIALS.keys-@consumer_tokens.collect{|c| c.class.service_name}
+      end
+      
       
       # creates request token and redirects on to oauth provider's auth page
       # If user is already connected it displays a page with an option to disconnect and redo
@@ -41,7 +48,7 @@ module Oauth
       def destroy
         throw RecordNotFound unless @token
         @token.destroy
-        if params[:Reconnect]
+        if params[:commit]=="Reconnect"
           redirect_to oauth_consumer_url(params[:id])
         else
           flash[:notice] = "#{params[:id].humanize} was successfully disconnected from your account"

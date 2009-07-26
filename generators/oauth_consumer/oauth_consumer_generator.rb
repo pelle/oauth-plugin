@@ -22,6 +22,7 @@ class OauthConsumerGenerator < Rails::Generator::Base
       @template_extension= options[:haml] ? "haml" : "erb"
       
       m.template "show.html.#{@template_extension}",  File.join('app/views', 'oauth_consumers', "show.html.#{@template_extension}")
+      m.template "index.html.#{@template_extension}",  File.join('app/views', 'oauth_consumers', "index.html.#{@template_extension}")
       
       unless options[:skip_migration] 
         m.migration_template 'migration.rb', 'db/migrate', :assigns => {

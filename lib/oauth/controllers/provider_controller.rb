@@ -4,8 +4,9 @@ module OAuth
     module ProviderController
       def self.included(controller)
         controller.class_eval do
-          before_filter :login_required, :except => [:request_token, :access_token, :test_request]
+          before_filter :login_required, :only => [:authorize,:revoke]
           before_filter :login_or_oauth_required, :only => [:test_request]
+          before_filter :oauth_required, :only => [:invalidate,:capabilities]
           before_filter :verify_oauth_consumer_signature, :only => [:request_token]
           before_filter :verify_oauth_request_token, :only => [:access_token]
           skip_before_filter :verify_authenticity_token
@@ -38,7 +39,7 @@ module OAuth
         @token = ::RequestToken.find_by_token params[:oauth_token]
         unless @token.invalidated?    
           if request.post? 
-            if params[:authorize] == '1'
+            if user_authorizes_token?
               @token.authorize!(current_user)
               if @token.oauth10?
                 @redirect_url = params[:oauth_callback] || @token.client_application.callback_url
@@ -55,7 +56,7 @@ module OAuth
               else
                 render :action => "authorize_success"
               end
-            elsif params[:authorize] == "0"
+            else
               @token.invalidate!
               render :action => "authorize_failure"
             end
@@ -72,6 +73,33 @@ module OAuth
           flash[:notice] = "You've revoked the token for #{@token.client_application.name}"
         end
         redirect_to oauth_clients_url
+      end
+      
+      # Invalidate current token
+      def invalidate
+        current_token.invalidate!
+        head :status=>410
+      end
+      
+      # Capabilities of current_token
+      def capabilities
+        if current_token.respond_to?(:capabilities)
+          @capabilities=current_token.capabilities
+        else
+          @capabilities={:invalidate=>url_for(:action=>:invalidate)}
+        end
+        
+        respond_to do |format|
+          format.json {render :json=>@capabilities}
+          format.xml {render :xml=>@capabilities}
+        end
+      end
+
+      protected
+      
+      # Override this to match your authorization page form
+      def user_authorizes_token?
+        params[:authorize] == '1'
       end
     end
   end

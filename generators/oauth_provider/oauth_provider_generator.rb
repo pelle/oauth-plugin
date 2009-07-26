@@ -53,6 +53,7 @@ class OauthProviderGenerator < Rails::Generator::Base
       m.route_name 'request_token', '/oauth/request_token',:controller=>'oauth',:action=>'request_token'
       m.route_name 'access_token', '/oauth/access_token',:controller=>'oauth',:action=>'access_token'
       m.route_name 'test_request', '/oauth/test_request',:controller=>'oauth',:action=>'test_request'
+
       m.route_resources "#{controller_file_name}_clients".to_sym
       
       if !options[:test_unit]

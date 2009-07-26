@@ -1,3 +1,14 @@
+7/25/2009
+  0.3.9
+  - Added an Index to oauth consumers controller. Rerun generator to create index template
+  - Added invalidate action to provider, which allows a token to invalidate itself /oauth/invalidate
+  - Added capabilities action to provider. Lets you expand to allow auto discovery of permissions and services that token provides.
+  - Can override how authorize form indicates an authorization. To get around ugly checkbox
+  
+    def user_authorizes_token?
+      params[:commit] == 'Authorize'
+    end
+  
 7/23/2009
   0.3.8
   - Fixed Gem Plugins Loading
