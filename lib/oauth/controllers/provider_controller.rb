@@ -9,7 +9,7 @@ module OAuth
           before_filter :oauth_required, :only => [:invalidate,:capabilities]
           before_filter :verify_oauth_consumer_signature, :only => [:request_token]
           before_filter :verify_oauth_request_token, :only => [:access_token]
-          skip_before_filter :verify_authenticity_token
+          skip_before_filter :verify_authenticity_token, :only=>[:request_token, :access_token, :invalidate, :test_request]
         end
       end
       
@@ -37,6 +37,11 @@ module OAuth
 
       def authorize
         @token = ::RequestToken.find_by_token params[:oauth_token]
+        unless @token
+          render :action=>"authorize_failure"
+          return
+        end
+        
         unless @token.invalidated?    
           if request.post? 
             if user_authorizes_token?
