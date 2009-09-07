@@ -69,7 +69,7 @@ module OAuth
       end
 
       def verify_oauth_request_token
-        verify_oauth_signature && current_token.is_a?(RequestToken)
+        verify_oauth_signature && current_token.is_a?(::RequestToken)
       end
 
       def invalid_oauth_response(code=401,message="Invalid OAuth Request")
