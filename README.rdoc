@@ -330,7 +330,7 @@ Before creating the FireEagleToken model the plugin checks if a class already ex
 Currently we provide the following semi tested tokens wrappers:
 
 * FireEagle
-* Twitter (requires Paul Singh's version of twitter gem until main gem is updated to 0.3.5 - sudo gem install paulsingh-twitter)
+* Twitter
 * Agree2
 
 These can be found in lib/oauth/models/consulers/services. Contributions will be warmly accepted for your favorite OAuth service.

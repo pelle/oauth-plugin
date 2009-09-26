@@ -1,4 +1,3 @@
-gem 'paulsingh-twitter' # go back to regular twitter gem when it is bumped to oauth 0.3.5
 require 'twitter'
 class TwitterToken < ConsumerToken
   TWITTER_SETTINGS={:site=>"http://twitter.com"}

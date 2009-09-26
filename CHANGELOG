@@ -1,3 +1,6 @@
+9/26/2009
+  0.3.11
+  - Moved twitter tokens dependency back to regular twitter gem
 7/29/2009
   0.3.10
   - Closed blocks in erb template (jcrosby) while pelle is hiding under his desk
