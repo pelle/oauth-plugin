@@ -44,16 +44,10 @@ class YahooToken < ConsumerToken
     @social_api ||= SocialAPI.new(OAuth::AccessToken.new( self.class.social_apis_consumer, token, secret))
   end
   
-  class SocialAPI
-    attr_reader :token
-    
+  class SocialAPI < Oauth::Models::Consumers::SimpleClient
     # initial implementation of this
     # http://developer.yahoo.com/social/rest_api_guide/index.html
     # Please fork and submit improvements here
-    def initialize(token)
-      @token = token
-    end
-    
     def guid
       @guid||=get("/v1/me/guid")["guid"]["value"]
     end
@@ -76,38 +70,6 @@ class YahooToken < ConsumerToken
     
     def contacts
       get("/v1/user/#{guid}/contacts")
-    end
-    
-    def put(path,params={})
-      parse(token.put(path,params, {'Accept' => 'application/json'}))
-    end
-
-    def delete(path)
-      parse(token.delete(path, {'Accept' => 'application/json'}))
-    end
-
-    def post(path,params={})
-      parse(token.post(path,params, {'Accept' => 'application/json'}))
-    end
-
-    def get(path)
-      parse(token.get(path, {'Accept' => 'application/json'}))
-    end
-
-    protected
-
-    def parse(response)
-      return false unless response
-      if ["200","201"].include? response.code
-        unless response.body.blank?
-          JSON.parse(response.body)
-        else
-          true
-        end
-      else
-        logger.debug "Got Response code: #{response.code}"
-        false
-      end
     end
 
   end

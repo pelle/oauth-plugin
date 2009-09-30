@@ -1,4 +1,6 @@
 require 'oauth/consumer'
+require File.join(File.dirname(__FILE__), 'simple_client')
+
 module Oauth
   module Models
     module Consumers
