@@ -29,11 +29,10 @@ module Oauth
           end
 
           def create_from_request_token(user,token,secret,oauth_verifier)
-            logger.info "create_from_request_token"
             request_token=OAuth::RequestToken.new consumer,token,secret
-            access_token=request_token.get_access_token :oauth_verifier=>oauth_verifier
-            logger.info self.inspect
-            logger.info user.inspect
+            options={}
+            options[:oauth_verifier]=oauth_verifier if oauth_verifier
+            access_token=request_token.get_access_token options
             create :user_id=>user.id,:token=>access_token.token,:secret=>access_token.secret
           end
           

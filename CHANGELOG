@@ -1,3 +1,7 @@
+9/30/2009
+  - Increased token size in consumer_tokens table because of Yahoo's oversized tokens 
+  - Added support for Yahoo
+  - Added support for Google (Boon Low)
 9/26/2009
   0.3.11
   - Moved twitter tokens dependency back to regular twitter gem

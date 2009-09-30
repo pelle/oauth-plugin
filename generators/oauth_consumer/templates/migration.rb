@@ -4,7 +4,7 @@ class CreateOauthConsumerTokens < ActiveRecord::Migration
     create_table :consumer_tokens do |t|
       t.integer :user_id
       t.string :type, :limit => 30
-      t.string :token
+      t.string :token, :limit => 1024 # This has to be huge because of Yahoo's excessively large tokens
       t.string :secret
       t.timestamps
     end
