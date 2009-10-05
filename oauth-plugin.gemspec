@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth-plugin}
-  s.version = "0.3.12"
+  s.version = "0.3.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
-  s.date = %q{2009-09-30}
+  s.date = %q{2009-10-05}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
@@ -85,7 +85,6 @@ Gem::Specification.new do |s|
      "lib/oauth/models/consumers/services/fireeagle_token.rb",
      "lib/oauth/models/consumers/services/google_token.rb",
      "lib/oauth/models/consumers/services/twitter_token.rb",
-     "lib/oauth/models/consumers/services/yahoo_token.rb",
      "lib/oauth/models/consumers/simple_client.rb",
      "lib/oauth/models/consumers/token.rb",
      "oauth-plugin.gemspec",
