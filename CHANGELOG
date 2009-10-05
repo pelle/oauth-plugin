@@ -1,3 +1,7 @@
+10/05/2009
+  0.3.13
+  - Got rid of yahoo token. To support it correctly requires way too much work. Let them suffer the consequences of their decissions.
+  - GoogleToken now uses portablecontacts gem
 9/30/2009
   0.3.12
   - Added a simple PortableContacts adapter for GoogleToken

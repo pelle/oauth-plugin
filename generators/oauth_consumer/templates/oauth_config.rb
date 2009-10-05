@@ -13,10 +13,6 @@
 #     :secret=>"",
 #     :scope=>"" # see http://code.google.com/apis/gdata/faq.html#AuthScopes
 #   },
-#   :yahoo=>{
-#     :key=>"",
-#     :secret=>"",
-#   },
 #   :agree2=>{
 #     :key=>"",
 #     :secret=>""
