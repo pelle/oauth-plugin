@@ -92,7 +92,7 @@ Gem::Specification.new do |s|
      "tasks/oauth_tasks.rake",
      "uninstall.rb"
   ]
-  s.homepage = %q{http://github.com/pelle/oauth-plugin/tree/master}
+  s.homepage = %q{http://github.com/pelle/oauth-plugin}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{oauth}

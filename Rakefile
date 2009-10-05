@@ -28,11 +28,16 @@ begin
     gemspec.summary = "Ruby on Rails Plugin for OAuth Provider and Consumer"
     gemspec.description = "Rails plugin for implementing an OAuth Provider or Consumer"
     gemspec.email = "oauth-ruby@googlegroups.com"
-    gemspec.homepage = "http://github.com/pelle/oauth-plugin/tree/master"
+    gemspec.homepage = "http://github.com/pelle/oauth-plugin"
     gemspec.authors = ["Pelle Braendgaard"]
     gemspec.add_dependency('oauth', '>= 0.3.5')
     gemspec.rubyforge_project = 'oauth'
   end
+  
+  Jeweler::RubyforgeTasks.new do |rubyforge|
+    rubyforge.doc_task = "rdoc"
+  end
+  
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
