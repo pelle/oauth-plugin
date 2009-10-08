@@ -10,8 +10,13 @@ if defined? ConsumerToken && defined? OAUTH_CREDENTIALS
       if File.exists?(File.join(File.dirname(__FILE__), "services","#{key.to_s}_token.rb"))
         require File.join(File.dirname(__FILE__), "services","#{key.to_s}_token")
       else
-        super_class = value[:super_class]||"ConsumerToken"
-        eval "class #{class_name} < #{super_class} ;end"
+        begin
+          # Let Rails auto-load from the models folder
+          eval class_name
+        rescue NameError
+          super_class = value[:super_class]||"ConsumerToken"
+          eval "class #{class_name} < #{super_class} ;end"
+        end
       end
     end
   end
