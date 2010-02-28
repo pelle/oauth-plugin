@@ -1,3 +1,5 @@
+require 'oauth/controllers/consumer_controller'
+
 # Goes through the entries in your OAUTH_CREDENTIALS and either loads the class required
 # or subclasses ConsumerToken with the name.
 #
