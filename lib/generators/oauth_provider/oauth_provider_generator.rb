@@ -1,5 +1,5 @@
 require 'rails/generators/migration'
-require 'generators/active_record'
+require 'rails/generators/active_record'
 
 class OauthProviderGenerator < Rails::Generators::Base
   include Rails::Generators::Migration
