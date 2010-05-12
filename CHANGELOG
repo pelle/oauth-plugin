@@ -1,3 +1,6 @@
+  0.4.0
+	- Rails 3 support
+	- Rails 3 generators [Paul Rosiana] and patches by [Alexander Flatter]
 10/08/2009
   0.3.14
   - Fixed the class generation when you have a custom token defined. [Brian Morearty]
