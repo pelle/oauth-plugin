@@ -2,6 +2,7 @@
 	- Increased default token and key size in anticipation of OAuth2 support
 	- Rails 3 support
 	- Rails 3 generators [Paul Rosiana] and patches by [Alexander Flatter]
+	- Callback urls now allow query parameters. Multiple patches but I used [Unk]'s.
 10/08/2009
   0.3.14
   - Fixed the class generation when you have a custom token defined. [Brian Morearty]
