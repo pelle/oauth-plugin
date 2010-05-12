@@ -8,4 +8,4 @@ end
 require 'oauth/server'
 require 'oauth/controllers/application_controller_methods'
 
-  ActionController::Base.send :include, OAuth::Controllers::ApplicationControllerMethods
+ActionController::Base.send :include, OAuth::Controllers::ApplicationControllerMethods
