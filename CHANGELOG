@@ -1,4 +1,5 @@
   0.4.0
+	- Increased default token and key size in anticipation of OAuth2 support
 	- Rails 3 support
 	- Rails 3 generators [Paul Rosiana] and patches by [Alexander Flatter]
 10/08/2009

@@ -6,7 +6,7 @@ class RequestToken < OauthToken
     return false if authorized?
     self.user = user
     self.authorized_at = Time.now
-    self.verifier=OAuth::Helper.generate_key(16)[0,20] unless oauth10?
+    self.verifier=OAuth::Helper.generate_key(20)[0,20] unless oauth10?
     self.save
   end
   
