@@ -48,7 +48,7 @@ class ClientApplication < ActiveRecord::Base
 protected
   
   def generate_keys
-    self.token = OAuth::Helper.generate_key(40)[0,40]
+    self.key = OAuth::Helper.generate_key(40)[0,40]
     self.secret = OAuth::Helper.generate_key(40)[0,40]
   end
 end
