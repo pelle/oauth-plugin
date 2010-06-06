@@ -36,6 +36,45 @@ module OAuth
       end
 
       def authorize
+        if params[:oauth_token]
+          oauth1_authorize
+        elsif ["webserver"].include?(params[:type]) # pick flow
+          send "oauth2_#{params[:type]}"
+        end
+      end
+
+      def revoke
+        @token = current_user.tokens.find_by_token params[:token]
+        if @token
+          @token.invalidate!
+          flash[:notice] = "You've revoked the token for #{@token.client_application.name}"
+        end
+        redirect_to oauth_clients_url
+      end
+      
+      # Invalidate current token
+      def invalidate
+        current_token.invalidate!
+        head :status=>410
+      end
+      
+      # Capabilities of current_token
+      def capabilities
+        if current_token.respond_to?(:capabilities)
+          @capabilities=current_token.capabilities
+        else
+          @capabilities={:invalidate=>url_for(:action=>:invalidate)}
+        end
+        
+        respond_to do |format|
+          format.json {render :json=>@capabilities}
+          format.xml {render :xml=>@capabilities}
+        end
+      end
+
+      protected
+      
+      def oauth1_authorize
         @token = ::RequestToken.find_by_token params[:oauth_token]
         unless @token
           render :action=>"authorize_failure"
@@ -76,37 +115,11 @@ module OAuth
           render :action => "authorize_failure"
         end
       end
-
-      def revoke
-        @token = current_user.tokens.find_by_token params[:token]
-        if @token
-          @token.invalidate!
-          flash[:notice] = "You've revoked the token for #{@token.client_application.name}"
-        end
-        redirect_to oauth_clients_url
-      end
       
-      # Invalidate current token
-      def invalidate
-        current_token.invalidate!
-        head :status=>410
-      end
-      
-      # Capabilities of current_token
-      def capabilities
-        if current_token.respond_to?(:capabilities)
-          @capabilities=current_token.capabilities
-        else
-          @capabilities={:invalidate=>url_for(:action=>:invalidate)}
-        end
+      def oauth2_webserver
+        @client_application = ClientApplication.find_by_key params[:client_id]
         
-        respond_to do |format|
-          format.json {render :json=>@capabilities}
-          format.xml {render :xml=>@capabilities}
-        end
       end
-
-      protected
       
       # Override this to match your authorization page form
       def user_authorizes_token?

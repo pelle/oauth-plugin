@@ -5,7 +5,7 @@ class CreateOauthTables < ActiveRecord::Migration
       t.string :url
       t.string :support_url
       t.string :callback_url
-      t.string :key, :limit => 20
+      t.string :key, :limit => 40
       t.string :secret, :limit => 40
       t.integer :user_id
 
