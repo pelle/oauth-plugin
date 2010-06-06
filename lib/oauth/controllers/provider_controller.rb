@@ -31,14 +31,34 @@ module OAuth
         end
       end
 
+      def token
+        @client_application = ClientApplication.find_by_key params[:client_id]
+        if @client_application.secret != params[:client_secret]
+          render :json=>{:error=>"incorrect_client_credentials"}.to_json
+          return
+        end
+        @verification_code =  @client_application.oauth2_verifiers.find_by_token params[:code]
+        unless @verification_code
+          render :json=>{:error=>"bad_verification_code"}.to_json
+          return
+        end
+        if @verification_code.redirect_url != params[:redirect_url]
+          render :json=>{:error=>"redirect_uri_mismatch"}.to_json
+          return
+        end
+        @token = @verification_code.exchange!
+        render :json=>@token
+      end
+
       def test_request
         render :text => params.collect{|k,v|"#{k}=#{v}"}.join("&")
       end
 
       def authorize
         if params[:oauth_token]
+          @token = ::RequestToken.find_by_token params[:oauth_token]
           oauth1_authorize
-        elsif ["webserver"].include?(params[:type]) # pick flow
+        elsif ["web_server"].include?(params[:type]) # pick flow
           send "oauth2_#{params[:type]}"
         end
       end
@@ -75,34 +95,22 @@ module OAuth
       protected
       
       def oauth1_authorize
-        @token = ::RequestToken.find_by_token params[:oauth_token]
         unless @token
           render :action=>"authorize_failure"
           return
         end
-        
+
         unless @token.invalidated?    
           if request.post? 
             if user_authorizes_token?
               @token.authorize!(current_user)
-              if @token.oauth10?
-                @redirect_url = URI.parse(params[:oauth_callback] || @token.client_application.callback_url)
-              else
-                @redirect_url = URI.parse(@token.oob? ? @token.client_application.callback_url : @token.callback_url)
-              end
-              
+              @redirect_url = URI.parse(@token.oob? ? @token.client_application.callback_url : @token.callback_url)
+
               unless @redirect_url.to_s.blank?
-                if @token.oauth10?
-                  @redirect_url.query = @redirect_url.query.blank? ?
-                                        "oauth_token=#{@token.token}" :
-                                        @redirect_url.query + "&oauth_token=#{@token.token}"
-                  redirect_to @redirect_url.to_s
-                else
-                  @redirect_url.query = @redirect_url.query.blank? ?
-                                        "oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}" :
-                                        @redirect_url.query + "&oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
-                  redirect_to @redirect_url.to_s
-                end
+                @redirect_url.query = @redirect_url.query.blank? ?
+                                      "oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}" :
+                                      @redirect_url.query + "&oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
+                redirect_to @redirect_url.to_s
               else
                 render :action => "authorize_success"
               end
@@ -115,10 +123,35 @@ module OAuth
           render :action => "authorize_failure"
         end
       end
-      
-      def oauth2_webserver
+
+      def oauth2_web_server
         @client_application = ClientApplication.find_by_key params[:client_id]
-        
+        if request.post?
+          @redirect_url = URI.parse(params[:redirect_url] || @client_application.callback_url)
+          if user_authorizes_token?
+            @verification_code = Oauth2Verifier.create :client_application=>@client_application, :user=>current_user, :callback_url=>@redirect_url.to_s
+
+            unless @redirect_url.to_s.blank?
+              @redirect_url.query = @redirect_url.query.blank? ?
+                                    "code=#{@verification_code.code}" :
+                                    @redirect_url.query + "&code=#{@verification_code.code}"
+              redirect_to @redirect_url.to_s
+            else
+              render :action => "authorize_success"
+            end
+          else
+            unless @redirect_url.to_s.blank?
+              @redirect_url.query = @redirect_url.query.blank? ?
+                                    "error=user_denied" :
+                                    @redirect_url.query + "&error=user_denied"
+              redirect_to @redirect_url.to_s
+            else
+              render :action => "authorize_failure"
+            end
+          end
+        else
+          render :action => "oauth2_authorize"
+        end
       end
       
       # Override this to match your authorization page form
