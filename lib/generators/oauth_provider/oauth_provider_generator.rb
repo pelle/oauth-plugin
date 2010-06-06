@@ -58,6 +58,8 @@ class OauthProviderGenerator < Rails::Generators::Base
     template 'oauth_token.rb',    File.join('app/models',"oauth_token.rb")
     template 'request_token.rb',  File.join('app/models',"request_token.rb")
     template 'access_token.rb',   File.join('app/models',"access_token.rb")
+    template 'oauth2_token.rb',   File.join('app/models',"oauth2_token.rb")
+    template 'oauth2_verifier.rb',File.join('app/models',"oauth2_verifier.rb")
     template 'oauth_nonce.rb',    File.join('app/models',"oauth_nonce.rb")
   end
   
@@ -71,6 +73,7 @@ class OauthProviderGenerator < Rails::Generators::Base
     route "match '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize"
     route "match '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token"
     route "match '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token"
+    route "match '/oauth/token',         :to => 'oauth#token',         :as => :token"
     route "match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request"
 
     route "resources :#{controller_file_name}_clients"
@@ -80,6 +83,8 @@ class OauthProviderGenerator < Rails::Generators::Base
     unless options['test-unit']
       template 'client_application_spec.rb',File.join('spec/models',"client_application_spec.rb")
       template 'oauth_token_spec.rb',    File.join('spec/models',"oauth_token_spec.rb")
+      template 'oauth2_token_spec.rb',    File.join('spec/models',"oauth2_token_spec.rb")
+      template 'oauth2_verifier_spec.rb', File.join('spec/models',"oauth2_verifier_spec.rb")
       template 'oauth_nonce_spec.rb',    File.join('spec/models',"oauth_nonce_spec.rb")
       template 'client_applications.yml',File.join('spec/fixtures',"client_applications.yml")
       template 'oauth_tokens.yml',    File.join('spec/fixtures',"oauth_tokens.yml")
@@ -109,6 +114,7 @@ class OauthProviderGenerator < Rails::Generators::Base
     template "show.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.#{@template_extension}")
     template "edit.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "edit.html.#{@template_extension}")
     template "authorize.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize.html.#{@template_extension}")
+    template "oauth2_webserver_authorize.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "oauth2_webserver_authorize.html.#{@template_extension}")
     template "authorize_success.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize_success.html.#{@template_extension}")
     template "authorize_failure.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize_failure.html.#{@template_extension}")
   end
