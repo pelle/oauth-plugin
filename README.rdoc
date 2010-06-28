@@ -6,6 +6,10 @@ We support the revised OAuth 1.0a specs at:
 
 http://oauth.net/core/1.0a
 
+As well as beginning support for OAuth 2.0:
+
+http://tools.ietf.org/html/draft-ietf-oauth-v2-08
+
 and the OAuth site at:
 
 http://oauth.net
@@ -16,7 +20,7 @@ http://mojodna.net/2009/05/20/an-idiots-guide-to-oauth-10a.html
 
 == Requirements
 
-You need to install the oauth gem (0.3.5) which is the core OAuth ruby library. It will NOT work on any previous version of the gem.
+You need to install the oauth gem (0.4.1) which is the core OAuth ruby library. It will NOT work on any previous version of the gem.
   
   sudo gem install oauth
 
@@ -35,7 +39,7 @@ Alternatively you can install it in vendors/plugin:
 
   script/plugin install git://github.com/pelle/oauth-plugin.git
 
-The Generator currently creates code (in particular views) that only work in Rails 2.
+The Generator currently creates code (in particular views) that only work in Rails 2 and 3.
 
 It should not be difficult to manually modify the code to work on Rails 1.2.x
 
