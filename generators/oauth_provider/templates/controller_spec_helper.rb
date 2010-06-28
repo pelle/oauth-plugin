@@ -2,19 +2,19 @@ require 'oauth/client/action_controller_request'
 module OAuthControllerSpecHelper
   
   def current_user
-    @user||=User.make
+    @user||=users(:aaron)
   end
 
   def current_client_application
-    @client_application||=ClientApplication.make :callback_url=>"http://application/callback"
+    @client_application||=client_applications(:one)
   end
   
   def access_token
-    @access_token||=AccessToken.make :user=>current_user,:client_application=>current_client_application
+    @access_token||=AccessToken.create :user=>current_user,:client_application=>current_client_application
   end
   
   def request_token
-    @request_token||=RequestToken.make :client_application=>current_client_application, :callback_url=>"http://application/callback"
+    @request_token||=RequestToken.create :client_application=>current_client_application, :callback_url=>"http://application/callback"
   end
   
   def consumer_request_token
@@ -25,10 +25,21 @@ module OAuthControllerSpecHelper
     OAuth::AccessToken.new current_consumer,access_token.token,access_token.secret
   end
   
-  def login
-    controller.stub!(:current_user).and_return(current_user)
+  if defined?(Devise)
+    include Devise::TestHelpers
+    def login
+      sign_in :user, current_user
+    end
+  else
+    def login
+      controller.stub!(:current_user).and_return(current_user)
+    end
   end
   
+  def login_as_application_owner
+    @user = users(:quentin)
+    login
+  end
   
   def current_consumer
     @consumer ||= OAuth::Consumer.new(current_client_application.key,current_client_application.secret,{:site => "http://test.host"})

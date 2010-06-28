@@ -2,6 +2,9 @@ require 'oauth'
 class ClientApplication < ActiveRecord::Base
   belongs_to :user
   has_many :tokens, :class_name => "OauthToken"
+  has_many :access_tokens
+  has_many :oauth2_verifiers
+  has_many :oauth_tokens
   validates_presence_of :name, :url, :key, :secret
   validates_uniqueness_of :key
   before_validation_on_create :generate_keys
@@ -40,8 +43,9 @@ class ClientApplication < ActiveRecord::Base
     @oauth_client ||= OAuth::Consumer.new(key, secret)
   end
     
-  def create_request_token
-    RequestToken.create :client_application => self,:callback_url=>self.token_callback_url
+  # If your application requires passing in extra parameters handle it here
+  def create_request_token(params={}) 
+    RequestToken.create :client_application => self, :callback_url=>self.token_callback_url
   end
   
 protected

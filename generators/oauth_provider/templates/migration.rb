@@ -21,7 +21,7 @@ class CreateOauthTables < ActiveRecord::Migration
       t.string :secret, :limit => 40
       t.string :callback_url
       t.string :verifier, :limit => 20
-      t.timestamp :authorized_at, :invalidated_at
+      t.timestamp :authorized_at, :invalidated_at, :valid_to
       t.timestamps
     end
     

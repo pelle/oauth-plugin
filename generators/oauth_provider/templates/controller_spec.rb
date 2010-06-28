@@ -2,8 +2,11 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/oauth_controller_spec_helper'
 
 describe OauthController do 
+  if defined?(Devise)
+    include Devise::TestHelpers
+  end  
   include OAuthControllerSpecHelper
-  
+  fixtures :client_applications, :oauth_tokens, :users
   describe "getting a request token" do
     before(:each) do
       sign_request_with_oauth
@@ -44,7 +47,6 @@ describe OauthController do
     before(:each) do
       sign_request_with_oauth nil, {:oauth_callback=>"http://test.com/alternative_callback"}
       ClientApplication.stub!(:find_by_key).and_return(current_client_application)
-      
     end
   
     def do_get
@@ -134,38 +136,6 @@ describe OauthController do
   
   end
 
-
-  describe "10a token authorization for internal app" do
-    before(:each) do
-      login
-      
-      @request_token = RequestToken.make(:internal,:callback_url=>"http://application/callback")
-      RequestToken.stub!(:find_by_token).and_return(request_token)
-    end
-  
-    def do_get
-      get :authorize, :oauth_token => request_token.token
-    end
-  
-    it "should redirect to default callback" do
-      do_get
-      response.should be_redirect
-      response.should redirect_to("http://application/callback?oauth_token=#{request_token.token}&oauth_verifier=#{request_token.verifier}")
-    end
-
-    it "should authorize token" do
-      request_token.should_receive(:authorize!).with(current_user)
-      do_get      
-    end
-
-    it "should redirect if token is invalidated" do
-      request_token.invalidate!
-      do_get
-      response.should redirect_to(root_url)
-    end
-  
-  end
-  
   describe "2.0 web_server flow" do
     before(:each) do
       login
@@ -385,6 +355,10 @@ class OauthorizedController<ApplicationController
 end
 
 describe OauthorizedController, " access control" do
+  fixtures :client_applications, :oauth_tokens, :users
+  if defined?(Devise)
+    include Devise::TestHelpers
+  end
   include OAuthControllerSpecHelper
   
   it "should return false for oauth? by default" do
@@ -520,7 +494,7 @@ describe OauthorizedController, " access control" do
 
   describe "oauth 2.0" do
     before(:each) do
-      @access_token = Oauth2Token.make :user=>current_user
+      @access_token = Oauth2Token.create :user=>current_user, :client_application=>current_client_application
       @client_application = @access_token.client_application
     end
     describe "authorize header" do
