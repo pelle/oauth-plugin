@@ -3,7 +3,7 @@ class OauthToken < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :token
   validates_presence_of :client_application, :token
-  before_validation_on_create :generate_keys
+  before_validation :generate_keys, :on => :create
   
   def invalidated?
     invalidated_at != nil
