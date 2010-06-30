@@ -34,20 +34,14 @@ module OAuth
       def token
         @client_application = ClientApplication.find_by_key params[:client_id]
         if @client_application.secret != params[:client_secret]
-          render :json=>{:error=>"incorrect_client_credentials"}.to_json
+          oauth2_error "invalid-client-credentials"
           return
         end
-        @verification_code =  @client_application.oauth2_verifiers.find_by_token params[:code]
-        unless @verification_code
-          render :json=>{:error=>"bad_verification_code"}.to_json
-          return
+        if ["authorization-code","basic-credentials","none"].include?(params[:grant_type])
+          send "oauth2_token_#{params[:grant_type].underscore}"
+        else 
+          oauth2_error "unsupported-grant-type"
         end
-        if @verification_code.redirect_url != params[:redirect_url]
-          render :json=>{:error=>"redirect_uri_mismatch"}.to_json
-          return
-        end
-        @token = @verification_code.exchange!
-        render :json=>@token
       end
 
       def test_request
@@ -58,8 +52,8 @@ module OAuth
         if params[:oauth_token]
           @token = ::RequestToken.find_by_token params[:oauth_token]
           oauth1_authorize
-        elsif ["web_server"].include?(params[:type]) # pick flow
-          send "oauth2_#{params[:type]}"
+        elsif ["code","token"].include?(params[:response_type]) # pick flow
+          send "oauth2_authorize_#{params[:response_type]}"
         end
       end
 
@@ -124,7 +118,7 @@ module OAuth
         end
       end
 
-      def oauth2_web_server
+      def oauth2_authorize_code
         @client_application = ClientApplication.find_by_key params[:client_id]
         if request.post?
           @redirect_url = URI.parse(params[:redirect_url] || @client_application.callback_url)
@@ -153,10 +147,80 @@ module OAuth
           render :action => "oauth2_authorize"
         end
       end
+
+      def oauth2_authorize_token
+        @client_application = ClientApplication.find_by_key params[:client_id]
+        if request.post?
+          @redirect_url = URI.parse(params[:redirect_url] || @client_application.callback_url)
+          if user_authorizes_token?
+            @token  = Oauth2Token.create :client_application=>@client_application, :user=>current_user, :scope=>params[:scope]
+            unless @redirect_url.to_s.blank?
+              @redirect_url.query = @redirect_url.query.blank? ?
+                                    "access_token=#{@token.token}" :
+                                    @redirect_url.query + "&access_token=#{@token.token}"
+              redirect_to @redirect_url.to_s
+            else
+              render :action => "authorize_success"
+            end
+          else
+            unless @redirect_url.to_s.blank?
+              @redirect_url.query = @redirect_url.query.blank? ?
+                                    "error=user_denied" :
+                                    @redirect_url.query + "&error=user_denied"
+              redirect_to @redirect_url.to_s
+            else
+              render :action => "authorize_failure"
+            end
+          end
+        else
+          render :action => "oauth2_authorize"
+        end
+      end
+
+      # http://tools.ietf.org/html/draft-ietf-oauth-v2-08#section-4.1.1
+      def oauth2_token_authorization_code
+        @verification_code =  @client_application.oauth2_verifiers.find_by_token params[:code]
+        unless @verification_code
+          oauth2_error
+          return
+        end
+        if @verification_code.redirect_url != params[:redirect_url]
+          oauth2_error
+          return
+        end
+        @token = @verification_code.exchange!
+        render :json=>@token    
+      end
+
+      # http://tools.ietf.org/html/draft-ietf-oauth-v2-08#section-4.1.2
+      def oauth2_token_basic_credentials
+        @user = authenticate_user( params[:username], params[:password])
+        unless @user
+          oauth2_error
+          return
+        end
+        @token = Oauth2Token.create :client_application=>@client_application, :user=>@user, :scope=>params[:scope]
+        render :json=>@token    
+      end
       
+      # should authenticate and return a user if valid password. Override in your own controller
+      def authenticate_user(username,password)
+        User.authenticate(username,password)
+      end
+
+      # autonomous authorization which creates a token for client_applications user
+      def oauth2_token_none
+        @token = Oauth2Token.create :client_application=>@client_application, :user=>@client_application.user, :scope=>params[:scope]
+        render :json=>@token    
+      end
+
       # Override this to match your authorization page form
       def user_authorizes_token?
         params[:authorize] == '1'
+      end  
+
+      def oauth2_error(error="invalid-grant")
+        render :json=>{:error=>error}.to_json
       end
     end
   end

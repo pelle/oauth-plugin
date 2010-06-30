@@ -136,14 +136,14 @@ describe OauthController do
   
   end
 
-  describe "2.0 web_server flow" do
+  describe "2.0 authorization code flow" do
     before(:each) do
       login
     end
 
     describe "authorize redirect" do
       before(:each) do
-        get :authorize, :type=>"web_server",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback"
+        get :authorize, :response_type=>"code",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback"
       end
       
       it "should render authorize" do
@@ -157,8 +157,9 @@ describe OauthController do
     
     describe "authorize" do
       before(:each) do
-        post :authorize, :type=>"web_server",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>1
+        post :authorize, :response_type=>"code",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>1
         @verification_token = Oauth2Verifier.last
+        @oauth2_token_count= Oauth2Token.count
       end
       subject { @verification_token }
       
@@ -178,7 +179,7 @@ describe OauthController do
       
       describe "get token" do
         before(:each) do
-          post :token, :type=>"web_server",:client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>@verification_token.code
+          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>@verification_token.code
           @token = Oauth2Token.last
         end
         
@@ -186,6 +187,13 @@ describe OauthController do
         
         it { should_not be_nil }
         it { should be_authorized }
+        it "should have added a new token" do
+          Oauth2Token.count.should==@oauth2_token_count+1
+        end
+        
+        it "should set user to current user" do
+          @token.user.should==current_user
+        end
         
         it "should return json token" do
           JSON.parse(response.body).should=={"access_token"=>@token.token}
@@ -194,52 +202,114 @@ describe OauthController do
 
       describe "get token with wrong secret" do
         before(:each) do
-          post :token, :type=>"web_server",:client_id=>current_client_application.key,:client_secret=>"fake", :redirect_url=>"http://application/callback",:code=>@verification_token.code
+          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>"fake", :redirect_url=>"http://application/callback",:code=>@verification_token.code
         end
         
         it "should not create token" do
-          Oauth2Token.last.should be_nil
+          Oauth2Token.count.should==@oauth2_token_count
         end
          
         it "should return incorrect_client_credentials error" do
-          JSON.parse(response.body).should == {"error"=>"incorrect_client_credentials"}
+          JSON.parse(response.body).should == {"error"=>"invalid-client-credentials"}
         end
       end
       
       describe "get token with wrong code" do
         before(:each) do
-          post :token, :type=>"web_server",:client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>"fake"
+          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>"fake"
         end
 
         it "should not create token" do
-          Oauth2Token.last.should be_nil
+          Oauth2Token.count.should==@oauth2_token_count
         end
 
         it "should return incorrect_client_credentials error" do
-          JSON.parse(response.body).should == {"error"=>"bad_verification_code"}
+          JSON.parse(response.body).should == {"error"=>"invalid-grant"}
         end
       end
 
       describe "get token with wrong redirect_url" do
         before(:each) do
-          post :token, :type=>"web_server",:client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://evil/callback",:code=>@verification_token.code
+          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://evil/callback",:code=>@verification_token.code
         end
 
         it "should not create token" do
-          Oauth2Token.last.should be_nil
+          Oauth2Token.count.should==@oauth2_token_count
         end
 
         it "should return incorrect_client_credentials error" do
-          JSON.parse(response.body).should == {"error"=>"redirect_uri_mismatch"}
+          JSON.parse(response.body).should == {"error"=>"invalid-grant"}
         end
       end
 
     end
-    
 
     describe "deny" do
       before(:each) do
-        post :authorize, :type=>"web_server",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>0
+        post :authorize, :response_type=>"code", :client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>0
+      end
+
+      it { Oauth2Verifier.last.should be_nil }
+
+      it "should redirect to default callback" do
+        response.should be_redirect
+        response.should redirect_to("http://application/callback?error=user_denied")
+      end      
+    end
+
+  end
+    
+
+  describe "2.0 authorization token flow" do
+    before(:each) do
+      login
+      current_client_application # load up so it creates its own token
+      @oauth2_token_count= Oauth2Token.count
+    end
+
+    describe "authorize redirect" do
+      before(:each) do
+        get :authorize, :response_type=>"token",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback"
+      end
+
+      it "should render authorize" do
+        response.should render_template("oauth2_authorize")
+      end
+
+      it "should not create token" do
+        Oauth2Verifier.last.should be_nil
+      end
+    end
+
+    describe "authorize" do
+      before(:each) do
+        post :authorize, :response_type=>"token",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>1
+        @token = Oauth2Token.last
+      end
+      subject { @token }
+      it "should redirect to default callback" do
+        response.should be_redirect
+        response.should redirect_to("http://application/callback?access_token=#{@token.token}")
+      end
+      
+      it "should not have a scope" do
+        @token.scope.should be_nil
+      end
+      it { should_not be_nil }
+      it { should be_authorized }
+      
+      it "should set user to current user" do
+        @token.user.should==current_user
+      end
+      
+      it "should have added a new token" do
+        Oauth2Token.count.should==@oauth2_token_count+1
+      end
+    end
+    
+    describe "deny" do
+      before(:each) do
+        post :authorize, :response_type=>"token", :client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>0
       end
       
       it { Oauth2Verifier.last.should be_nil }
@@ -249,10 +319,106 @@ describe OauthController do
         response.should redirect_to("http://application/callback?error=user_denied")
       end      
     end
-  
   end
   
+  describe "oauth2 token for autonomous client_application" do
+    before(:each) do
+      current_client_application
+      @oauth2_token_count = Oauth2Token.count
+      post :token, :grant_type=>"none", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret
+      @token = Oauth2Token.last
+    end
+    
+    subject { @token }
+    
+    it { should_not be_nil }
+    it { should be_authorized }
+    it "should set user to client_applications user" do
+      @token.user.should==current_client_application.user
+    end
+    it "should have added a new token" do
+      Oauth2Token.count.should==@oauth2_token_count+1
+    end
+    
+    it "should return json token" do
+      JSON.parse(response.body).should=={"access_token"=>@token.token}
+    end
+  end
+  
+  describe "oauth2 token for autonomous client_application with invalid client credentials" do
+    before(:each) do
+      current_client_application
+      @oauth2_token_count = Oauth2Token.count
+      post :token, :grant_type=>"none", :client_id=>current_client_application.key,:client_secret=>"bad"
+    end
+    
+    subject { @token }
+    
+    it "should not have added a new token" do
+      Oauth2Token.count.should==@oauth2_token_count
+    end
+    
+    it "should return json token" do
+      JSON.parse(response.body).should=={"error"=>"invalid-client-credentials"}
+    end
+  end
+  
+  
+  describe "oauth2 token for basic credentials" do
+    before(:each) do
+      current_client_application
+      @oauth2_token_count = Oauth2Token.count
+      post :token, :grant_type=>"basic-credentials", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>current_user.login, :password=>"password"
+      @token = Oauth2Token.last
+    end
+    
+    subject { @token }
+    
+    it { should_not be_nil }
+    it { should be_authorized }
+    it "should set user to client_applications user" do
+      @token.user.should==current_user
+    end
+    it "should have added a new token" do
+      Oauth2Token.count.should==@oauth2_token_count+1
+    end
+    
+    it "should return json token" do
+      JSON.parse(response.body).should=={"access_token"=>@token.token}
+    end
+  end
 
+  describe "oauth2 token for basic credentials with wrong password" do
+    before(:each) do
+      current_client_application
+      @oauth2_token_count = Oauth2Token.count
+      post :token, :grant_type=>"basic-credentials", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>current_user.login, :password=>"bad"
+    end
+    
+    it "should not have added a new token" do
+      Oauth2Token.count.should==@oauth2_token_count
+    end
+    
+    it "should return json token" do
+      JSON.parse(response.body).should=={"error"=>"invalid-grant"}
+    end
+  end
+  
+  describe "oauth2 token for basic credentials with unknown user" do
+    before(:each) do
+      current_client_application
+      @oauth2_token_count = Oauth2Token.count
+      post :token, :grant_type=>"basic-credentials", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>"non existent", :password=>"password"
+    end
+    
+    it "should not have added a new token" do
+      Oauth2Token.count.should==@oauth2_token_count
+    end
+    
+    it "should return json token" do
+      JSON.parse(response.body).should=={"error"=>"invalid-grant"}
+    end
+  end
 
   describe "getting an access token" do
     before(:each) do
