@@ -55,8 +55,11 @@ module OAuth
             end
             true
           else
-            controller.send :invalid_oauth_response
-            false
+            if @strategies.include?(:interactive) 
+              controller.send :access_denied
+            else
+              controller.send :invalid_oauth_response
+            end
           end
         end
 
@@ -183,6 +186,11 @@ module OAuth
       def invalid_oauth_response(code=401,message="Invalid OAuth Request")
         render :text => message, :status => code
         false
+      end
+      
+      # override this in your controller
+      def access_denied
+        head 401
       end
 
       private
