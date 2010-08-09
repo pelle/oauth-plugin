@@ -114,7 +114,7 @@ class OauthProviderGenerator < Rails::Generators::Base
     template "show.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "show.html.#{@template_extension}")
     template "edit.html.#{@template_extension}",  File.join('app/views', controller_class_path, 'oauth_clients', "edit.html.#{@template_extension}")
     template "authorize.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize.html.#{@template_extension}")
-    template "oauth2_webserver_authorize.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "oauth2_webserver_authorize.html.#{@template_extension}")
+    template "oauth2_authorize.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "oauth2_authorize.html.#{@template_extension}")
     template "authorize_success.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize_success.html.#{@template_extension}")
     template "authorize_failure.html.#{@template_extension}",  File.join('app/views', controller_class_path, controller_file_name, "authorize_failure.html.#{@template_extension}")
   end
