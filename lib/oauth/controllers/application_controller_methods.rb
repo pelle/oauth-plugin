@@ -144,7 +144,7 @@ module OAuth
         # Returns an Array of [String, Hash] if a token is present.
         # Returns nil if no token is found.
         def token_and_options
-          if header = ActionController::HttpAuthentication::Basic.authorization(request).to_s[/^Token (.*)/]
+          if header = (request.respond_to?(:authorization) ? request.authorization : ActionController::HttpAuthentication::Basic.authorization(request)).to_s[/^Token (.*)/]
             values = $1.split(',').
               inject({}) do |memo, value|
                 value.strip!                      # remove any spaces between commas and values
