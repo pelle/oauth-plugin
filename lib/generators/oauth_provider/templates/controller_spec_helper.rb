@@ -60,7 +60,7 @@ module OAuthControllerSpecHelper
   end
 
   def add_oauth2_token_header(token,options={})    
-    request.env['HTTP_AUTHORIZATION'] = "Token token=\"#{token.token}\""
+    request.env['HTTP_AUTHORIZATION'] = "OAuth #{token.token}"
   end
     
 end

@@ -134,9 +134,9 @@ module OAuth
         end
         
         # Blatantly stolen from http://github.com/technoweenie/http_token_authentication
-        # Parses the token and options out of the token authorization header.  If
+        # Parses the token and options out of the OAuth authorization header.  If
         # the header looks like this:
-        #   Authorization: Token token="abc", nonce="def"
+        #   Authorization: OAuth abc
         # Then the returned token is "abc", and the options is {:nonce => "def"}
         #
         # request - ActionController::Request instance with the current headers.
@@ -144,16 +144,8 @@ module OAuth
         # Returns an Array of [String, Hash] if a token is present.
         # Returns nil if no token is found.
         def token_and_options
-          if header = (request.respond_to?(:authorization) ? request.authorization : ActionController::HttpAuthentication::Basic.authorization(request)).to_s[/^Token (.*)/]
-            values = $1.split(',').
-              inject({}) do |memo, value|
-                value.strip!                      # remove any spaces between commas and values
-                key, value = value.split(/\=\"?/) # split key=value pairs
-                value.chomp!('"')                 # chomp trailing " in value
-                value.gsub!(/\\\"/, '"')          # unescape remaining quotes
-                memo.update(key => value)
-              end
-            [values.delete("token"), values.with_indifferent_access]
+          if header = (request.respond_to?(:authorization) ? request.authorization : ActionController::HttpAuthentication::Basic.authorization(request)).to_s[/^OAuth (.*)/]
+            [$1.strip, {}]
           end
         end
 

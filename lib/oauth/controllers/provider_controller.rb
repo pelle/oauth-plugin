@@ -34,13 +34,13 @@ module OAuth
       def token
         @client_application = ClientApplication.find_by_key params[:client_id]
         if @client_application.secret != params[:client_secret]
-          oauth2_error "invalid-client-credentials"
+          oauth2_error "invalid_client_credentials"
           return
         end
-        if ["authorization-code","basic-credentials","none"].include?(params[:grant_type])
+        if ["authorization_code","password","none"].include?(params[:grant_type])
           send "oauth2_token_#{params[:grant_type].underscore}"
         else 
-          oauth2_error "unsupported-grant-type"
+          oauth2_error "unsupported_grant_type"
         end
       end
 
@@ -193,7 +193,7 @@ module OAuth
       end
 
       # http://tools.ietf.org/html/draft-ietf-oauth-v2-08#section-4.1.2
-      def oauth2_token_basic_credentials
+      def oauth2_token_password
         @user = authenticate_user( params[:username], params[:password])
         unless @user
           oauth2_error
@@ -219,7 +219,7 @@ module OAuth
         params[:authorize] == '1'
       end  
 
-      def oauth2_error(error="invalid-grant")
+      def oauth2_error(error="invalid_grant")
         render :json=>{:error=>error}.to_json
       end
     end

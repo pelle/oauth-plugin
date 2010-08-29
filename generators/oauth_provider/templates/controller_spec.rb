@@ -179,7 +179,7 @@ describe OauthController do
       
       describe "get token" do
         before(:each) do
-          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>@verification_token.code
+          post :token, :grant_type=>"authorization_code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>@verification_token.code
           @token = Oauth2Token.last
         end
         
@@ -202,7 +202,7 @@ describe OauthController do
 
       describe "get token with wrong secret" do
         before(:each) do
-          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>"fake", :redirect_url=>"http://application/callback",:code=>@verification_token.code
+          post :token, :grant_type=>"authorization_code", :client_id=>current_client_application.key,:client_secret=>"fake", :redirect_url=>"http://application/callback",:code=>@verification_token.code
         end
         
         it "should not create token" do
@@ -210,13 +210,13 @@ describe OauthController do
         end
          
         it "should return incorrect_client_credentials error" do
-          JSON.parse(response.body).should == {"error"=>"invalid-client-credentials"}
+          JSON.parse(response.body).should == {"error"=>"invalid_client"}
         end
       end
       
       describe "get token with wrong code" do
         before(:each) do
-          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>"fake"
+          post :token, :grant_type=>"authorization_code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://application/callback",:code=>"fake"
         end
 
         it "should not create token" do
@@ -224,13 +224,13 @@ describe OauthController do
         end
 
         it "should return incorrect_client_credentials error" do
-          JSON.parse(response.body).should == {"error"=>"invalid-grant"}
+          JSON.parse(response.body).should == {"error"=>"invalid_grant"}
         end
       end
 
       describe "get token with wrong redirect_url" do
         before(:each) do
-          post :token, :grant_type=>"authorization-code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://evil/callback",:code=>@verification_token.code
+          post :token, :grant_type=>"authorization_code", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :redirect_url=>"http://evil/callback",:code=>@verification_token.code
         end
 
         it "should not create token" do
@@ -238,7 +238,7 @@ describe OauthController do
         end
 
         it "should return incorrect_client_credentials error" do
-          JSON.parse(response.body).should == {"error"=>"invalid-grant"}
+          JSON.parse(response.body).should == {"error"=>"invalid_grant"}
         end
       end
 
@@ -359,7 +359,7 @@ describe OauthController do
     end
     
     it "should return json token" do
-      JSON.parse(response.body).should=={"error"=>"invalid-client-credentials"}
+      JSON.parse(response.body).should=={"error"=>"invalid_client"}
     end
   end
   
@@ -368,7 +368,7 @@ describe OauthController do
     before(:each) do
       current_client_application
       @oauth2_token_count = Oauth2Token.count
-      post :token, :grant_type=>"basic-credentials", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>current_user.login, :password=>"password"
+      post :token, :grant_type=>"password", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>current_user.login, :password=>"password"
       @token = Oauth2Token.last
     end
     
@@ -392,7 +392,7 @@ describe OauthController do
     before(:each) do
       current_client_application
       @oauth2_token_count = Oauth2Token.count
-      post :token, :grant_type=>"basic-credentials", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>current_user.login, :password=>"bad"
+      post :token, :grant_type=>"password", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>current_user.login, :password=>"bad"
     end
     
     it "should not have added a new token" do
@@ -400,7 +400,7 @@ describe OauthController do
     end
     
     it "should return json token" do
-      JSON.parse(response.body).should=={"error"=>"invalid-grant"}
+      JSON.parse(response.body).should=={"error"=>"invalid_grant"}
     end
   end
   
@@ -408,7 +408,7 @@ describe OauthController do
     before(:each) do
       current_client_application
       @oauth2_token_count = Oauth2Token.count
-      post :token, :grant_type=>"basic-credentials", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>"non existent", :password=>"password"
+      post :token, :grant_type=>"password", :client_id=>current_client_application.key,:client_secret=>current_client_application.secret, :username=>"non existent", :password=>"password"
     end
     
     it "should not have added a new token" do
@@ -416,7 +416,7 @@ describe OauthController do
     end
     
     it "should return json token" do
-      JSON.parse(response.body).should=={"error"=>"invalid-grant"}
+      JSON.parse(response.body).should=={"error"=>"invalid_grant"}
     end
   end
 
@@ -670,7 +670,7 @@ describe OauthorizedController, " access control" do
       
       it "should include headers" do
         get :interactive_and_token
-        ActionController::HttpAuthentication::Basic.authorization(request).should == "Token token=\"#{access_token.token}\""
+        ActionController::HttpAuthentication::Basic.authorization(request).should == "OAuth #{access_token.token}"
       end
       
       [:interactive,:two_legged,:interactive_and_two_legged,:token_legacy,:both_legacy].each do |action|
