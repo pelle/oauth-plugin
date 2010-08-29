@@ -1,6 +1,7 @@
   0.4.0
-  - Added OAuth 2.0 website flow
-  - Support for OAuth 2.0 bearer tokens
+	- OAUTH 2.0 authorization_code and password grant types
+	- Supports OAuth 2.0 draft 10 (Note this is incompatible with previous drafts)
+	- Refactored application_controller_methods to be a lot less intrusive
 	- Increased default token and key size in anticipation of OAuth2 support
 	- Rails 3 support
 	- Rails 3 generators [Paul Rosiana] and patches by [Alexander Flatter]

@@ -8,7 +8,7 @@ http://oauth.net/core/1.0a
 
 As well as beginning support for OAuth 2.0:
 
-http://tools.ietf.org/html/draft-ietf-oauth-v2-08
+http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 and the OAuth site at:
 
