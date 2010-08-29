@@ -496,27 +496,35 @@ class OauthorizedController<ApplicationController
   before_filter :login_or_oauth_required,                      :only=>:both_legacy
   
   def interactive
+    head :ok
   end
   
   def all
+    head :ok
   end
   
   def token
+    head :ok
   end
 
   def interactive_and_token
+    head :ok
   end
   
   def interactive_and_two_legged
+    head :ok
   end
   
   def two_legged
+    head :ok
   end
   
   def token_legacy
+    head :ok
   end
   
   def both_legacy
+    head :ok
   end
 end
 
