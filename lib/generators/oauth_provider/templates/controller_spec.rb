@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/oauth_controller_spec_helper'
-
+require 'json'
 describe OauthController do 
   if defined?(Devise)
     include Devise::TestHelpers
@@ -114,7 +114,7 @@ describe OauthController do
     end
   
     def do_post
-      post :authorize, :oauth_token => request_token.token, :authorize=>1
+      post :authorize, :oauth_token => request_token.token, :authorize=>"1"
     end
   
     it "should redirect to default callback" do
@@ -157,7 +157,7 @@ describe OauthController do
     
     describe "authorize" do
       before(:each) do
-        post :authorize, :response_type=>"code",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>1
+        post :authorize, :response_type=>"code",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>"1"
         @verification_token = Oauth2Verifier.last
         @oauth2_token_count= Oauth2Token.count
       end
@@ -246,7 +246,7 @@ describe OauthController do
 
     describe "deny" do
       before(:each) do
-        post :authorize, :response_type=>"code", :client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>0
+        post :authorize, :response_type=>"code", :client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>"0"
       end
 
       it { Oauth2Verifier.last.should be_nil }
@@ -283,7 +283,7 @@ describe OauthController do
 
     describe "authorize" do
       before(:each) do
-        post :authorize, :response_type=>"token",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>1
+        post :authorize, :response_type=>"token",:client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>"1"
         @token = Oauth2Token.last
       end
       subject { @token }
@@ -309,7 +309,7 @@ describe OauthController do
     
     describe "deny" do
       before(:each) do
-        post :authorize, :response_type=>"token", :client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>0
+        post :authorize, :response_type=>"token", :client_id=>current_client_application.key, :redirect_url=>"http://application/callback",:authorize=>"0"
       end
       
       it { Oauth2Verifier.last.should be_nil }
