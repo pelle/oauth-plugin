@@ -1,5 +1,5 @@
-require 'oauth/helper'
 require File.dirname(__FILE__) + '/../test_helper'
+require 'oauth/helper'
 
 class ClientNoneTest < ActiveSupport::TestCase
   include OAuth::Helper
