@@ -1,3 +1,4 @@
+require 'oauth/models/consumers/token'
 class ConsumerToken
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -5,7 +6,6 @@ class ConsumerToken
 
   field :token, :type => String
   field :secret, :type => String
-  field :type, :type => String
 
   index :token, :unique => true
 

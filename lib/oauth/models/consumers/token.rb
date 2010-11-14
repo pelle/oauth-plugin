@@ -7,7 +7,6 @@ module Oauth
       module Token
         def self.included(model)
           model.class_eval do
-            belongs_to :user
             validates_presence_of :user, :token, :secret                      
           end
 
