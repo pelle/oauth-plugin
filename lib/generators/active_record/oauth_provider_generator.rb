@@ -5,7 +5,7 @@ module ActiveRecord
     class OauthProviderGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
 
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('../oauth_provider_templates', __FILE__)
 
       # Implement the required interface for Rails::Generators::Migration.
       def self.next_migration_number(dirname) #:nodoc:
