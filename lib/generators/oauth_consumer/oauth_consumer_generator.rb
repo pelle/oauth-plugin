@@ -6,11 +6,6 @@ class OauthConsumerGenerator < Rails::Generators::Base
   
   hook_for :orm
     
-  class_option 'haml',      :type => :boolean, :default => false,
-                            :desc => 'Use Haml for views'
-  # class_option 'test-unit', :type => :boolean, :default => false,
-  #                             :desc => 'Use Test::Unit for tests (instead of RSpec)'
-  
   def copy_models
     template 'oauth_config.rb',   File.join('config', 'initializers', 'oauth_consumers.rb')
   end
@@ -19,6 +14,8 @@ class OauthConsumerGenerator < Rails::Generators::Base
     template 'controller.rb', File.join('app', 'controllers', 'oauth_consumers_controller.rb')
   end
   
+  hook_for :template_engine
+  
   def add_route
     route <<-ROUTE.strip
 resources :oauth_consumers do
@@ -26,12 +23,5 @@ resources :oauth_consumers do
   end
 ROUTE
   end
-  
-  def copy_views
-    @template_extension = options.haml? ? "haml" : "erb"
     
-    template "show.html.#{@template_extension}",  File.join('app', 'views', 'oauth_consumers', "show.html.#{@template_extension}")
-    template "index.html.#{@template_extension}", File.join('app', 'views', 'oauth_consumers', "index.html.#{@template_extension}")
-  end
-  
 end

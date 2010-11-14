@@ -3,7 +3,7 @@ require 'rails/generators/erb/controller/controller_generator'
 module Haml
   module Generators
     class OauthProviderGenerator < Erb::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('../oauth_provider_templates', __FILE__)
 
       argument :name, :type => :string, :default => 'Oauth'
 
