@@ -1,6 +1,10 @@
-gem 'oauth', '>=0.3.5'
+require 'oauth'
 require 'oauth/signature/hmac/sha1'
-require 'oauth/request_proxy/action_controller_request'
+if Rails.version =~ /^3\./
+  require 'oauth/request_proxy/rack_request'
+else
+  require 'oauth/request_proxy/action_controller_request'
+end
 require 'oauth/server'
 require 'oauth/controllers/application_controller_methods'
 
