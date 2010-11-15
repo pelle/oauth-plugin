@@ -15,7 +15,7 @@ end
 desc 'Generate documentation for the oauth plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Oauth'
+  rdoc.title    = 'OAuth Plugin'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
@@ -30,7 +30,7 @@ begin
     gemspec.email = "oauth-ruby@googlegroups.com"
     gemspec.homepage = "http://github.com/pelle/oauth-plugin"
     gemspec.authors = ["Pelle Braendgaard"]
-    gemspec.add_dependency('oauth', '>= 0.3.5')
+    gemspec.add_dependency('oauth', '>= 0.4.4')
     gemspec.rubyforge_project = 'oauth'
   end
   
