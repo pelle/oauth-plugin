@@ -20,15 +20,15 @@ http://mojodna.net/2009/05/20/an-idiots-guide-to-oauth-10a.html
 
 == Requirements
 
-You need to install the oauth gem (0.4.1) which is the core OAuth ruby library. It will NOT work on any previous version of the gem.
+You need to install the oauth gem (0.4.4) which is the core OAuth ruby library. It will likely NOT work on any previous version of the gem.
   
-  sudo gem install oauth
+  gem install oauth
 
-== Installation
+== Installation (Rails 2.x)
 
 The plugin can now be installed as an gem from github, which is the easiest way to keep it up to date.
 
-  sudo gem install oauth-plugin
+  gem install oauth-plugin --pre
   
 You should add the following in the gem dependency section of environment.rb
 
@@ -46,6 +46,12 @@ It should not be difficult to manually modify the code to work on Rails 1.2.x
 I think the only real issue is that the views have .html.erb extensions. So these could theoretically just be renamed to .rhtml.
 
 Please let me know if this works and I will see if I can make the generator conditionally create .rhtml for pre 2.0 versions of RAILS.
+
+== Installation (Rails 3.0)
+
+Add the plugin to your Gemfile:
+
+  gem "oauth-plugin", ">=0.4"
 
 == OAuth Provider generator (Rails 3)
 
