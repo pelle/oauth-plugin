@@ -6,7 +6,8 @@
 # OAUTH_CREDENTIALS={
 #   :twitter=>{
 #     :key=>"",
-#     :secret=>""
+#     :secret=>"",
+#     :allow_login => true # Use :allow_login => true to allow user to login to account
 #   },
 #   :google=>{
 #     :key=>"",

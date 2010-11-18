@@ -3,7 +3,6 @@ module Oauth
     module ConsumerController
       def self.included(controller)
         controller.class_eval do  
-          before_filter :login_required
           before_filter :load_consumer, :except=>:index
           skip_before_filter :verify_authenticity_token,:only=>:callback
         end
@@ -13,8 +12,7 @@ module Oauth
         @consumer_tokens=ConsumerToken.all :conditions=>{:user_id=>current_user.id}
         # The services the user hasn't already connected to
         @services=OAUTH_CREDENTIALS.keys-@consumer_tokens.collect{|c| c.class.service_name}
-      end
-      
+      end      
       
       # creates request token and redirects on to oauth provider's auth page
       # If user is already connected it displays a page with an option to disconnect and redo
@@ -31,11 +29,18 @@ module Oauth
       end
 
       def callback
+        logger.info "CALLBACK"
         @request_token_secret=session[params[:oauth_token]]
         if @request_token_secret
-          @token=@consumer.create_from_request_token(current_user,params[:oauth_token],@request_token_secret,params[:oauth_verifier])
+          @token=@consumer.find_or_create_from_request_token(current_user,params[:oauth_token],@request_token_secret,params[:oauth_verifier])
           if @token
-            flash[:notice] = "#{params[:id].humanize} was successfully connected to your account"
+            # Log user in
+            if logged_in?
+              flash[:notice] = "#{params[:id].humanize} was successfully connected to your account"
+            else
+              current_user = @token.user 
+              flash[:notice] = "You logged in with #{params[:id].humanize}"
+            end
             go_back
           else
             flash[:error] = "An error happened, please try connecting again"
@@ -67,8 +72,14 @@ module Oauth
       def load_consumer
         consumer_key=params[:id].to_sym
         throw RecordNotFound unless OAUTH_CREDENTIALS.include?(consumer_key)
+        deny_access! unless logged_in? || OAUTH_CREDENTIALS[consumer_key][:allow_login]
         @consumer="#{consumer_key.to_s.camelcase}Token".constantize
-        @token=@consumer.find_by_user_id current_user.id
+        @token=@consumer.find_by_user_id current_user.id if logged_in?
+      end
+      
+      # Override this in you controller to deny user or redirect to login screen.
+      def deny_access!
+        head 403
       end
       
     end

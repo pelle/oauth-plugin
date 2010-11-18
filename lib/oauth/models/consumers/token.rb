@@ -29,14 +29,26 @@ module Oauth
             consumer.get_request_token(:oauth_callback=>callback_url)
           end
 
-          def create_from_request_token(user,token,secret,oauth_verifier)
+          def find_or_create_from_request_token(user,token,secret,oauth_verifier)
             request_token=OAuth::RequestToken.new consumer,token,secret
             options={}
             options[:oauth_verifier]=oauth_verifier if oauth_verifier
             access_token=request_token.get_access_token options
-            create :user_id=>user.id,:token=>access_token.token,:secret=>access_token.secret
+            find_or_create_from_access_token user, access_token
           end
           
+          def find_or_create_from_access_token(user,access_token)
+            if user
+              user.consumer_tokens.first(:conditions=>{:type=>self.to_s,:token=>access_token.token}) ||
+                user.consumer_tokens.create!(:type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
+            else
+              ConsumerToken.first( :token=>access_token.token,:type=>self.to_s) ||
+                create(:type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
+            end
+          end
+          
+          def build_user_from_token
+          end
           protected
           
           def credentials
@@ -56,6 +68,18 @@ module Oauth
           def simple_client
             @simple_client||=SimpleClient.new OAuth::AccessToken.new( self.class.consumer,token,secret)
           end
+          
+          # Override this to return user data from service
+          def params_for_user
+            {}
+          end
+          
+          def create_user
+            self.user ||= begin
+              User.new params_for_user
+              user.save(:validate=>false)
+            end
+          end  
           
         end
       end

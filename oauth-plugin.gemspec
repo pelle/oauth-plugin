@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
-  s.date = %q{2010-12-06}
+  s.date = %q{2010-12-08}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
     "MIT-LICENSE",
     "README.rdoc",
     "Rakefile",
+    "UPGRADE.rdoc",
     "VERSION",
     "generators/oauth_consumer/USAGE",
     "generators/oauth_consumer/oauth_consumer_generator.rb",
@@ -172,6 +173,7 @@ Gem::Specification.new do |s|
     "lib/oauth/models/consumers/services/twitter_token.rb",
     "lib/oauth/models/consumers/simple_client.rb",
     "lib/oauth/models/consumers/token.rb",
+    "lib/oauth/rack/oauth_filter.rb",
     "oauth-plugin.gemspec",
     "rails/init.rb",
     "tasks/oauth_tasks.rake",
