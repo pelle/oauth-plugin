@@ -5,3 +5,4 @@ pkg
 .svn
 *.gem
 .bundle
+.swp

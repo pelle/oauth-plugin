@@ -26,6 +26,7 @@ module Oauth
           end
 
           def get_request_token(callback_url)
+            Rails.logger.info "OAUTH_CONSUMER #{consumer.inspect}"
             consumer.get_request_token(:oauth_callback=>callback_url)
           end
 
@@ -62,11 +63,11 @@ module Oauth
           # Main client for interfacing with remote service. Override this to use
           # preexisting library eg. Twitter gem.
           def client
-            @client||=OAuth::AccessToken.new self.class.consumer,token,secret
+            @client||=OAuth::AccessToken.new slelf.class.consumer,token,secret
           end
 
           def simple_client
-            @simple_client||=SimpleClient.new OAuth::AccessToken.new( self.class.consumer,token,secret)
+            @simple_client||=SimpleClient.new client
           end
           
           # Override this to return user data from service

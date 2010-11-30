@@ -10,6 +10,7 @@ if defined? ConsumerToken && defined? OAUTH_CREDENTIALS
     class_name=value[:class_name]||"#{key.to_s.classify}Token"
     unless Object.const_defined?(class_name.to_sym)
       if File.exists?(File.join(File.dirname(__FILE__), "services","#{key.to_s}_token.rb"))
+        Rails.logger.info File.join(File.dirname(__FILE__), "services","#{key.to_s}_token")
         require File.join(File.dirname(__FILE__), "services","#{key.to_s}_token")
       else
         begin

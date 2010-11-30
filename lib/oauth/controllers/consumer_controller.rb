@@ -79,7 +79,7 @@ module Oauth
       
       # Override this in you controller to deny user or redirect to login screen.
       def deny_access!
-        head 403
+        head 401
       end
       
     end
