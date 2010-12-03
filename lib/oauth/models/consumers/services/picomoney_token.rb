@@ -5,8 +5,8 @@ class PicomoneyToken < OpenTransactToken
   def self.credentials
     @credentials||={
         :site=>"https://picomoney.com",
-        :consumer_key => super.delete(:key),
-        :consumer_secret => super.delete(:secret)
+        :consumer_key => super[:key],
+        :consumer_secret => super[:secret]
       }.merge(super)
   end  
   

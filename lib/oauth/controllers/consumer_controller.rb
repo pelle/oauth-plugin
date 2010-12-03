@@ -33,12 +33,13 @@ module Oauth
         @request_token_secret=session[params[:oauth_token]]
         if @request_token_secret
           @token=@consumer.find_or_create_from_request_token(current_user,params[:oauth_token],@request_token_secret,params[:oauth_verifier])
+          session[params[:oauth_token]] = nil
           if @token
             # Log user in
             if logged_in?
               flash[:notice] = "#{params[:id].humanize} was successfully connected to your account"
             else
-              current_user = @token.user 
+              self.current_user = @token.user 
               flash[:notice] = "You logged in with #{params[:id].humanize}"
             end
             go_back
