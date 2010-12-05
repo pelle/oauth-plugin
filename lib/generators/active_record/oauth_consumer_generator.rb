@@ -2,7 +2,7 @@ require 'rails/generators/active_record'
 
 module ActiveRecord
   module Generators
-    class OauthProviderGenerator < Rails::Generators::Base
+    class OauthConsumerGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
 
       source_root File.expand_path('../oauth_consumer_templates', __FILE__)
