@@ -44,8 +44,17 @@ module OAuth
         def params
           controller.send :params
         end
+        
         def request
           controller.send :request
+        end
+        
+        def env
+          request.env
+        end
+        
+        def using_rack_filter?
+          request.env["oauth_plugin"]
         end
         
         def allow?
@@ -77,22 +86,32 @@ module OAuth
         end
 
         def oauth10_token
-          begin
-            if ClientApplication.verify_request(request) do |request_proxy|
-                @oauth_token = ClientApplication.find_token(request_proxy.token)
-                if @oauth_token.respond_to?(:provided_oauth_verifier=)
-                  @oauth_token.provided_oauth_verifier=request_proxy.oauth_verifier 
-                end
-                # return the token secret and the consumer secret
-                [(@oauth_token.nil? ? nil : @oauth_token.secret), (@oauth_token.client_application.nil? ? nil : @oauth_token.client_application.secret)]
-              end
+          if using_rack_filter?
+            if env["oauth.token"]
+              @oauth_token = env["oauth.token"]
               controller.send :current_token=, @oauth_token
               true
             else
               false
             end
-          rescue
-            false
+          else  
+            begin
+              if ClientApplication.verify_request(request) do |request_proxy|
+                  @oauth_token = ClientApplication.find_token(request_proxy.token)
+                  if @oauth_token.respond_to?(:provided_oauth_verifier=)
+                    @oauth_token.provided_oauth_verifier=request_proxy.oauth_verifier 
+                  end
+                  # return the token secret and the consumer secret
+                  [(@oauth_token.nil? ? nil : @oauth_token.secret), (@oauth_token.client_application.nil? ? nil : @oauth_token.client_application.secret)]
+                end
+                controller.send :current_token=, @oauth_token
+                true
+              else
+                false
+              end
+            rescue
+              false
+            end
           end
         end
 
@@ -109,23 +128,30 @@ module OAuth
         end
         
         def two_legged
-          begin
-            if ClientApplication.verify_request(request) do |request_proxy|
-                @client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
-
-                # Store this temporarily in client_application object for use in request token generation 
-                @client_application.token_callback_url=request_proxy.oauth_callback if request_proxy.oauth_callback
-
-                # return the token secret and the consumer secret
-                [nil, @client_application.secret]
-              end
+          if using_rack_filter?
+            if env["oauth.client_application"]
+              @client_application = env["oauth.client_application"]
               controller.send :current_client_application=, @client_application
-              true
-            else
+            end
+          else
+            begin
+              if ClientApplication.verify_request(request) do |request_proxy|
+                  @client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
+
+                  # Store this temporarily in client_application object for use in request token generation 
+                  @client_application.token_callback_url=request_proxy.oauth_callback if request_proxy.oauth_callback
+
+                  # return the token secret and the consumer secret
+                  [nil, @client_application.secret]
+                end
+                controller.send :current_client_application=, @client_application
+                true
+              else
+                false
+              end
+            rescue
               false
             end
-          rescue
-            false
           end
         end
         
