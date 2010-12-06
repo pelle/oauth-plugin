@@ -1,4 +1,5 @@
-  0.4.0
+  0.4.0 
+  - Fixed bug with AR ORM Generator [theirix]
 	- mongoid support in rails 3 [Alexander Semyonov]
 	- OAUTH 2.0 authorization_code and password grant types
 	- Supports OAuth 2.0 draft 10 (Note this is incompatible with previous drafts)
