@@ -1,3 +1,6 @@
+  0.4.0-pre3
+  - Experimental rack filter for OAuth 1.0a:
+    see lib/oauth/rack/oauth_filter.rb for details
   0.4.0-pre2
   - mongoid defaults to being embedded
   - new :auto_login option in oauth_config.rb which lets you use eg. twitter as a primary authentication method

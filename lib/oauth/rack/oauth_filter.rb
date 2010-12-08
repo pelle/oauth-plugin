@@ -3,12 +3,23 @@ require "rack/request"
 require "oauth/signature"
 module OAuth
   module Rack
+    
+    # An OAuth 1.0a filter to be used together with the oauth-plugin for rails.T
+    # This is still experimental
+    #
+    # Add it as middleware to your config/application.rb:
+    #
+    # require 'oauth/rack/oauth_filter'
+    # config.middleware.use OAuth::Rack::OAuthFilter
+    
+    
+    
     class OAuthFilter
       def initialize(app)
         @app = app
       end
       
-      def call(env)
+      def call(env)        
         request = ::Rack::Request.new(env)
         env["oauth_plugin"]=true
         if ClientApplication.verify_request(request) do |request_proxy|

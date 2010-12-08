@@ -15,7 +15,6 @@ module OAuth
   module Plugin
     class OAuthRailtie < Rails::Railtie
       initializer "oauth-plugin.configure_rails_initialization" do |app|
-        app.middleware.insert_before ActionDispatch::Cookies, OAuth::Rack::OAuthFilter
         ActionController::Base.send :include, OAuth::Controllers::ApplicationControllerMethods
       end
     end
