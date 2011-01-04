@@ -1,3 +1,6 @@
+  0.4.0-pre4
+  - Fixed bug when creating a new user from a new consumer token
+  - Fix typo in consumer token [krasio]
   - Fix issue with mongoid not supporting find_by_x style queries. [3en]
   0.4.0-pre3
   - Experimental rack filter for OAuth 1.0a:
