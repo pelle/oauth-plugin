@@ -43,7 +43,7 @@ module Oauth
               user.consumer_tokens.first(:conditions=>{:type=>self.to_s,:token=>access_token.token}) ||
                 user.consumer_tokens.create!(:type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
             else
-              ConsumerToken.first( :token=>access_token.token,:type=>self.to_s) ||
+              ConsumerToken.first( :conditions =>{ :token=>access_token.token,:type=>self.to_s}) ||
                 create(:type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
             end
           end
