@@ -370,6 +370,10 @@ And you could do:
 
 The client method gives you a OAuth::AccessToken which you can use to perform rest operations on the client site - see http://oauth.rubyforge.org/rdoc/classes/OAuth/AccessToken.html
 
+If you are using Mongoid you want to add an embeds_many association in your user model:
+
+  embeds_many :consumer_tokens
+
 === Custom ConsumerToken models
 
 Before creating the FireEagleToken model the plugin checks if a class already exists by that name or if we provide an api wrapper for it. This allows you to create a better token model that uses an existing ruby gem.
