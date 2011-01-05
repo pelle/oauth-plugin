@@ -21,12 +21,10 @@ class ConsumerToken
 
   def self.find_or_create_from_access_token(user,access_token)
     if user
-      user.consumer_tokens.first(:conditions=>{:_type=>self.to_s,:token=>access_token.token}) ||
+      user.consumer_tokens.where(:_type=>self.to_s,:token=>access_token.token).first ||
         user.consumer_tokens.create!(:_type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
     else
-      # Is there a better way of doing this in mongoid?
-      # Please submit a patch
-      user = User.first(:conditions=>{:_type=>self.to_s,"consumer_tokens.token"=>access_token.token})
+      user = User.where("consumer_tokens._type"=>self.to_s,"consumer_tokens.token"=>access_token.token).first
       if user
         user.consumer_tokens.detect{|t| t.token==access_token.token && t.is_a?(self)} 
       else
