@@ -42,7 +42,10 @@ module OAuth
         end
         
         def allow?
-          if !(@strategies & env["oauth.strategies"].to_a).empty?
+          if @strategies.include?(:interactive) && interactive
+            true          
+          elsif !(@strategies & env["oauth.strategies"].to_a).empty?
+            self.current_user = token.try(:user)
             true
           else
             if @strategies.include?(:interactive) 
@@ -106,7 +109,7 @@ module OAuth
       end
       
       def oauth?
-        current_token!=nil
+        current_token
       end
       
       # use in a before_filter. Note this is for compatibility purposes. Better to use oauthenticate now
