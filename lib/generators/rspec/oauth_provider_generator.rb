@@ -9,10 +9,6 @@ module Rspec
       class_option :fixture, :type => :boolean
 
       def copy_controller_spec_files
-        template 'controller_spec_helper.rb',
-          File.join('spec/controllers', class_path, "#{file_name}_controller_spec_helper.rb")
-        template 'controller_spec.rb',
-          File.join('spec/controllers', class_path, "#{file_name}_controller_spec.rb")
         template 'clients_controller_spec.rb',
           File.join('spec/controllers', class_path, "#{file_name}_clients_controller_spec.rb")
       end

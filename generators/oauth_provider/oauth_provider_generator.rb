@@ -73,8 +73,6 @@ class OauthProviderGenerator < Rails::Generator::Base
         m.template 'client_applications.yml',File.join('spec/fixtures',"client_applications.yml")
         m.template 'oauth_tokens.yml',    File.join('spec/fixtures',"oauth_tokens.yml")
         m.template 'oauth_nonces.yml',    File.join('spec/fixtures',"oauth_nonces.yml")
-        m.template 'controller_spec_helper.rb', File.join('spec/controllers', controller_class_path,"#{controller_file_name}_controller_spec_helper.rb")
-        m.template 'controller_spec.rb',File.join('spec/controllers',controller_class_path,"#{controller_file_name}_controller_spec.rb")      
         m.template 'clients_controller_spec.rb',File.join('spec/controllers',controller_class_path,"#{controller_file_name}_clients_controller_spec.rb")
       else
         m.directory File.join('test')
@@ -87,8 +85,6 @@ class OauthProviderGenerator < Rails::Generator::Base
         m.template 'client_applications.yml',File.join('test/fixtures',"client_applications.yml")
         m.template 'oauth_tokens.yml',    File.join('test/fixtures',"oauth_tokens.yml")
         m.template 'oauth_nonces.yml',    File.join('test/fixtures',"oauth_nonces.yml")
-        m.template 'controller_test_helper.rb', File.join('test', controller_class_path,"#{controller_file_name}_controller_test_helper.rb")
-        m.template 'controller_test.rb',File.join('test/functional',controller_class_path,"#{controller_file_name}_controller_test.rb")
         m.template 'clients_controller_test.rb',File.join('test/functional',controller_class_path,"#{controller_file_name}_clients_controller_test.rb")
       end
       
