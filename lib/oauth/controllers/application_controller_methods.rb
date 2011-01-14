@@ -39,6 +39,7 @@ module OAuth
         def initialize(controller,strategies)
           @controller = controller
           @strategies = strategies
+          controller.send :oauth_authenticator=, self
         end
         
         def params
@@ -180,11 +181,11 @@ module OAuth
       protected
       
       def current_token
-        @current_token
+        @oauth_authenticator.try(:token)
       end
       
       def current_client_application
-        @current_client_application
+        @oauth_authenticator.try(:client_application)
       end
       
       def oauth?
@@ -213,26 +214,8 @@ module OAuth
 
       private
       
-      def current_token=(token)
-        @current_token=token
-        if @current_token
-          @current_user=@current_token.user
-          @current_client_application=@current_token.client_application
-        else
-          @current_user = nil
-          @current_client_application = nil
-        end
-        @current_token
-      end
-      
-      def current_client_application=(app)
-        if app
-          @current_client_application = app
-          @current_user = app.user
-        else
-          @current_client_application = nil
-          @current_user = nil
-        end
+      def oauth_authenticator=(auth)
+        @oauth_authenticator = auth
       end
     end
   end

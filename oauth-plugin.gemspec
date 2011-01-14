@@ -25,7 +25,14 @@ Gem::Specification.new do |s|
   s.summary = %q{Ruby on Rails Plugin for OAuth Provider and Consumer}
   s.add_development_dependency "twitter"
   s.add_development_dependency "opentransact"
-
-  s.add_dependency(%q<oauth>, [">= 0.4.4"])
+  s.add_development_dependency "rspec", "~> 2.4.0"
+  s.add_development_dependency "fakeweb"
+  s.add_development_dependency "fuubar"
+  s.add_development_dependency "guard-rspec"
+  s.add_development_dependency "growl"
+  s.add_development_dependency "rack-test"
+  s.add_dependency "multi_json"
+  s.add_dependency("oauth", ["~> 0.4.4"])
+  s.add_dependency("rack")
 end
 

@@ -6,3 +6,5 @@ pkg
 *.gem
 .bundle
 .swp
+.idea
+.rvmrc
