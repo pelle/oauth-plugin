@@ -1,4 +1,3 @@
-require 'oauth/signature'
 module OAuth
   module Controllers
    
@@ -42,27 +41,8 @@ module OAuth
           controller.send :oauth_authenticator=, self
         end
         
-        def params
-          controller.send :params
-        end
-        
-        def request
-          controller.send :request
-        end
-        
-        def env
-          request.env
-        end
-        
-        def using_rack_filter?
-          request.env["oauth_plugin"]
-        end
-        
         def allow?
-          if @strategies.any? do |strategy| 
-              @strategy  = strategy.to_sym
-              send @strategy
-            end
+          if !(@strategies & env["oauth.strategies"].to_a).empty?
             true
           else
             if @strategies.include?(:interactive) 
@@ -74,46 +54,11 @@ module OAuth
         end
 
         def oauth20_token
-          return false unless defined?(Oauth2Token)
-          token, options = token_and_options
-          token ||= params[:oauth_token] || params[:access_token]
-          if !token.blank?
-            @oauth2_token = Oauth2Token.find_by_token(token)
-            if @oauth2_token && @oauth2_token.authorized?
-              controller.send :current_token=, @oauth2_token
-            end
-          end
-          @oauth2_token!=nil
+           env["oauth.version"]==2 && env["oauth.token"]
         end
 
         def oauth10_token
-          if using_rack_filter?
-            if env["oauth.token"]
-              @oauth_token = env["oauth.token"]
-              controller.send :current_token=, @oauth_token
-              true
-            else
-              false
-            end
-          else  
-            begin
-              if ClientApplication.verify_request(request) do |request_proxy|
-                  @oauth_token = ClientApplication.find_token(request_proxy.token)
-                  if @oauth_token.respond_to?(:provided_oauth_verifier=)
-                    @oauth_token.provided_oauth_verifier=request_proxy.oauth_verifier 
-                  end
-                  # return the token secret and the consumer secret
-                  [(@oauth_token.nil? ? nil : @oauth_token.secret), (@oauth_token.client_application.nil? ? nil : @oauth_token.client_application.secret)]
-                end
-                controller.send :current_token=, @oauth_token
-                true
-              else
-                false
-              end
-            rescue
-              false
-            end
-          end
+          env["oauth.version"]==1 && env["oauth.token"]
         end
 
         def oauth10_request_token
@@ -127,53 +72,25 @@ module OAuth
         def token
           oauth20_token || oauth10_access_token
         end
-        
+
+        def client_application
+          env["oauth.version"]==1 && env["oauth.client_application"] || oauth20_token.try(:client_application)
+        end
+
         def two_legged
-          if using_rack_filter?
-            if env["oauth.client_application"]
-              @client_application = env["oauth.client_application"]
-              controller.send :current_client_application=, @client_application
-            end
-          else
-            begin
-              if ClientApplication.verify_request(request) do |request_proxy|
-                  @client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
-
-                  # Store this temporarily in client_application object for use in request token generation 
-                  @client_application.token_callback_url=request_proxy.oauth_callback if request_proxy.oauth_callback
-
-                  # return the token secret and the consumer secret
-                  [nil, @client_application.secret]
-                end
-                controller.send :current_client_application=, @client_application
-                true
-              else
-                false
-              end
-            rescue
-              false
-            end
-          end
+           env["oauth.version"]==1 && client_application
         end
         
         def interactive
           @controller.send :logged_in?
         end
-        
-        # Blatantly stolen from http://github.com/technoweenie/http_token_authentication
-        # Parses the token and options out of the OAuth authorization header.  If
-        # the header looks like this:
-        #   Authorization: OAuth abc
-        # Then the returned token is "abc", and the options is {:nonce => "def"}
-        #
-        # request - ActionController::Request instance with the current headers.
-        #
-        # Returns an Array of [String, Hash] if a token is present.
-        # Returns nil if no token is found.
-        def token_and_options
-          if header = (request.respond_to?(:authorization) ? request.authorization : ActionController::HttpAuthentication::Basic.authorization(request)).to_s[/^OAuth (.*)/]
-            [$1.strip, {}]
-          end
+
+        def env
+          request.env
+        end
+
+        def request
+          controller.send :request
         end
 
       end
