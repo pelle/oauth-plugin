@@ -38,7 +38,6 @@ module OAuth
         def initialize(controller,strategies)
           @controller = controller
           @strategies = strategies
-          controller.send :oauth_authenticator=, self
         end
         
         def allow?
@@ -101,11 +100,11 @@ module OAuth
       protected
       
       def current_token
-        @oauth_authenticator.try(:token)
+        request.env["oauth.token"]
       end
       
       def current_client_application
-        @oauth_authenticator.try(:client_application)
+        request.env["oauth.version"]==1 && env["oauth.client_application"] || current_token.try(:client_application)
       end
       
       def oauth?
@@ -132,11 +131,6 @@ module OAuth
         head 401
       end
 
-      private
-      
-      def oauth_authenticator=(auth)
-        @oauth_authenticator = auth
-      end
     end
   end
 end
