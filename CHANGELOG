@@ -1,3 +1,5 @@
+  - BIG REFACTOR. DO NOT USE IN PRODUCTION YET
+  - Most core OAuth functionality is being put into OAuthFilter. This means Rails 2.3 and above only
   0.4.0-pre4
   - Fixed bug when creating a new user from a new consumer token
   - Fix typo in consumer token [krasio]

@@ -1,3 +1,5 @@
+= MAJOR NEW VERSION NOT READY FOR USE YET
+
 = OAuth Plugin
 
 This is a plugin for implementing OAuth Providers and Consumers in Rails applications.
