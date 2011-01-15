@@ -42,7 +42,7 @@ module OAuth
         
         def allow?
           if @strategies.include?(:interactive) && interactive
-            true          
+            true
           elsif !(@strategies & env["oauth.strategies"].to_a).empty?
             @controller.send :current_user=, token.user if token
             true
@@ -64,15 +64,15 @@ module OAuth
         end
 
         def oauth10_request_token
-          oauth10_token && @oauth_token.is_a?(::RequestToken)
+          oauth10_token && oauth10_token.is_a?(::RequestToken) ? oauth10_token : nil
         end
 
         def oauth10_access_token
-          oauth10_token && @oauth_token.is_a?(::AccessToken)
+          oauth10_token && oauth10_token.is_a?(::AccessToken) ? oauth10_token : nil
         end
         
         def token
-          oauth20_token || oauth10_access_token
+          oauth20_token || oauth10_access_token || nil
         end
 
         def client_application
