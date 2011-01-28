@@ -29,7 +29,7 @@ module OAuth
           @strategies << :interactive if @options[:interactive]
         end
         
-        def filter(controller)
+        def self.filter(controller)
           Authenticator.new(controller,@strategies).allow?
         end
       end
