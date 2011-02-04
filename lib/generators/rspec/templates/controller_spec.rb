@@ -289,7 +289,7 @@ describe OauthController do
       subject { @token }
       it "should redirect to default callback" do
         response.should be_redirect
-        response.should redirect_to("http://application/callback?access_token=#{@token.token}")
+        response.should redirect_to("http://application/callback#access_token=#{@token.token}")
       end
 
       it "should not have a scope" do
