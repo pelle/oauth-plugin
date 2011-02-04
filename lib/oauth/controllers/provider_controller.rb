@@ -155,10 +155,7 @@ module OAuth
           if user_authorizes_token?
             @token  = Oauth2Token.create :client_application=>@client_application, :user=>current_user, :scope=>params[:scope]
             unless @redirect_url.to_s.blank?
-              @redirect_url.query = @redirect_url.query.blank? ?
-                                    "access_token=#{@token.token}" :
-                                    @redirect_url.query + "&access_token=#{@token.token}"
-              redirect_to @redirect_url.to_s
+              redirect_to "#{@redirect_url.to_s}#access_token=#{@token.token}"
             else
               render :action => "authorize_success"
             end
