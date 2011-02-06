@@ -30,7 +30,7 @@ class RequestToken < OauthToken
   end
   
   def oob?
-    self.callback_url=='oob'
+    callback_url.nil? || callback_url.downcase == 'oob'
   end
   
   def oauth10?
