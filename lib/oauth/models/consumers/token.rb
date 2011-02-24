@@ -40,12 +40,17 @@ module Oauth
           def find_or_create_from_access_token(user,access_token)
             secret = access_token.respond_to?(:secret) ? access_token.secret : nil
             if user
-              user.consumer_tokens.first(:conditions=>{:type=>self.to_s,:token=>access_token.token}) ||
-                self.create!(:user => user,:token=>access_token.token, :secret=>secret)
+              token = self.find_or_create_by_user_id_and_token_and_secret(user.id, access_token.token, secret)
             else
-              ConsumerToken.first( :conditions =>{ :token=>access_token.token,:type=>self.to_s}) ||
-                self.create!(:type=>self.to_s,:token=>access_token.token, :secret=>secret)
+              token = self.find_or_create_by_token_and_secret(access_token.token, secret)
             end
+            
+            if token.new_record?
+              token.secret = access_token.secret
+              token.save
+            end
+
+            token
           end
           
           def build_user_from_token
