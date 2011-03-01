@@ -18,7 +18,8 @@ module Oauth
       # If user is already connected it displays a page with an option to disconnect and redo
       def show
         unless @token
-          @request_token=@consumer.get_request_token(callback_oauth_consumer_url(params[:id]))
+          request_url = callback_oauth_consumer_url(params[:id]) + '?' + request.query_string
+          @request_token=@consumer.get_request_token(request_url)
           session[@request_token.token]=@request_token.secret
           if @request_token.callback_confirmed?
             redirect_to @request_token.authorize_url
