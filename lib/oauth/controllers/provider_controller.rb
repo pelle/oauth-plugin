@@ -121,7 +121,7 @@ module OAuth
       def oauth2_authorize_code
         @client_application = ClientApplication.find_by_key params[:client_id]
         if request.post?
-          @redirect_url = URI.parse(params[:redirect_url] || @client_application.callback_url)
+          @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url)
           if user_authorizes_token?
             @verification_code = Oauth2Verifier.create :client_application=>@client_application, :user=>current_user, :callback_url=>@redirect_url.to_s
 
@@ -151,7 +151,7 @@ module OAuth
       def oauth2_authorize_token
         @client_application = ClientApplication.find_by_key params[:client_id]
         if request.post?
-          @redirect_url = URI.parse(params[:redirect_url] || @client_application.callback_url)
+          @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url)
           if user_authorizes_token?
             @token  = Oauth2Token.create :client_application=>@client_application, :user=>current_user, :scope=>params[:scope]
             unless @redirect_url.to_s.blank?
@@ -184,7 +184,7 @@ module OAuth
           oauth2_error
           return
         end
-        if @verification_code.redirect_url != params[:redirect_url]
+        if @verification_code.redirect_url != params[:redirect_uri]
           oauth2_error
           return
         end
