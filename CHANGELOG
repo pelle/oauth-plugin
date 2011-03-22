@@ -1,4 +1,7 @@
   - BIG REFACTOR. DO NOT USE IN PRODUCTION YET
+  - Fixes various mongoid issues [3en]
+  - Adds oauth2 consumer support
+  - Fixes oauth2 provider. parameter should be redirect_uri not redirect_url [Kimtaro]
   - Most core OAuth functionality is being put into OAuthFilter. This means Rails 2.3 and above only
   0.4.0-pre4
   - Fixed bug when creating a new user from a new consumer token
