@@ -12,6 +12,10 @@ class OauthConsumersController < ApplicationController
     @services=OAUTH_CREDENTIALS.keys-@consumer_tokens.collect{|c| c.class.service_name}
   end
   
+  def callback
+  	super
+  end
+  
   protected
   
   # Change this to decide where you want to redirect user to after callback is finished.
