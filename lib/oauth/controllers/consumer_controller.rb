@@ -18,14 +18,37 @@ module Oauth
       # If user is already connected it displays a page with an option to disconnect and redo
       def show
         unless @token
-          @request_token=@consumer.get_request_token(callback_oauth_consumer_url(params[:id]))
-          session[@request_token.token]=@request_token.secret
-          if @request_token.callback_confirmed?
-            redirect_to @request_token.authorize_url
+          if @consumer.ancestors.include?(Oauth2Token)
+            redirect_to @consumer.authorize_url(callback2_oauth_consumer_url(params[:id]))
           else
-            redirect_to(@request_token.authorize_url + "&oauth_callback=#{callback_oauth_consumer_url(params[:id])}")
+            @request_token=@consumer.get_request_token(callback_oauth_consumer_url(params[:id]))
+            session[@request_token.token]=@request_token.secret
+            if @request_token.callback_confirmed?
+              redirect_to @request_token.authorize_url
+            else
+              redirect_to(@request_token.authorize_url + "&oauth_callback=#{callback_oauth_consumer_url(params[:id])}")
+            end
           end
         end
+      end
+      
+      def callback2
+        @token = @consumer.access_token(current_user,params[:code], callback2_oauth_consumer_url(params[:id]))
+        logger.info @token.inspect
+        if @token
+          # Log user in
+          if logged_in?
+            flash[:notice] = "#{params[:id].humanize} was successfully connected to your account"
+          else
+            self.current_user = @token.user 
+            flash[:notice] = "You logged in with #{params[:id].humanize}"
+          end
+          go_back
+        else
+          flash[:error] = "An error happened, please try connecting again"
+          redirect_to oauth_consumer_url(params[:id])
+        end
+
       end
 
       def callback

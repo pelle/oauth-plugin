@@ -19,7 +19,10 @@ class OauthConsumerGenerator < Rails::Generators::Base
   def add_route
     route <<-ROUTE.strip
 resources :oauth_consumers do
-    get :callback, :on => :member
+    member do
+      get :callback
+      get :callback2
+    end
   end
 ROUTE
   end

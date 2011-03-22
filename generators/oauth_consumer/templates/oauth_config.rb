@@ -6,12 +6,21 @@
 # OAUTH_CREDENTIALS={
 #   :twitter=>{
 #     :key=>"",
-#     :secret=>""
+#     :secret=>"",
+#     :allow_login => true # Use :allow_login => true to allow user to login to account
 #   },
 #   :google=>{
 #     :key=>"",
 #     :secret=>"",
 #     :scope=>"" # see http://code.google.com/apis/gdata/faq.html#AuthScopes
+#   },
+#   :github=>{
+#     :key => "",
+#     :secret => ""
+#   },
+#   :facebook=>{
+#     :key => "",
+#     :secret => ""
 #   },
 #   :agree2=>{
 #     :key=>"",
@@ -20,6 +29,14 @@
 #   :fireeagle=>{
 #     :key=>"",
 #     :secret=>""
+#   },
+#   :oauth2_server => {
+#      :key=>"",
+#      :secret=>"",
+#      :oauth_version => 2
+#      :options=>{ # OAuth::Consumer options
+#        :site=>"http://hourfeed.com" # Remember to add a site for a generic OAuth site
+#      }
 #   },
 #   :hour_feed=>{
 #     :key=>"",

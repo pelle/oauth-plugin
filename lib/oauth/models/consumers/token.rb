@@ -7,7 +7,7 @@ module Oauth
       module Token
         def self.included(model)
           model.class_eval do
-            validates_presence_of :user, :token, :secret                      
+            validates_presence_of :user, :token
           end
 
           model.send(:include, InstanceMethods)
@@ -26,7 +26,6 @@ module Oauth
           end
 
           def get_request_token(callback_url)
-            Rails.logger.info "OAUTH_CONSUMER #{consumer.inspect}"
             consumer.get_request_token(:oauth_callback=>callback_url)
           end
 
@@ -39,12 +38,13 @@ module Oauth
           end
           
           def find_or_create_from_access_token(user,access_token)
+            secret = access_token.respond_to?(:secret) ? access_token.secret : nil
             if user
               user.consumer_tokens.first(:conditions=>{:type=>self.to_s,:token=>access_token.token}) ||
-                user.consumer_tokens.create!(:type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
+                self.create!(:user => user,:token=>access_token.token, :secret=>secret)
             else
               ConsumerToken.first( :conditions =>{ :token=>access_token.token,:type=>self.to_s}) ||
-                create(:type=>self.to_s,:token=>access_token.token, :secret=>access_token.secret)
+                self.create!(:type=>self.to_s,:token=>access_token.token, :secret=>secret)
             end
           end
           
