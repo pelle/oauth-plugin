@@ -46,7 +46,7 @@ module Oauth
             end
             
             if token.new_record?
-              token.secret = access_token.secret
+              token.secret = secret
               token.save
             end
 
