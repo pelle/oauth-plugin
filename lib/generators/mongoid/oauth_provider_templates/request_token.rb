@@ -25,9 +25,9 @@ class RequestToken < OauthToken
       "#{super}&oauth_callback_confirmed=true"
     end
   end
-
+  
   def oob?
-    self.callback_url == 'oob'
+    callback_url.nil? || callback_url.downcase == 'oob'
   end
 
   def oauth10?
