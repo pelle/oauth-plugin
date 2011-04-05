@@ -1,4 +1,5 @@
 0.4.0-pre5
+  - More forgiving about oob callback values[chrisrhoden]
   - Update Twitter consumer to use latest Twitter Gem [afeld]
   - Fixes various mongoid issues [3en]
   - Adds oauth2 consumer support
