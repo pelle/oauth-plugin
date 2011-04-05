@@ -1,4 +1,5 @@
-  - BIG REFACTOR. DO NOT USE IN PRODUCTION YET
+0.4.0-pre5
+  - Update Twitter consumer to use latest Twitter Gem [afeld]
   - Fixes various mongoid issues [3en]
   - Adds oauth2 consumer support
   - Fixes oauth2 provider. parameter should be redirect_uri not redirect_url [Kimtaro]
