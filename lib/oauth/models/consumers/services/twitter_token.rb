@@ -6,12 +6,6 @@ class TwitterToken < ConsumerToken
   end
   
   def client
-    unless @client
-      @twitter_oauth=Twitter::OAuth.new TwitterToken.consumer.key,TwitterToken.consumer.secret
-      @twitter_oauth.authorize_from_access token,secret
-      @client=Twitter::Base.new(@twitter_oauth)
-    end
-    
-    @client
+    @client ||= Twitter::Client.new(:consumer_key => TwitterToken.consumer.key, :consumer_secret => TwitterToken.consumer.secret)
   end
 end
