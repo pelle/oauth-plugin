@@ -10,6 +10,10 @@ class OauthConsumersController < ApplicationController
   def callback
     super
   end
+
+  def client
+    super
+  end
   
   protected
   
