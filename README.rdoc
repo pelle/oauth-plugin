@@ -404,9 +404,13 @@ Once the user has authorized your application, you can access the client APIs vi
 
   /oauth_consumers/[SERVICE_NAME]/client/[ENDPOINT]
 
-For example to get the user's Google Calendars (which is available at "https://www.google.com/calendar/feeds/default?alt=jsonc"), you would append that path as the ENDPOINT above, i.e.
+For example to get the user's Google Calendars in JSON (documented in their API as "https://www.google.com/calendar/feeds/default?alt=jsonc"), you would append that path as the ENDPOINT above, i.e.
 
-  /oauth_consumers/[SERVICE_NAME]/client/calendar/feeds/default?alt=jsonc
+  /oauth_consumers/google/client/calendar/feeds/default?alt=jsonc
+
+As another example, to get my Twitter info as XML (available at "https://api.twitter.com/1/users/show.xml?screen_name=pelleb"), use:
+
+  /oauth_consumers/twitter/client/1/users/show.xml?screen_name=pelleb
 
 === Migrate database
 
