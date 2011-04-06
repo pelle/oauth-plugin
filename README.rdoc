@@ -400,6 +400,14 @@ Where SERVICE_NAME is the name you set in the OAUTH_CREDENTIALS hash. This will 
   
 You can specify this url to the service you're calling when you register, but it will automatically be sent along anyway.
 
+Once the user has authorized your application, you can access the client APIs via:
+
+  /oauth_consumers/[SERVICE_NAME]/client/[ENDPOINT]
+
+For example to get the user's Google Calendars (which is available at "https://www.google.com/calendar/feeds/default?alt=jsonc"), you would append that path as the ENDPOINT above, i.e.
+
+  /oauth_consumers/[SERVICE_NAME]/client/calendar/feeds/default?alt=jsonc
+
 === Migrate database
 
 The database is defined in:
