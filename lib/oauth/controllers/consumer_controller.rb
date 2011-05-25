@@ -14,10 +14,11 @@ module Oauth
         @services=OAUTH_CREDENTIALS.keys-@consumer_tokens.collect{|c| c.class.service_name}
       end      
       
-      # creates request token and redirects on to oauth provider's auth page
-      # If user is already connected it displays a page with an option to disconnect and redo
+      # If the user has no token or <tt>force</tt> is set as a param, creates request token and
+      # redirects on to oauth provider's auth page.  Otherwise it displays a page with an option
+      # to disconnect and redo
       def show
-        unless @token
+        unless @token || params[:force]
           if @consumer.ancestors.include?(Oauth2Token)
             request_url = callback2_oauth_consumer_url(params[:id]) + '?' + request.query_string
             redirect_to @consumer.authorize_url(request_url)
