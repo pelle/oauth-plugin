@@ -79,17 +79,20 @@ module Oauth
       def client
         method = request.method.downcase.to_sym
         path = "/#{params[:endpoint]}?#{request.query_string}"
+        if consumer_credentials[:expose]
+          if @token
+            oauth_response = @token.client.send(method, path)
+            if oauth_response.is_a? Net::HTTPRedirection
+              # follow redirect
+              oauth_response = @token.client.send(method, oauth_response['Location'])
+            end
 
-        if @token
-          oauth_response = @token.client.send(method, path)
-          if oauth_response.is_a? Net::HTTPRedirection
-            # follow redirect
-            oauth_response = @token.client.send(method, oauth_response['Location'])
+            render :text => oauth_response.body
+          else
+            render :text => "Token needed.", :status => 403
           end
-
-          render :text => oauth_response.body
         else
-          render :text => "Token needed.", :status => 403
+          render :text => "Not allowed", :status => 403
         end
       end
 
@@ -112,10 +115,17 @@ module Oauth
         redirect_to root_url
       end
       
+      def consumer_credentials
+        OAUTH_CREDENTIALS[consumer_key]
+      end
+      
+      def consumer_key
+        @consumer_key ||= params[:id].to_sym
+      end
+      
       def load_consumer
-        consumer_key=params[:id].to_sym
         throw RecordNotFound unless OAUTH_CREDENTIALS.include?(consumer_key)
-        deny_access! unless logged_in? || OAUTH_CREDENTIALS[consumer_key][:allow_login]
+        deny_access! unless logged_in? || consumer_credentials[:allow_login]
         @consumer="#{consumer_key.to_s.camelcase}Token".constantize
         @token=@consumer.find(:first, :conditions=>{:user_id=>current_user.id.to_s}) if logged_in?
       end

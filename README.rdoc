@@ -1,5 +1,3 @@
-= MAJOR NEW VERSION NOT READY FOR USE YET
-
 = OAuth Plugin
 
 This is a plugin for implementing OAuth Providers and Consumers in Rails applications.
@@ -68,6 +66,14 @@ This currently supports rspec, test_unit, haml, erb, active_record and mongoid:
 This generates OAuth and OAuth client controllers as well as the required models.
 
 It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
+
+=== INSTALL RACK FILTER (NEW)
+
+A big change over previous versions is that we now use a rack filter. You have to install this in your application.rb file:
+
+  require 'oauth/rack/oauth_filter'
+  config.middleware.use OAuth::Rack::OAuthFilter    
+
 
 === Generator Options
 
@@ -327,11 +333,14 @@ Add entries to OAUTH_CREDENTIALS for all OAuth Applications you wish to connect 
   OAUTH_CREDENTIALS={
     :twitter=>{
       :key=>"key",
-      :secret=>"secret"
+      :secret=>"secret",
+      :client=>:twitter_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+      :expose => false, # set to true to expose client via the web
     },
     :agree2=>{
       :key=>"key",
-      :secret=>"secret"
+      :secret=>"secret",
+      :expose => false, # set to true to expose client via the web
     },
     :hour_feed=>{
       :key=>"",
@@ -397,9 +406,21 @@ To connect a user to an external service link or redirect them to:
 Where SERVICE_NAME is the name you set in the OAUTH_CREDENTIALS hash. This will request the request token and redirect the user to the services authorization screen. When the user accepts the get redirected back to:
 
   /oauth_consumers/[SERVICE_NAME]/callback
-  
+
 You can specify this url to the service you're calling when you register, but it will automatically be sent along anyway.
 
+=== Expose client
+
+This is designed to let your local javascript apps access remote OAuth apis. You have to specifically enable this by adding the expose flag to your oauth config file. eg:
+
+  OAUTH_CREDENTIALS={
+    :twitter=>{
+      :key=>"key",
+      :secret=>"secret",
+      :client=>:oauth_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+      :expose => true      # set to true to expose client via the web
+    }
+      
 Once the user has authorized your application, you can access the client APIs via:
 
   /oauth_consumers/[SERVICE_NAME]/client/[ENDPOINT]
@@ -422,6 +443,13 @@ Run them as any other normal migration in rails with:
 
   rake db:migrate
 
+== Contribute and earn OAuth Karma
+
+Anyone who has a commit accepted into the official oauth-plugin git repo is awarded OAuthKarma:
+
+https://picomoney.com/oauth-karma/accounts
+
+
 == More
 
 The Mailing List for all things OAuth in Ruby is:
@@ -436,4 +464,4 @@ The OAuth Ruby Gem home page is http://oauth.rubyforge.org
 
 Please help documentation, patches and testing.
 
-Copyright (c) 2007-2010 Pelle Braendgaard and contributors, released under the MIT license
+Copyright (c) 2007-2011 Pelle Braendgaard and contributors, released under the MIT license

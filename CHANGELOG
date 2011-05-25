@@ -1,7 +1,10 @@
 0.4.0-pre5
+  - protect oauth consumer relay with :expose configuration option. It's off by default. [pelle]
+  - Reenable twitter client. It is now configurable for twitter tokens. :client=>:twitter_gem or :oauth_gem [pelle]
   - fix issues with new consumer tokens [afeld]
   - More forgiving about oob callback values[chrisrhoden]
   - Update Twitter consumer to use latest Twitter Gem [afeld]
+  - removed portable_contacts client from Google Token [p8]
   - Fixes various mongoid issues [3en]
   - Adds oauth2 consumer support
   - Fixes oauth2 provider. parameter should be redirect_uri not redirect_url [Kimtaro]
