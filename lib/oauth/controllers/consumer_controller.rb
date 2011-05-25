@@ -76,6 +76,23 @@ module Oauth
 
       end
 
+      def client
+        method = request.method.downcase.to_sym
+        path = "/#{params[:endpoint]}?#{request.query_string}"
+
+        if @token
+          oauth_response = @token.client.send(method, path)
+          if oauth_response.is_a? Net::HTTPRedirection
+            # follow redirect
+            oauth_response = @token.client.send(method, oauth_response['Location'])
+          end
+
+          render :text => oauth_response.body
+        else
+          render :text => "Token needed.", :status => 403
+        end
+      end
+
       def destroy
         throw RecordNotFound unless @token
         @token.destroy
