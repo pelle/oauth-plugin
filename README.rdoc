@@ -28,7 +28,7 @@ You need to install the oauth gem (0.4.4) which is the core OAuth ruby library. 
 
 Add the plugin to your Gemfile:
 
-  gem "oauth-plugin", ">=0.4.0.pre1"
+  gem "oauth-plugin", ">= 0.4.0.pre1"
 
 And install it:
 
@@ -90,7 +90,7 @@ The generator supports the defaults you have created in your application.rb file
 Add the following lines to your user model:
 
   has_many :client_applications
-  has_many :tokens, :class_name=>"OauthToken",:order=>"authorized_at desc",:include=>[:client_application]
+  has_many :tokens, :class_name => "OauthToken", :order => "authorized_at desc", :include => [:client_application]
 
 == OAuth Provider generator (Rails 2)
 
@@ -115,7 +115,7 @@ These can of course be used individually as well.
 Add the following lines to your user model:
 
   has_many :client_applications
-  has_many :tokens, :class_name=>"OauthToken",:order=>"authorized_at desc",:include=>[:client_application]
+  has_many :tokens, :class_name => "OauthToken", :order => "authorized_at desc", :include => [:client_application]
 
 === Migrate database
 
@@ -141,13 +141,13 @@ Make it look like this:
 
   class UpgradeOauth < ActiveRecord::Migration
     def self.up
-      add_column :oauth_tokens,:callback_url,:string
-      add_column :oauth_tokens,:verifier,:string,:limit => 20
+      add_column :oauth_tokens, :callback_url, :string
+      add_column :oauth_tokens, :verifier, :string, :limit => 20
     end
 
     def self.down
-      remove_column :oauth_tokens,:callback_url
-      remove_column :oauth_tokens,:verifier
+      remove_column :oauth_tokens, :callback_url
+      remove_column :oauth_tokens, :verifier
     end
   end
 
@@ -168,7 +168,7 @@ Add the following towards the top of the model class
 Then change the create_request_token method to the following:
 
   def create_request_token
-    RequestToken.create :client_application =>self,:callback_url=>token_callback_url
+    RequestToken.create :client_application => self, :callback_url => token_callback_url
   end
 
 === Changes in request_token.rb
@@ -191,7 +191,7 @@ Make sure it looks like this:
   
     def exchange!
       return false unless authorized?
-      return false unless oauth10? || verifier==provided_oauth_verifier
+      return false unless oauth10? || verifier == provided_oauth_verifier
     
       RequestToken.transaction do
         access_token = AccessToken.create(:user => user, :client_application => client_application)
@@ -204,12 +204,12 @@ Make sure it looks like this:
       if oauth10?
         super
       else
-        "#{super}&oauth_callback_confirmed=true"
+        "#{super}&oauth_callback_confirmed = true"
       end
     end
   
     def oob?
-      self.callback_url=='oob'
+      self.callback_url == 'oob'
     end
   
     def oauth10?
@@ -286,8 +286,8 @@ If you want to give oauth access to everything a registered user can do, just re
 
 If you want to restrict consumers to the index and show methods of your controller do the following:
 
-  before_filter :login_required,:except=>[:show,:index]
-  before_filter :login_or_oauth_required,:only=>[:show,:index]
+  before_filter :login_required, :except => [:show,:index]
+  before_filter :login_or_oauth_required, :only => [:show,:index]
 
 If you have an action you only want used via oauth:
 
@@ -330,33 +330,33 @@ All configuration of applications is done in
 
 Add entries to OAUTH_CREDENTIALS for all OAuth Applications you wish to connect to. Get this information by registering your application at the particular applications developer page.
 
-  OAUTH_CREDENTIALS={
-    :twitter=>{
-      :key=>"key",
-      :secret=>"secret",
-      :client=>:twitter_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+  OAUTH_CREDENTIALS = {
+    :twitter => {
+      :key => "key",
+      :secret => "secret",
+      :client => :twitter_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
       :expose => false, # set to true to expose client via the web
     },
-    :agree2=>{
-      :key=>"key",
-      :secret=>"secret",
+    :agree2 => {
+      :key => "key",
+      :secret => "secret",
       :expose => false, # set to true to expose client via the web
     },
-    :hour_feed=>{
-      :key=>"",
-      :secret=>"",
-      :options={
-        :site=>"http://hourfeed.com" 
+    :hour_feed => {
+      :key => "",
+      :secret => "",
+      :options = {
+        :site => "http://hourfeed.com" 
       }
     },
-    :nu_bux=>{
-      :key=>"",
-      :secret=>"",
-      :super_class=>"OpenTransactToken",  # if a OAuth service follows a particular standard 
+    :nu_bux => {
+      :key => "",
+      :secret => "",
+      :super_class => "OpenTransactToken",  # if a OAuth service follows a particular standard 
                                           # with a token implementation you can set the superclass
                                           # to use
-      :options=>{
-        :site=>"http://nubux.heroku.com"
+      :options => {
+        :site => "http://nubux.heroku.com"
       }
     }
   }
@@ -373,11 +373,11 @@ eg. If you connect to Yahoo's FireEagle you would add the :fire_eagle entry to O
 
 This allows you to add a has_one association in your user model:
 
-  has_one  :fire_eagle, :class_name=>"FireEagleToken", :dependent=>:destroy
+  has_one  :fire_eagle, :class_name => "FireEagleToken", :dependent => :destroy
 
 And you could do:
 
-  @location=@user.fire_eagle.client.location
+  @location = @user.fire_eagle.client.location
 
 The client method gives you a OAuth::AccessToken which you can use to perform rest operations on the client site - see http://oauth.rubyforge.org/rdoc/classes/OAuth/AccessToken.html
 
@@ -413,11 +413,11 @@ You can specify this url to the service you're calling when you register, but it
 
 This is designed to let your local javascript apps access remote OAuth apis. You have to specifically enable this by adding the expose flag to your oauth config file. eg:
 
-  OAUTH_CREDENTIALS={
-    :twitter=>{
-      :key=>"key",
-      :secret=>"secret",
-      :client=>:oauth_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+  OAUTH_CREDENTIALS = {
+    :twitter => {
+      :key => "key",
+      :secret => "secret",
+      :client => :oauth_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
       :expose => true      # set to true to expose client via the web
     }
       
