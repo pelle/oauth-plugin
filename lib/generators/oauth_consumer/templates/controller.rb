@@ -16,6 +16,11 @@ class OauthConsumersController < ApplicationController
   	super
   end
   
+  def client
+    super
+  end
+  
+  
   protected
   
   # Change this to decide where you want to redirect user to after callback is finished.

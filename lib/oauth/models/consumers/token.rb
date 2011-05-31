@@ -40,15 +40,14 @@ module Oauth
           def find_or_create_from_access_token(user,access_token)
             secret = access_token.respond_to?(:secret) ? access_token.secret : nil
             if user
-              token = self.find_or_create_by_user_id_and_token_and_secret(user.id, access_token.token, secret)
+              token = self.find_or_initialize_by_user_id_and_token(user.id, access_token.token)
             else
-              token = self.find_or_create_by_token_and_secret(access_token.token, secret)
+              token = self.find_or_initialize_by_token(access_token.token)
             end
             
-            if token.new_record?
-              token.secret = secret
-              token.save
-            end
+            # set or update the secret
+            token.secret = secret
+            token.save! if token.new_record? or token.changed?
 
             token
           end

@@ -1,5 +1,3 @@
-= MAJOR NEW VERSION NOT READY FOR USE YET
-
 = OAuth Plugin
 
 This is a plugin for implementing OAuth Providers and Consumers in Rails applications.
@@ -30,7 +28,7 @@ You need to install the oauth gem (0.4.4) which is the core OAuth ruby library. 
 
 Add the plugin to your Gemfile:
 
-  gem "oauth-plugin", ">=0.4.0.pre1"
+  gem "oauth-plugin", ">= 0.4.0.pre1"
 
 And install it:
 
@@ -69,6 +67,14 @@ This generates OAuth and OAuth client controllers as well as the required models
 
 It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
 
+=== INSTALL RACK FILTER (NEW)
+
+A big change over previous versions is that we now use a rack filter. You have to install this in your application.rb file:
+
+  require 'oauth/rack/oauth_filter'
+  config.middleware.use OAuth::Rack::OAuthFilter    
+
+
 === Generator Options
 
 The generator supports the defaults you have created in your application.rb file. eg:
@@ -84,7 +90,7 @@ The generator supports the defaults you have created in your application.rb file
 Add the following lines to your user model:
 
   has_many :client_applications
-  has_many :tokens, :class_name=>"OauthToken",:order=>"authorized_at desc",:include=>[:client_application]
+  has_many :tokens, :class_name => "OauthToken", :order => "authorized_at desc", :include => [:client_application]
 
 == OAuth Provider generator (Rails 2)
 
@@ -109,7 +115,7 @@ These can of course be used individually as well.
 Add the following lines to your user model:
 
   has_many :client_applications
-  has_many :tokens, :class_name=>"OauthToken",:order=>"authorized_at desc",:include=>[:client_application]
+  has_many :tokens, :class_name => "OauthToken", :order => "authorized_at desc", :include => [:client_application]
 
 === Migrate database
 
@@ -135,13 +141,13 @@ Make it look like this:
 
   class UpgradeOauth < ActiveRecord::Migration
     def self.up
-      add_column :oauth_tokens,:callback_url,:string
-      add_column :oauth_tokens,:verifier,:string,:limit => 20
+      add_column :oauth_tokens, :callback_url, :string
+      add_column :oauth_tokens, :verifier, :string, :limit => 20
     end
 
     def self.down
-      remove_column :oauth_tokens,:callback_url
-      remove_column :oauth_tokens,:verifier
+      remove_column :oauth_tokens, :callback_url
+      remove_column :oauth_tokens, :verifier
     end
   end
 
@@ -162,7 +168,7 @@ Add the following towards the top of the model class
 Then change the create_request_token method to the following:
 
   def create_request_token
-    RequestToken.create :client_application =>self,:callback_url=>token_callback_url
+    RequestToken.create :client_application => self, :callback_url => token_callback_url
   end
 
 === Changes in request_token.rb
@@ -185,7 +191,7 @@ Make sure it looks like this:
   
     def exchange!
       return false unless authorized?
-      return false unless oauth10? || verifier==provided_oauth_verifier
+      return false unless oauth10? || verifier == provided_oauth_verifier
     
       RequestToken.transaction do
         access_token = AccessToken.create(:user => user, :client_application => client_application)
@@ -198,12 +204,12 @@ Make sure it looks like this:
       if oauth10?
         super
       else
-        "#{super}&oauth_callback_confirmed=true"
+        "#{super}&oauth_callback_confirmed = true"
       end
     end
   
     def oob?
-      self.callback_url=='oob'
+      self.callback_url == 'oob'
     end
   
     def oauth10?
@@ -280,8 +286,8 @@ If you want to give oauth access to everything a registered user can do, just re
 
 If you want to restrict consumers to the index and show methods of your controller do the following:
 
-  before_filter :login_required,:except=>[:show,:index]
-  before_filter :login_or_oauth_required,:only=>[:show,:index]
+  before_filter :login_required, :except => [:show,:index]
+  before_filter :login_or_oauth_required, :only => [:show,:index]
 
 If you have an action you only want used via oauth:
 
@@ -324,30 +330,33 @@ All configuration of applications is done in
 
 Add entries to OAUTH_CREDENTIALS for all OAuth Applications you wish to connect to. Get this information by registering your application at the particular applications developer page.
 
-  OAUTH_CREDENTIALS={
-    :twitter=>{
-      :key=>"key",
-      :secret=>"secret"
+  OAUTH_CREDENTIALS = {
+    :twitter => {
+      :key => "key",
+      :secret => "secret",
+      :client => :twitter_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+      :expose => false, # set to true to expose client via the web
     },
-    :agree2=>{
-      :key=>"key",
-      :secret=>"secret"
+    :agree2 => {
+      :key => "key",
+      :secret => "secret",
+      :expose => false, # set to true to expose client via the web
     },
-    :hour_feed=>{
-      :key=>"",
-      :secret=>"",
-      :options={
-        :site=>"http://hourfeed.com" 
+    :hour_feed => {
+      :key => "",
+      :secret => "",
+      :options = {
+        :site => "http://hourfeed.com" 
       }
     },
-    :nu_bux=>{
-      :key=>"",
-      :secret=>"",
-      :super_class=>"OpenTransactToken",  # if a OAuth service follows a particular standard 
+    :nu_bux => {
+      :key => "",
+      :secret => "",
+      :super_class => "OpenTransactToken",  # if a OAuth service follows a particular standard 
                                           # with a token implementation you can set the superclass
                                           # to use
-      :options=>{
-        :site=>"http://nubux.heroku.com"
+      :options => {
+        :site => "http://nubux.heroku.com"
       }
     }
   }
@@ -364,11 +373,11 @@ eg. If you connect to Yahoo's FireEagle you would add the :fire_eagle entry to O
 
 This allows you to add a has_one association in your user model:
 
-  has_one  :fire_eagle, :class_name=>"FireEagleToken", :dependent=>:destroy
+  has_one  :fire_eagle, :class_name => "FireEagleToken", :dependent => :destroy
 
 And you could do:
 
-  @location=@user.fire_eagle.client.location
+  @location = @user.fire_eagle.client.location
 
 The client method gives you a OAuth::AccessToken which you can use to perform rest operations on the client site - see http://oauth.rubyforge.org/rdoc/classes/OAuth/AccessToken.html
 
@@ -397,8 +406,32 @@ To connect a user to an external service link or redirect them to:
 Where SERVICE_NAME is the name you set in the OAUTH_CREDENTIALS hash. This will request the request token and redirect the user to the services authorization screen. When the user accepts the get redirected back to:
 
   /oauth_consumers/[SERVICE_NAME]/callback
-  
+
 You can specify this url to the service you're calling when you register, but it will automatically be sent along anyway.
+
+=== Expose client
+
+This is designed to let your local javascript apps access remote OAuth apis. You have to specifically enable this by adding the expose flag to your oauth config file. eg:
+
+  OAUTH_CREDENTIALS = {
+    :twitter => {
+      :key => "key",
+      :secret => "secret",
+      :client => :oauth_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+      :expose => true      # set to true to expose client via the web
+    }
+      
+Once the user has authorized your application, you can access the client APIs via:
+
+  /oauth_consumers/[SERVICE_NAME]/client/[ENDPOINT]
+
+For example to get the user's Google Calendars in JSON (documented in their API as "https://www.google.com/calendar/feeds/default?alt=jsonc"), you would append that path as the ENDPOINT above, i.e.
+
+  /oauth_consumers/google/client/calendar/feeds/default?alt=jsonc
+
+As another example, to get my Twitter info as XML (available at "https://api.twitter.com/1/users/show.xml?screen_name=pelleb"), use:
+
+  /oauth_consumers/twitter/client/1/users/show.xml?screen_name=pelleb
 
 === Migrate database
 
@@ -409,6 +442,13 @@ The database is defined in:
 Run them as any other normal migration in rails with:
 
   rake db:migrate
+
+== Contribute and earn OAuth Karma
+
+Anyone who has a commit accepted into the official oauth-plugin git repo is awarded OAuthKarma:
+
+https://picomoney.com/oauth-karma/accounts
+
 
 == More
 
@@ -424,4 +464,4 @@ The OAuth Ruby Gem home page is http://oauth.rubyforge.org
 
 Please help documentation, patches and testing.
 
-Copyright (c) 2007-2010 Pelle Braendgaard and contributors, released under the MIT license
+Copyright (c) 2007-2011 Pelle Braendgaard and contributors, released under the MIT license

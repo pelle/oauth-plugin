@@ -7,16 +7,21 @@
 #   :twitter=>{
 #     :key=>"",
 #     :secret=>"",
+#     :client=>:twitter_gem, # :twitter_gem or :oauth_gem (defaults to :twitter_gem)
+#     :expose => false, # expose client at /oauth_consumers/twitter/client see docs
 #     :allow_login => true # Use :allow_login => true to allow user to login to account
 #   },
 #   :google=>{
 #     :key=>"",
 #     :secret=>"",
+#     :expose => false, # expose client at /oauth_consumers/google/client see docs
 #     :scope=>"" # see http://code.google.com/apis/gdata/faq.html#AuthScopes
 #   },
 #   :github=>{
 #     :key => "",
-#     :secret => ""
+#     :secret => "",
+#     :expose => false, # expose client at /oauth_consumers/twitter/client see docs
+#
 #   },
 #   :facebook=>{
 #     :key => "",
