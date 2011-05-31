@@ -38,9 +38,12 @@ module OAuth
         def initialize(controller,strategies)
           @controller = controller
           @strategies = strategies
+          @strategies << :two_legged
         end
         
         def allow?
+puts @strategies.inspect
+puts env["oauth.strategies"].inspect
           if @strategies.include?(:interactive) && interactive
             true
           elsif !(@strategies & env["oauth.strategies"].to_a).empty?
