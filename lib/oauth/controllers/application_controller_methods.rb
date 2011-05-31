@@ -42,8 +42,6 @@ module OAuth
         end
         
         def allow?
-puts @strategies.inspect
-puts env["oauth.strategies"].inspect
           if @strategies.include?(:interactive) && interactive
             true
           elsif !(@strategies & env["oauth.strategies"].to_a).empty?
