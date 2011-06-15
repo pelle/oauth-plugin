@@ -1,6 +1,6 @@
 module OAuth
   module Controllers
-   
+
     module ProviderController
       def self.included(controller)
         controller.class_eval do
@@ -12,7 +12,7 @@ module OAuth
           skip_before_filter :verify_authenticity_token, :only=>[:request_token, :access_token, :invalidate, :test_request]
         end
       end
-      
+
       def request_token
         @token = current_client_application.create_request_token params
         if @token
@@ -20,7 +20,7 @@ module OAuth
         else
           render :nothing => true, :status => 401
         end
-      end 
+      end
 
       def access_token
         @token = current_token && current_token.exchange!
@@ -32,14 +32,14 @@ module OAuth
       end
 
       def token
-        @client_application = ClientApplication.find_by_key params[:client_id]
+        @client_application = ClientApplication.find_by_key! params[:client_id]
         if @client_application.secret != params[:client_secret]
           oauth2_error "invalid_client"
           return
         end
         if ["authorization_code","password","none"].include?(params[:grant_type])
           send "oauth2_token_#{params[:grant_type].underscore}"
-        else 
+        else
           oauth2_error "unsupported_grant_type"
         end
       end
@@ -50,7 +50,7 @@ module OAuth
 
       def authorize
         if params[:oauth_token]
-          @token = ::RequestToken.find_by_token params[:oauth_token]
+          @token = ::RequestToken.find_by_token! params[:oauth_token]
           oauth1_authorize
         elsif ["code","token"].include?(params[:response_type]) # pick flow
           send "oauth2_authorize_#{params[:response_type]}"
@@ -58,20 +58,20 @@ module OAuth
       end
 
       def revoke
-        @token = current_user.tokens.find_by_token params[:token]
+        @token = current_user.tokens.find_by_token! params[:token]
         if @token
           @token.invalidate!
           flash[:notice] = "You've revoked the token for #{@token.client_application.name}"
         end
         redirect_to oauth_clients_url
       end
-      
+
       # Invalidate current token
       def invalidate
         current_token.invalidate!
         head :status=>410
       end
-      
+
       # Capabilities of current_token
       def capabilities
         if current_token.respond_to?(:capabilities)
@@ -79,7 +79,7 @@ module OAuth
         else
           @capabilities={:invalidate=>url_for(:action=>:invalidate)}
         end
-        
+
         respond_to do |format|
           format.json {render :json=>@capabilities}
           format.xml {render :xml=>@capabilities}
@@ -87,15 +87,15 @@ module OAuth
       end
 
       protected
-      
+
       def oauth1_authorize
         unless @token
           render :action=>"authorize_failure"
           return
         end
 
-        unless @token.invalidated?    
-          if request.post? 
+        unless @token.invalidated?
+          if request.post?
             if user_authorizes_token?
               @token.authorize!(current_user)
               @redirect_url = URI.parse(@token.oob? ? @token.client_application.callback_url : @token.callback_url)
@@ -186,7 +186,7 @@ module OAuth
           return
         end
         @token = @verification_code.exchange!
-        render :json=>@token    
+        render :json=>@token
       end
 
       # http://tools.ietf.org/html/draft-ietf-oauth-v2-08#section-4.1.2
@@ -197,9 +197,9 @@ module OAuth
           return
         end
         @token = Oauth2Token.create :client_application=>@client_application, :user=>@user, :scope=>params[:scope]
-        render :json=>@token    
+        render :json=>@token
       end
-      
+
       # should authenticate and return a user if valid password. Override in your own controller
       def authenticate_user(username,password)
         User.authenticate(username,password)
@@ -208,13 +208,13 @@ module OAuth
       # autonomous authorization which creates a token for client_applications user
       def oauth2_token_none
         @token = Oauth2Token.create :client_application=>@client_application, :user=>@client_application.user, :scope=>params[:scope]
-        render :json=>@token    
+        render :json=>@token
       end
 
       # Override this to match your authorization page form
       def user_authorizes_token?
         params[:authorize] == '1'
-      end  
+      end
 
       def oauth2_error(error="invalid_grant")
         render :json=>{:error=>error}.to_json
