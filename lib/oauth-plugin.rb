@@ -10,12 +10,13 @@ else
   ActionController::Base.send :include, OAuth::Controllers::ApplicationControllerMethods
 end
 
-
-module OAuth
-  module Plugin
-    class OAuthRailtie < Rails::Railtie
-      initializer "oauth-plugin.configure_rails_initialization" do |app|
-        ActionController::Base.send :include, OAuth::Controllers::ApplicationControllerMethods
+if defined? ::Rails && defined ::Rails::Railtie 
+  module OAuth
+    module Plugin
+      class OAuthRailtie < Rails::Railtie
+        initializer "oauth-plugin.configure_rails_initialization" do |app|
+          ActionController::Base.send :include, OAuth::Controllers::ApplicationControllerMethods
+        end
       end
     end
   end
