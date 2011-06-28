@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
-  s.date = %q{2010-12-08}
+  s.date = %q{2011-06-28}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  
+
   s.homepage = %q{http://github.com/pelle/oauth-plugin}
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{oauth}
@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "guard-rspec"
   s.add_development_dependency "growl"
   s.add_development_dependency "rack-test"
-  
+
   s.add_dependency "multi_json"
   s.add_dependency("oauth", ["~> 0.4.4"])
   s.add_dependency("rack")

@@ -54,6 +54,8 @@ module OAuth
           oauth1_authorize
         elsif ["code","token"].include?(params[:response_type]) # pick flow
           send "oauth2_authorize_#{params[:response_type]}"
+        else
+          render :status=>404, :text=>"No token provided"
         end
       end
 

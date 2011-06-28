@@ -1,3 +1,6 @@
+0.4.0-pre6
+  - fixes issue with erb generator in rails 3 [pelleb]
+  - various cleanups in generators [akonan]
 0.4.0-pre5
   - protect oauth consumer relay with :expose configuration option. It's off by default. [pelle]
   - Reenable twitter client. It is now configurable for twitter tokens. :client=>:twitter_gem or :oauth_gem [pelle]
@@ -40,7 +43,7 @@
   0.3.12
   - Added a simple PortableContacts adapter for GoogleToken
   - Added a SimpleClient wrapper to provide really simple wrapper for OAuth based json web services
-  - Increased token size in consumer_tokens table because of Yahoo's oversized tokens 
+  - Increased token size in consumer_tokens table because of Yahoo's oversized tokens
   - Added support for Yahoo
   - Added support for Google (Boon Low)
 9/26/2009
@@ -58,11 +61,11 @@
   - Added invalidate action to provider, which allows a token to invalidate itself /oauth/invalidate
   - Added capabilities action to provider. Lets you expand to allow auto discovery of permissions and services that token provides.
   - Can override how authorize form indicates an authorization. To get around ugly checkbox
-  
+
     def user_authorizes_token?
       params[:commit] == 'Authorize'
     end
-  
+
 7/23/2009
   0.3.8
   - Fixed Gem Plugins Loading
