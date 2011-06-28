@@ -15,7 +15,7 @@ class ClientApplicationTest < ActiveSupport::TestCase
   fixtures :users,:client_applications,:oauth_tokens
   
   def setup
-    @application = ClientApplication.create :name=>"Agree2",:url=>"http://agree2.com",:user=>users(:quentin)
+    @application = ClientApplication.create :name => "Agree2", :url => "http://agree2.com", :user => users(:quentin)
     create_consumer
   end
 

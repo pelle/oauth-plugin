@@ -50,7 +50,7 @@ describe OauthClientsController do
   
     it "should assign client_applications" do
       do_get
-      assigns[:client_application].should==current_client_application
+      assigns[:client_application].should == current_client_application
     end
   
     it "should render show template" do
@@ -73,7 +73,7 @@ describe OauthClientsController do
   
     it "should assign client_applications" do
       do_get
-      assigns[:client_application].class.should==ClientApplication
+      assigns[:client_application].class.should == ClientApplication
     end
   
     it "should render show template" do
@@ -95,7 +95,7 @@ describe OauthClientsController do
   
     it "should assign client_applications" do
       do_get
-      assigns[:client_application].should==current_client_application
+      assigns[:client_application].should == current_client_application
     end
   
     it "should render edit template" do
@@ -108,7 +108,7 @@ describe OauthClientsController do
   describe "create" do
     
     def do_valid_post
-      post :create, 'client_application'=>{'name' => 'my site', :url=>"http://test.com"}
+      post :create, 'client_application' => {'name' => 'my site', :url => "http://test.com"}
       @client_application = ClientApplication.last
     end
 
@@ -150,11 +150,11 @@ describe OauthClientsController do
   describe "update" do
   
     def do_valid_update
-      put :update, :id => '1', 'client_application'=>{'name' => 'updated site'}
+      put :update, :id => '1', 'client_application' => {'name' => 'updated site'}
     end
 
     def do_invalid_update
-      put :update, :id => '1', 'client_application'=>{'name' => nil}
+      put :update, :id => '1', 'client_application' => {'name' => nil}
     end
   
     it "should redirect to show client_application" do

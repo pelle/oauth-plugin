@@ -54,7 +54,7 @@ class OauthClientsControllerShowTest < ActionController::TestCase
   end
   
   def do_get
-    get :show, :id=>'3'
+    get :show, :id => '3'
   end
   
   def test_should_be_successful
@@ -169,12 +169,12 @@ class OauthClientsControllerCreateTest < ActionController::TestCase
   
   def do_valid_post
     @client_application.expects(:save).returns(true)
-    post :create,'client_application'=>{'name'=>'my site'}
+    post :create,'client_application' => {'name' => 'my site'}
   end
 
   def do_invalid_post
     @client_application.expects(:save).returns(false)
-    post :create,:client_application=>{:name=>'my site'}
+    post :create,:client_application=>{:name => 'my site'}
   end
   
   def test_should_query_current_users_client_applications
@@ -248,12 +248,12 @@ class OauthClientsControllerUpdateTest < ActionController::TestCase
   
   def do_valid_update
     @client_application.expects(:update_attributes).returns(true)
-    put :update, :id => '1', 'client_application' => {'name'=>'my site'}
+    put :update, :id => '1', 'client_application' => {'name' => 'my site'}
   end
 
   def do_invalid_update
     @client_application.expects(:update_attributes).returns(false)
-    put :update, :id=>'1', 'client_application' => {'name'=>'my site'}
+    put :update, :id=>'1', 'client_application' => {'name' => 'my site'}
   end
   
   def test_should_query_current_users_client_applications
