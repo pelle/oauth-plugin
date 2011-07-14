@@ -14,8 +14,6 @@ module OAuth
     # require 'oauth/rack/oauth_filter'
     # config.middleware.use OAuth::Rack::OAuthFilter
 
-
-
     class OAuthFilter
       def initialize(app)
         @app = app
@@ -23,12 +21,11 @@ module OAuth
 
       def call(env)
         request = ::Rack::Request.new(env)
-        env["oauth_plugin"]=true
+        env["oauth_plugin"] = true
         strategies = []
         if token_string = oauth2_token(request)
-          token = Oauth2Token.find_by_token(token_string) if token_string
-          if token
-            env["oauth.token"] = token
+          if token = Oauth2Token.find(:conditions => ['invalidated_at IS NULL AND authorized_at IS NOT NULL and token = ?', token_string])
+            env["oauth.token"]   = token
             env["oauth.version"] = 2
             strategies << :oauth20_token
             strategies << :token
@@ -37,15 +34,15 @@ module OAuth
         elsif oauth1_verify(request) do |request_proxy|
             client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
             env["oauth.client_application_candidate"] = client_application
-            # Store this temporarily in client_application object for use in request token generation
-            client_application.token_callback_url=request_proxy.oauth_callback if request_proxy.oauth_callback
 
+            # Store this temporarily in client_application object for use in request token generation
+            client_application.token_callback_url = request_proxy.oauth_callback if request_proxy.oauth_callback
             oauth_token = nil
 
             if request_proxy.token
-              oauth_token = client_application.tokens.first(:conditions=>{:token => request_proxy.token})
+              oauth_token = client_application.tokens.first(:conditions => { :token => request_proxy.token })
               if oauth_token.respond_to?(:provided_oauth_verifier=)
-                oauth_token.provided_oauth_verifier=request_proxy.oauth_verifier
+                oauth_token.provided_oauth_verifier = request_proxy.oauth_verifier
               end
               env["oauth.token_candidate"] = oauth_token
             end
@@ -88,7 +85,7 @@ module OAuth
       def oauth2_token(request)
         (request.params["oauth_token"] && !request.params["oauth_signature"] ? request.params["oauth_token"] : nil )  ||
           request.env["HTTP_AUTHORIZATION"] &&
-            request.env["HTTP_AUTHORIZATION"][/^(OAuth|Token) ([^\s]*)$/] && $2
+          request.env["HTTP_AUTHORIZATION"][/^(OAuth|Token) ([^\s]*)$/, 2]
       end
     end
   end
