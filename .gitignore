@@ -8,3 +8,5 @@ pkg
 .swp
 .idea
 .rvmrc
+
+Gemfile.lock
