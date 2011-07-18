@@ -199,7 +199,7 @@ describe OAuth::Rack::OAuthFilter do
   class OauthToken
     attr_accessor :token
 
-    def self.find(conditions_hash)
+    def self.first(conditions_hash)
       case conditions_hash[:conditions].last
       when "not_authorized", "invalidated"
         nil
