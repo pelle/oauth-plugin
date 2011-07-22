@@ -22,6 +22,7 @@ module Oauth
           end
           
           def consumer
+            options = credentials[:options] || {}
             @consumer||=OAuth::Consumer.new credentials[:key],credentials[:secret],credentials[:options]
           end
 
