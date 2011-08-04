@@ -104,7 +104,7 @@ module OAuth
       end
       
       def current_client_application
-        request.env["oauth.version"]==1 && env["oauth.client_application"] || current_token.try(:client_application)
+        request.env["oauth.version"]==1 && request.env["oauth.client_application"] || current_token.try(:client_application)
       end
       
       def oauth?
