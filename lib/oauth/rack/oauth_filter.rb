@@ -5,7 +5,7 @@ require "oauth/request_proxy/rack_request"
 
 module OAuth
   module Rack
-    
+
     # An OAuth 1.0a filter to be used together with the oauth-plugin for rails.T
     # This is still experimental
     #
@@ -13,15 +13,15 @@ module OAuth
     #
     # require 'oauth/rack/oauth_filter'
     # config.middleware.use OAuth::Rack::OAuthFilter
-    
-    
-    
+
+
+
     class OAuthFilter
       def initialize(app)
         @app = app
       end
-      
-      def call(env)        
+
+      def call(env)
         request = ::Rack::Request.new(env)
         env["oauth_plugin"]=true
         strategies = []
@@ -31,7 +31,7 @@ module OAuth
             env["oauth.token"] = token
             env["oauth.version"] = 2
             strategies << :oauth20_token
-            strategies << :token            
+            strategies << :token
           end
 
         elsif oauth1_verify(request) do |request_proxy|
@@ -41,11 +41,11 @@ module OAuth
             client_application.token_callback_url=request_proxy.oauth_callback if request_proxy.oauth_callback
 
             oauth_token = nil
-            
+
             if request_proxy.token
               oauth_token = client_application.tokens.first(:conditions=>{:token => request_proxy.token})
               if oauth_token.respond_to?(:provided_oauth_verifier=)
-                oauth_token.provided_oauth_verifier=request_proxy.oauth_verifier 
+                oauth_token.provided_oauth_verifier=request_proxy.oauth_verifier
               end
               env["oauth.token_candidate"] = oauth_token
             end
@@ -75,7 +75,7 @@ module OAuth
       end
 
       def oauth1_verify(request, options = {}, &block)
-        begin 
+        begin
           signature = OAuth::Signature.build(request, options, &block)
           return false unless OauthNonce.remember(signature.request.nonce, signature.request.timestamp)
           value = signature.verify
@@ -86,10 +86,10 @@ module OAuth
       end
 
       def oauth2_token(request)
-        request.params["oauth_token"] ||
+        (request.params["oauth_token"] && !request.params["oauth_signature"])  ||
           request.env["HTTP_AUTHORIZATION"] &&
             request.env["HTTP_AUTHORIZATION"][/^(OAuth|Token) ([^\s]*)$/] && $2
       end
-    end      
+    end
   end
 end
