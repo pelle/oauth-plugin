@@ -1,5 +1,8 @@
 0.4.0-pre7
   - OAuth 1 requests using query or form encoded parameters where being interpreted as OAuth2 [pelleb]
+  - OAuth 2 requests were not checking for invalidated tokens. Please upgrade for this if you offer OAuth 2 [rymai]
+  - Handle case where credentials[:options] in consumer plugin was nil [marnen]
+  - Better facebook example [marnen]
 0.4.0-pre6
   - fixes issue with erb generator in rails 3 [pelleb]
   - various cleanups in generators [akonan]
