@@ -22,7 +22,8 @@ module Oauth
           end
           
           def consumer
-            @consumer||=OAuth::Consumer.new credentials[:key],credentials[:secret],credentials[:options]
+            options = credentials[:options] || {}
+            @consumer||=OAuth::Consumer.new credentials[:key],credentials[:secret],options
           end
 
           def get_request_token(callback_url)
