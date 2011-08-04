@@ -25,7 +25,12 @@
 #   },
 #   :facebook => {
 #     :key => "",
-#     :secret => ""
+#     :secret => "",
+#     :oauth_version => 2,
+#     :super_class => 'Oauth2Token' # unnecessary if you have an explicit "class FacebookToken < Oauth2Token",
+#     :options => {
+#       :site => "https://graph.facebook.com"
+#     }
 #   },
 #   :agree2 => {
 #     :key => "",
