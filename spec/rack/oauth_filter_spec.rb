@@ -3,14 +3,15 @@ require 'rack/test'
 require 'oauth/rack/oauth_filter'
 require 'multi_json'
 require 'forwardable'
+
 class OAuthEcho
   def call(env)
     response = {}
-    response[:oauth_token] = env["oauth.token"].token if env["oauth.token"]
+    response[:oauth_token]        = env["oauth.token"].token            if env["oauth.token"]
     response[:client_application] = env["oauth.client_application"].key if env["oauth.client_application"]
-    response[:oauth_version] = env["oauth.version"] if env["oauth.version"]
-    response[:strategies] = env["oauth.strategies"] if env["oauth.strategies"]
-     [200 ,{"Accept"=>"application/json"}, [MultiJson.encode(response)] ]
+    response[:oauth_version]      = env["oauth.version"]                if env["oauth.version"]
+    response[:strategies]         = env["oauth.strategies"]             if env["oauth.strategies"]
+     [200, { "Accept" => "application/json" }, [MultiJson.encode(response)]]
   end
 end
 
@@ -55,32 +56,122 @@ describe OAuth::Rack::OAuthFilter do
     response.should == {"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","oauth10_request_token"]}
   end
 
-  it "should authenticate with oauth2 auth header" do
-    get '/',{},{"HTTP_AUTHORIZATION"=>"OAuth my_token"}
-    last_response.should be_ok
-    response = MultiJson.decode(last_response.body)
-    response.should == {"oauth_token" => "my_token", "oauth_version"=>2, "strategies"=>["oauth20_token","token"]}
-  end
+  describe "OAuth2" do
+    describe "token given through a HTTP Auth Header" do
+      context "authorized and non-invalidated token" do
+        it "authenticates" do
+          get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth valid_token" }
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+        end
+      end
 
-  it "should authenticate with pre draft 10 oauth2 auth header" do
-    get '/',{},{"HTTP_AUTHORIZATION"=>"Token my_token"}
-    last_response.should be_ok
-    response = MultiJson.decode(last_response.body)
-    response.should == {"oauth_token" => "my_token", "oauth_version"=>2, "strategies"=>["oauth20_token","token"]}
-  end
+      context "non-authorized token" do
+        it "doesn't authenticate" do
+          get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth not_authorized" }
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
 
-  it "should authenticate with oauth2 query parameter" do
-    get '/?oauth_token=my_token'
-    last_response.should be_ok
-    response = MultiJson.decode(last_response.body)
-    response.should == {"oauth_token" => "my_token", "oauth_version"=>2, "strategies"=>["oauth20_token","token"]}
-  end
+      context "authorized and invalidated token" do
+        it "doesn't authenticate with an invalidated token" do
+          get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth invalidated" }
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+    end
 
-  it "should authenticate with oauth2 post parameter" do
-    post '/', :oauth_token=>'my_token'
-    last_response.should be_ok
-    response = MultiJson.decode(last_response.body)
-    response.should == {"oauth_token" => "my_token", "oauth_version"=>2, "strategies"=>["oauth20_token","token"]}
+    describe "token given through a HTTP Auth Header following the OAuth2 pre draft" do
+      context "authorized and non-invalidated token" do
+        it "authenticates" do
+          get '/', {}, { "HTTP_AUTHORIZATION" => "Token valid_token" }
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+        end
+      end
+
+      context "non-authorized token" do
+        it "doesn't authenticate" do
+          get '/', {}, { "HTTP_AUTHORIZATION" => "Token not_authorized" }
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+
+      context "authorized and invalidated token" do
+        it "doesn't authenticate with an invalidated token" do
+          get '/', {}, { "HTTP_AUTHORIZATION" => "Token invalidated" }
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+    end
+
+    describe "token given through a query parameter" do
+      context "authorized and non-invalidated token" do
+        it "authenticates" do
+          get '/?oauth_token=valid_token'
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+        end
+      end
+
+      context "non-authorized token" do
+        it "doesn't authenticate" do
+          get '/?oauth_token=not_authorized'
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+
+      context "authorized and invalidated token" do
+        it "doesn't authenticate with an invalidated token" do
+          get '/?oauth_token=invalidated'
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+    end
+
+    describe "token given through a post parameter" do
+      context "authorized and non-invalidated token" do
+        it "authenticates" do
+          post '/', :oauth_token => 'valid_token'
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+        end
+      end
+
+      context "non-authorized token" do
+        it "doesn't authenticate" do
+          post '/', :oauth_token => 'not_authorized'
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+
+      context "authorized and invalidated token" do
+        it "doesn't authenticate with an invalidated token" do
+          post '/', :oauth_token => 'invalidated'
+          last_response.should be_ok
+          response = MultiJson.decode(last_response.body)
+          response.should == {}
+        end
+      end
+    end
   end
 
 
@@ -108,8 +199,13 @@ describe OAuth::Rack::OAuthFilter do
   class OauthToken
     attr_accessor :token
 
-    def self.find_by_token(token)
-      OauthToken.new(token)
+    def self.first(conditions_hash)
+      case conditions_hash[:conditions].last
+      when "not_authorized", "invalidated"
+        nil
+      else
+        OauthToken.new(conditions_hash[:conditions].last)
+      end
     end
 
     def initialize(token)
@@ -131,6 +227,5 @@ describe OAuth::Rack::OAuthFilter do
       true
     end
   end
-
 
 end
