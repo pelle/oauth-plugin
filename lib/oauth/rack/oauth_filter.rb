@@ -23,6 +23,7 @@ module OAuth
         request = ::Rack::Request.new(env)
         env["oauth_plugin"] = true
         strategies = []
+=begin
         if token_string = oauth2_token(request)
           if token = Oauth2Token.first(:conditions => ['invalidated_at IS NULL AND authorized_at IS NOT NULL and token = ?', token_string])
             env["oauth.token"]   = token
@@ -30,8 +31,8 @@ module OAuth
             strategies << :oauth20_token
             strategies << :token
           end
-
-        elsif oauth1_verify(request) do |request_proxy|
+=end
+        if oauth1_verify(request) do |request_proxy|
             client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
             env["oauth.client_application_candidate"] = client_application
 
