@@ -100,7 +100,8 @@ module OAuth
           if request.post?
             if user_authorizes_token?
               @token.authorize!(current_user)
-              @redirect_url = URI.parse(@token.oob? ? @token.client_application.callback_url : @token.callback_url)
+              callback_url  = @token.oob? ? @token.client_application.callback_url : @token.callback_url
+              @redirect_url = URI.parse(callback_url) unless callback_url.blank?
 
               unless @redirect_url.to_s.blank?
                 @redirect_url.query = @redirect_url.query.blank? ?
