@@ -123,15 +123,13 @@ module OAuth
 
       def oauth2_authorize_code
         @client_application = ClientApplication.find_by_key params[:client_id]
+        # Using ||= allows us to override this and customize the verification_code and call super to handle the rest
+        @token ||= Oauth2Verifier.new :client_application=>@client_application, :user=>current_user, :callback_url=>@redirect_url.to_s, :scope => params[:scope], :state => params[:state]
         if request.post?
-          @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url)
-          if user_authorizes_token?
-            @verification_code = Oauth2Verifier.create :client_application=>@client_application, :user=>current_user, :callback_url=>@redirect_url.to_s
-
+          @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url) if params[:redirect_uri] || @client_application.callback_url
+          if user_authorizes_token? && @token.save
             unless @redirect_url.to_s.blank?
-              @redirect_url.query = @redirect_url.query.blank? ?
-                                    "code=#{@verification_code.code}" :
-                                    @redirect_url.query + "&code=#{@verification_code.code}"
+              @redirect_url.query = @redirect_url.query.blank? ? @token.to_query : @redirect_url.query + @token.to_query
               redirect_to @redirect_url.to_s
             else
               render :action => "authorize_success"
@@ -153,12 +151,12 @@ module OAuth
 
       def oauth2_authorize_token
         @client_application = ClientApplication.find_by_key params[:client_id]
+        @token  = Oauth2Token.new :client_application=>@client_application, :user=>current_user, :scope=>params[:scope]
         if request.post?
           @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url)
-          if user_authorizes_token?
-            @token  = Oauth2Token.create :client_application=>@client_application, :user=>current_user, :scope=>params[:scope]
+          if user_authorizes_token? && @token.save
             unless @redirect_url.to_s.blank?
-              redirect_to "#{@redirect_url.to_s}#access_token=#{@token.token}"
+              redirect_to "#{@redirect_url.to_s}##{@token.to_query}"
             else
               render :action => "authorize_success"
             end
@@ -177,7 +175,7 @@ module OAuth
         end
       end
 
-      # http://tools.ietf.org/html/draft-ietf-oauth-v2-08#section-4.1.1
+      # http://tools.ietf.org/html/draft-ietf-oauth-v2-22#section-4.1.1
       def oauth2_token_authorization_code
         @verification_code =  @client_application.oauth2_verifiers.find_by_token params[:code]
         unless @verification_code
@@ -192,7 +190,7 @@ module OAuth
         render :json=>@token
       end
 
-      # http://tools.ietf.org/html/draft-ietf-oauth-v2-08#section-4.1.2
+      # http://tools.ietf.org/html/draft-ietf-oauth-v2-22#section-4.1.2
       def oauth2_token_password
         @user = authenticate_user( params[:username], params[:password])
         unless @user
@@ -222,6 +220,7 @@ module OAuth
       def oauth2_error(error="invalid_grant")
         render :json=>{:error=>error}.to_json
       end
+
     end
   end
 end
