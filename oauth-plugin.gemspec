@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pelle Braendgaard"]
-  s.date = %q{2011-06-28}
+  s.date = %q{2011-10-20}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
