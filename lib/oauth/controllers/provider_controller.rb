@@ -1,3 +1,4 @@
+require 'oauth/provider/authorizer'
 module OAuth
   module Controllers
 
@@ -9,7 +10,7 @@ module OAuth
           oauthenticate :strategies => :token, :interactive => false, :only => [:invalidate,:capabilities]
           oauthenticate :strategies => :two_legged, :interactive => false, :only => [:request_token]
           oauthenticate :strategies => :oauth10_request_token, :interactive => false, :only => [:access_token]
-          skip_before_filter :verify_authenticity_token, :only=>[:request_token, :access_token, :invalidate, :test_request]
+          skip_before_filter :verify_authenticity_token, :only=>[:request_token, :access_token, :invalidate, :test_request, :token]
         end
       end
 
@@ -37,7 +38,10 @@ module OAuth
           oauth2_error "invalid_client"
           return
         end
-        if ["authorization_code","password","none"].include?(params[:grant_type])
+        # older drafts used none for client_credentials
+        params[:grant_type] = 'client_credentials' if params[:grant_type] == 'none'
+        logger.info "grant_type=#{params[:grant_type]}"
+        if ["authorization_code", "password", "client_credentials"].include?(params[:grant_type])
           send "oauth2_token_#{params[:grant_type].underscore}"
         else
           oauth2_error "unsupported_grant_type"
@@ -52,10 +56,14 @@ module OAuth
         if params[:oauth_token]
           @token = ::RequestToken.find_by_token! params[:oauth_token]
           oauth1_authorize
-        elsif ["code","token"].include?(params[:response_type]) # pick flow
-          send "oauth2_authorize_#{params[:response_type]}"
         else
-          render :status=>404, :text=>"No token provided"
+          if request.post?
+            @authorizer = OAuth::Provider::Authorizer.new current_user, user_authorizes_token?, params
+            redirect_to @authorizer.redirect_uri
+          else
+            @client_application = ClientApplication.find_by_key! params[:client_id]
+            render :action => "oauth2_authorize"
+          end
         end
       end
 
@@ -121,59 +129,6 @@ module OAuth
         end
       end
 
-      def oauth2_authorize_code
-        @client_application = ClientApplication.find_by_key params[:client_id]
-        # Using ||= allows us to override this and customize the verification_code and call super to handle the rest
-        @token ||= Oauth2Verifier.new :client_application=>@client_application, :user=>current_user, :callback_url=>@redirect_url.to_s, :scope => params[:scope], :state => params[:state]
-        if request.post?
-          @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url) if params[:redirect_uri] || @client_application.callback_url
-          if user_authorizes_token? && @token.save
-            unless @redirect_url.to_s.blank?
-              @redirect_url.query = @redirect_url.query.blank? ? @token.to_query : @redirect_url.query + @token.to_query
-              redirect_to @redirect_url.to_s
-            else
-              render :action => "authorize_success"
-            end
-          else
-            unless @redirect_url.to_s.blank?
-              @redirect_url.query = @redirect_url.query.blank? ?
-                                    "error=user_denied" :
-                                    @redirect_url.query + "&error=user_denied"
-              redirect_to @redirect_url.to_s
-            else
-              render :action => "authorize_failure"
-            end
-          end
-        else
-          render :action => "oauth2_authorize"
-        end
-      end
-
-      def oauth2_authorize_token
-        @client_application = ClientApplication.find_by_key params[:client_id]
-        @token  = Oauth2Token.new :client_application=>@client_application, :user=>current_user, :scope=>params[:scope]
-        if request.post?
-          @redirect_url = URI.parse(params[:redirect_uri] || @client_application.callback_url)
-          if user_authorizes_token? && @token.save
-            unless @redirect_url.to_s.blank?
-              redirect_to "#{@redirect_url.to_s}##{@token.to_query}"
-            else
-              render :action => "authorize_success"
-            end
-          else
-            unless @redirect_url.to_s.blank?
-              @redirect_url.query = @redirect_url.query.blank? ?
-                                    "error=user_denied" :
-                                    @redirect_url.query + "&error=user_denied"
-              redirect_to @redirect_url.to_s
-            else
-              render :action => "authorize_failure"
-            end
-          end
-        else
-          render :action => "oauth2_authorize"
-        end
-      end
 
       # http://tools.ietf.org/html/draft-ietf-oauth-v2-22#section-4.1.1
       def oauth2_token_authorization_code
@@ -207,7 +162,7 @@ module OAuth
       end
 
       # autonomous authorization which creates a token for client_applications user
-      def oauth2_token_none
+      def oauth2_token_client_credentials
         @token = Oauth2Token.create :client_application=>@client_application, :user=>@client_application.user, :scope=>params[:scope]
         render :json=>@token
       end
