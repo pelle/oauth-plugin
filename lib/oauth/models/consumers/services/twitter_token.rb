@@ -11,12 +11,12 @@ class TwitterToken < ConsumerToken
   end
 
   def client
-    @client ||= begin
-      if credentials[:client].to_sym==:oauth_gem
+    @client ||= begin 
+      if self.class.credentials[:client].to_sym == :oauth_gem
         super
       else
         require 'twitter'
-        Twitter::Client.new(:consumer_key => TwitterToken.consumer.key, :consumer_secret => TwitterToken.consumer.secret)
+        Twitter::Client.new(:consumer_key => self.class.consumer.key, :consumer_secret => self.class.consumer.secret)
       end
     end
   end

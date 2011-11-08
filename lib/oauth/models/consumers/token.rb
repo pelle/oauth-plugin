@@ -55,8 +55,7 @@ module Oauth
 
           def build_user_from_token
           end
-          protected
-
+          
           def credentials
             @credentials||=OAUTH_CREDENTIALS[service_name]
           end
