@@ -19,10 +19,10 @@ module Oauth
       def show
         unless @token
           if @consumer.ancestors.include?(Oauth2Token)
-            request_url = callback2_oauth_consumer_url(params[:id]) + '?' + request.query_string
+            request_url = callback2_oauth_consumer_url(params[:id]) + callback2_querystring
             redirect_to @consumer.authorize_url(request_url)
           else
-            request_url = callback_oauth_consumer_url(params[:id]) + '?' + request.query_string
+            request_url = callback_oauth_consumer_url(params[:id]) + callback2_querystring
             @request_token = @consumer.get_request_token(request_url)
             session[@request_token.token]=@request_token.secret
             if @request_token.callback_confirmed?
@@ -32,6 +32,10 @@ module Oauth
             end
           end
         end
+      end
+      
+      def callback2_querystring
+        request.query_string.blank? ? '' : '?' + request.query_string
       end
       
       def callback2
