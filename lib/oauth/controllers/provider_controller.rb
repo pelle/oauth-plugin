@@ -105,24 +105,22 @@ module OAuth
         end
 
         unless @token.invalidated?
-          if request.post?
-            if user_authorizes_token?
-              @token.authorize!(current_user)
-              callback_url  = @token.oob? ? @token.client_application.callback_url : @token.callback_url
-              @redirect_url = URI.parse(callback_url) unless callback_url.blank?
+          if user_authorizes_token?
+            @token.authorize!(current_user)
+            callback_url  = @token.oob? ? @token.client_application.callback_url : @token.callback_url
+            @redirect_url = URI.parse(callback_url) unless callback_url.blank?
 
-              unless @redirect_url.to_s.blank?
-                @redirect_url.query = @redirect_url.query.blank? ?
-                                      "oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}" :
-                                      @redirect_url.query + "&oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
-                redirect_to @redirect_url.to_s
-              else
-                render :action => "authorize_success"
-              end
+            unless @redirect_url.to_s.blank?
+              @redirect_url.query = @redirect_url.query.blank? ?
+                                    "oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}" :
+                                    @redirect_url.query + "&oauth_token=#{@token.token}&oauth_verifier=#{@token.verifier}"
+              redirect_to @redirect_url.to_s
             else
-              @token.invalidate!
-              render :action => "authorize_failure"
+              render :action => "authorize_success"
             end
+          else
+            @token.invalidate!
+            render :action => "authorize_failure"
           end
         else
           render :action => "authorize_failure"
