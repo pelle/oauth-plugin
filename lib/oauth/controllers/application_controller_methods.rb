@@ -113,12 +113,12 @@ module OAuth
       
       # use in a before_filter. Note this is for compatibility purposes. Better to use oauthenticate now
       def oauth_required
-        Authenticator.new(self,[:oauth10_access_token]).allow?
+        Authenticator.new(self,[:oauth20_token, :oauth10_access_token]).allow?
       end
       
       # use in before_filter. Note this is for compatibility purposes. Better to use oauthenticate now
       def login_or_oauth_required
-        Authenticator.new(self,[:oauth10_access_token,:interactive]).allow?
+        Authenticator.new(self,[:oauth20_token, :oauth10_access_token,:interactive]).allow?
       end
       
       def invalid_oauth_response(code=401,message="Invalid OAuth Request")
