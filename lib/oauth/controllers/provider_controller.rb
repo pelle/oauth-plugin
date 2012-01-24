@@ -9,7 +9,7 @@ module OAuth
           oauthenticate :only => [:test_request]
           oauthenticate :strategies => :token, :interactive => false, :only => [:invalidate,:capabilities]
           oauthenticate :strategies => :two_legged, :interactive => false, :only => [:request_token]
-          oauthenticate :strategies => :oauth10_request_token, :interactive => false, :only => [:access_token]
+          oauthenticate :strategies => [:oauth20_token, :oauth10_request_token], :interactive => false, :only => [:access_token]
           skip_before_filter :verify_authenticity_token, :only=>[:request_token, :access_token, :invalidate, :test_request, :token]
         end
       end
