@@ -8,7 +8,7 @@ module OAuth
           before_filter :login_required, :only => [:authorize,:revoke]
           oauthenticate :only => [:test_request]
           oauthenticate :strategies => :token, :interactive => false, :only => [:invalidate,:capabilities]
-          oauthenticate :strategies => :two_legged, :interactive => false, :only => [:request_token]
+          oauthenticate :strategies => [:token, :two_legged], :interactive => false, :only => [:request_token]
           oauthenticate :strategies => [:oauth20_token, :oauth10_request_token], :interactive => false, :only => [:access_token]
           skip_before_filter :verify_authenticity_token, :only=>[:request_token, :access_token, :invalidate, :test_request, :token]
         end
@@ -152,7 +152,7 @@ module OAuth
           oauth2_error
           return
         end
-        @token = Oauth2Token.create :client_application=>@client_application, :user=>@user, :scope=>params[:scope]
+        @token = Oauth2AccessToken.create :client_application=>@client_application, :user=>@user, :scope=>params[:scope]
         render :json=>@token
       end
 
@@ -163,7 +163,7 @@ module OAuth
 
       # autonomous authorization which creates a token for client_applications user
       def oauth2_token_client_credentials
-        @token = Oauth2Token.create :client_application=>@client_application, :user=>@client_application.user, :scope=>params[:scope]
+        @token = Oauth2AccessToken.create :client_application=>@client_application, :user=>@client_application.user, :scope=>params[:scope]
         render :json=>@token
       end
 
