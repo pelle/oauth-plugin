@@ -5,14 +5,14 @@ class TwitterToken < ConsumerToken
     :authorize_path => "/oauth/authorize",
     :access_token_path => "/oauth/access_token",
   }
-  
+
   def self.consumer(options={})
     @consumer ||= OAuth::Consumer.new(credentials[:key], credentials[:secret], TWITTER_SETTINGS.merge(options))
   end
-  
+
   def client
-    @client ||= begin 
-      if credentials[:client].to_sym==:oauth_gem  
+    @client ||= begin
+      if credentials[:client].to_sym==:oauth_gem
         super
       else
         require 'twitter'
@@ -20,5 +20,5 @@ class TwitterToken < ConsumerToken
       end
     end
   end
-  
+
 end

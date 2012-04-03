@@ -12,7 +12,7 @@ class CreateOauthTables < ActiveRecord::Migration
       t.timestamps
     end
     add_index :client_applications, :key, :unique => true
-    
+
     create_table :oauth_tokens do |t|
       t.integer :user_id
       t.string :type, :limit => 20
@@ -25,9 +25,9 @@ class CreateOauthTables < ActiveRecord::Migration
       t.timestamp :authorized_at, :invalidated_at, :expires_at
       t.timestamps
     end
-    
+
     add_index :oauth_tokens, :token, :unique => true
-    
+
     create_table :oauth_nonces do |t|
       t.string :nonce
       t.integer :timestamp
@@ -35,7 +35,7 @@ class CreateOauthTables < ActiveRecord::Migration
       t.timestamps
     end
     add_index :oauth_nonces,[:nonce, :timestamp], :unique
-    
+
   end
 
   def self.down
