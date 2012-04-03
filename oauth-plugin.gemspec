@@ -34,6 +34,6 @@ Gem::Specification.new do |s|
   s.add_dependency "multi_json"
   s.add_dependency("oauth", ["~> 0.4.4"])
   s.add_dependency("rack")
-  s.add_dependency("oauth2")
+  s.add_dependency("oauth2", '>= 0.5.0')
 end
 
