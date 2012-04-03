@@ -92,7 +92,7 @@ You need to install the oauth gem (0.4.4) which is the core OAuth ruby library. 
 
 Add the plugin to your Gemfile:
 
-  gem "oauth-plugin", ">= 0.4.0.pre1"
+  gem "oauth-plugin", "~> 0.4.0"
 
 And install it:
 

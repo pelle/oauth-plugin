@@ -1,3 +1,7 @@
+0.4.0
+  - fix migrations to use expires_at instead of valid_to [pelle]
+  - add force parameter for forcing token refresh [afeold]
+  - make it work in rails 2x [Kimtaro]
 0.4.0-rc2
   - Better OAuth2 support.
   - Refactored authorizer into a Authorizer object which is now better tested
