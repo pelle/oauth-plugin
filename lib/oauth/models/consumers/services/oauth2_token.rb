@@ -12,11 +12,11 @@ class Oauth2Token < ConsumerToken
   def self.authorize_url(callback_url)
     options = {:redirect_uri=>callback_url}
     options[:scope] = credentials[:scope] if credentials[:scope].present?
-    consumer.web_server.authorize_url(options)
+    consumer.auth_code.authorize_url(options)
   end
 
   def self.access_token(user, code, redirect_uri)
-    access_token = consumer.web_server.get_access_token(code, :redirect_uri => redirect_uri)
+    access_token = consumer.auth_code.get_token(code, :redirect_uri => redirect_uri)
     find_or_create_from_access_token user, access_token
   end
 
