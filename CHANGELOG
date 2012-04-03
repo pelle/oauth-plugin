@@ -3,6 +3,7 @@
   - add force parameter for forcing token refresh [afeold]
   - make it work in rails 2x [Kimtaro]
   - Use 0.5+ OAuth2 gem [kookster]
+  - prevent addition of ? marks to callback url when not needed [kookster]
 0.4.0-rc2
   - Better OAuth2 support.
   - Refactored authorizer into a Authorizer object which is now better tested
