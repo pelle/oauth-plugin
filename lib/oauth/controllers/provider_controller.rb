@@ -68,7 +68,7 @@ module OAuth
       end
 
       def revoke
-        @token = current_user.tokens.find_by_token! params[:token]
+        @token = current_user.tokens.where(:token => params[:token]).first
         if @token
           @token.invalidate!
           flash[:notice] = "You've revoked the token for #{@token.client_application.name}"

@@ -38,6 +38,7 @@ module OAuth
         def initialize(controller,strategies)
           @controller = controller
           @strategies = strategies
+          @strategies << :two_legged
         end
 
         def allow?
