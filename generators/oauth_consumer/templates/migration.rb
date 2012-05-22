@@ -9,7 +9,7 @@ class CreateOauthConsumerTokens < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :consumer_tokens, :token, :unique => true
+    add_index :consumer_tokens, :token, :unique => true, :length => 100
 
   end
 
