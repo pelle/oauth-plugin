@@ -86,7 +86,7 @@ module OAuth
         request.params['bearer_token'] || request.params['access_token'] || (request.params["oauth_token"] && !request.params["oauth_signature"] ? request.params["oauth_token"] : nil )  ||
           request.env["HTTP_AUTHORIZATION"] &&
           !request.env["HTTP_AUTHORIZATION"][/(oauth_version="1.0")/] &&
-          request.env["HTTP_AUTHORIZATION"][/^(Bearer|OAuth|Token) ([^\s]*)$/, 2]
+          request.env["HTTP_AUTHORIZATION"][/^(Bearer|OAuth|Token) (token=)?([^\s]*)$/, 3]
       end
     end
   end
