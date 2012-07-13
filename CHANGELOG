@@ -1,3 +1,8 @@
+0.4.1
+  - Security fix for OAuth1 provider. Please upgrade if you're using any 0.4 version. Thanks to [tomhughes]
+  - Limit index size in ConsumerToken migration to deal with very large tokens [devainandor]
+  - Accept ancient OAuth2 Token token=asfavasd like tokens. Just for complete compatibility. [pelle]
+  - oauth2 errors should return http 400 [pelle]
 0.4.0
   - fix migrations to use expires_at instead of valid_to [pelle]
   - add force parameter for forcing token refresh [afeld]
