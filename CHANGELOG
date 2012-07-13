@@ -1,3 +1,5 @@
+0.5.0-rc2
+  - Remove support for Rails 2.x.x
 0.5.0-rc1
   - First step at seperating consumer and provider. This branch contains provider
 0.4.1
