@@ -1,7 +1,5 @@
 require 'spec_helper'
 require 'multi_json'
-require 'oauth/provider/authorizer'
-require 'dummy_provider_models'
 
 describe OAuth::Provider::Authorizer do
 

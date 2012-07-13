@@ -12,6 +12,7 @@ require 'oauth/provider/models/authorized'
 require 'oauth/provider/models/bearer_token'
 require 'oauth/provider/models/secret'
 require 'oauth/provider/models/short_expiry'
+require 'oauth/provider/models/access_token'
 require 'oauth/provider/models/request_token'
 require 'oauth/provider/models/verifier'
 
