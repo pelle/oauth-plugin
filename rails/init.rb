@@ -1,1 +1,1 @@
-require 'oauth-plugin'
+require 'oauth-provider'
