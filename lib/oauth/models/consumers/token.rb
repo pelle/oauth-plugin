@@ -81,9 +81,14 @@ module Oauth
 
           def create_user
             self.user ||= begin
-              User.new params_for_user
+              user = User.new params_for_user
               user.save(:validate=>false)
+              user
             end
+          end
+
+          def create_user_if_create
+            create_user if id.nil?
           end
 
         end
