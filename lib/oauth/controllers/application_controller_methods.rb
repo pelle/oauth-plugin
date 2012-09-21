@@ -43,7 +43,7 @@ module OAuth
         def allow?
           if @strategies.include?(:interactive) && interactive
             true
-          elsif !(@strategies & env["oauth.strategies"].to_a).empty?
+          elsif !(@strategies & Array(env["oauth.strategies"])).empty?
             @controller.send :current_user=, token.user if token
             true
           else
