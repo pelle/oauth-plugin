@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.authors = ["Pelle Braendgaard"]
   s.date = %q{2011-10-20}
   s.description = %q{Rails plugin for implementing an OAuth Provider or Consumer}
+  s.license = "MIT"
   s.email = %q{oauth-ruby@googlegroups.com}
   s.extra_rdoc_files = [
     "README.rdoc"
