@@ -44,8 +44,12 @@ module OAuth
           if @strategies.include?(:interactive) && interactive
             true
           elsif !(@strategies & env["oauth.strategies"].to_a).empty?
-            @controller.send :current_user=, token.user if token
-            true
+            if token.present?
+              @controller.send :current_user=, token.user
+              true
+            else
+              false
+            end
           else
             if @strategies.include?(:interactive)
               controller.send :access_denied
