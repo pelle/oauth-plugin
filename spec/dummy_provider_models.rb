@@ -20,7 +20,7 @@ class ClientApplication
 end
 
 class OauthToken
-  attr_accessor :token
+  attr_accessor :token, :refresh_token
 
   def self.first(conditions_hash)
     case conditions_hash[:conditions].last
