@@ -25,7 +25,7 @@ module Oauth
 
         unless @token
           if @consumer.ancestors.include?(Oauth2Token)
-            request_url = callback2_oauth_consumer_url(params[:id]) + callback2_querystring
+            request_url = callback2_oauth_consumer_url + callback2_querystring
             redirect_to @consumer.authorize_url(request_url)
           else
             request_url = callback_oauth_consumer_url(params[:id]) + callback2_querystring
@@ -45,7 +45,7 @@ module Oauth
       end
       
       def callback2
-        @token = @consumer.access_token(current_user,params[:code], callback2_oauth_consumer_url(params[:id]))
+        @token = @consumer.access_token(current_user,params[:code], callback2_oauth_consumer_url)
         logger.info @token.inspect
         if @token
           # Log user in
@@ -116,6 +116,10 @@ module Oauth
 
           go_back
         end
+      end
+
+      def callback2_oauth_consumer_url
+        @consumer.consumer.options[:redirect_uri]
       end
 
       protected
