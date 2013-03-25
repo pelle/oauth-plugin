@@ -46,7 +46,6 @@ module Oauth
       
       def callback2
         @token = @consumer.access_token(current_user,params[:code], callback2_oauth_consumer_url)
-        logger.info @token.inspect
         if @token
           # Log user in
           if logged_in?
