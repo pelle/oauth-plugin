@@ -72,6 +72,7 @@ module Oauth
             refresh_token = access_token.respond_to?(:refresh_token) ? access_token.refresh_token : nil
             expires_in, expires_at = token.expiration_date(access_token) if token.class.ancestors.include?(Oauth2Token)
 
+            token.token = access_token.token
             token.refresh_token = refresh_token
             token.secret = secret
             token.expires_at = expires_at
