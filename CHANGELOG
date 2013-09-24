@@ -1,3 +1,6 @@
+0.5.1
+  - Support slim templates for consumer [pelle]
+  - Add via argument to match routes to support 4.0 [pelle]
 0.5.0
   - Make compatible with Rails 4 [tomhughes]
   - Added support for RefreshTokens [RubenHoms]

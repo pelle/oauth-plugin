@@ -19,7 +19,7 @@ class OauthConsumerGenerator < Rails::Generator::Base
       m.template 'controller.rb',File.join('app/controllers',"oauth_consumers_controller.rb")
       m.route_entry "map.resources :oauth_consumers,:member=>{:callback=>:get}"
 
-      @template_extension= options[:haml] ? "haml" : "erb"
+      @template_extension= options[:haml] ? "haml" : ( options[:slim] ? "slim": "erb")
 
       m.template "show.html.#{@template_extension}",  File.join('app/views', 'oauth_consumers', "show.html.#{@template_extension}")
       m.template "index.html.#{@template_extension}",  File.join('app/views', 'oauth_consumers', "index.html.#{@template_extension}")
@@ -46,5 +46,7 @@ class OauthConsumerGenerator < Rails::Generator::Base
 #             "Generate the Test::Unit compatible tests instead of RSpec") { |v| options[:test_unit] = v }
       opt.on("--haml",
             "Templates use haml") { |v| options[:haml] = v }
+      opt.on("--slim",
+            "Templates use slim") { |v| options[:slim] = v }
     end
 end
