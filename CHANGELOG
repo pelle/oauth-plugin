@@ -1,3 +1,9 @@
+0.5.0
+  - Make compatible with Rails 4 [tomhughes]
+  - Added support for RefreshTokens [RubenHoms]
+  - allow? should return false when token is not found [thetizzo]
+  - add license to gemspec [jordimassaguerpla]
+  - update documentation for Rails 2.x [yann]
 0.4.1
   - Security fix for OAuth1 provider. Please upgrade if you're using any 0.4 version. Thanks to [tomhughes]
   - Limit index size in ConsumerToken migration to deal with very large tokens [devainandor]
