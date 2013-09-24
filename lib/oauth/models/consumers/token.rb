@@ -38,17 +38,45 @@ module Oauth
             find_or_create_from_access_token user, access_token
           end
 
-          def find_or_create_from_access_token(user,access_token)
-            secret = access_token.respond_to?(:secret) ? access_token.secret : nil
-            if user
-              token = self.find_or_initialize_by_user_id_and_token(user.id, access_token.token)
+          # Finds, creates or updates a ConsumerToken by finding the token
+          # or taking it when it's given. It then updates the attributes and saves the changes/new record to a datastore.
+          # @param user [User] The user to which the access token should belong to
+          # @param access_token [AccessToken || Oauth2Token] Either a request token taken from the service or a ConsumerToken
+          # @param new_token [AccessToken] A new access token, used for refreshing the access token with OAuth 2.
+          #
+          # Usage example:
+          # find_or_create_from_access_token(current_user, access_token) <-- Find or create a new access token
+          # find_or_create_from_access-token(current_user, Oauth2Token.last, client.refresh!) <-- Edits existing record with new refreshed information
+          def find_or_create_from_access_token(user, access_token, new_token = nil)
+            if access_token.class.ancestors.include?(Oauth2Token)
+              token = access_token
             else
-              token = self.find_or_initialize_by_token(access_token.token)
+              if user
+                token = self.find_or_initialize_by_user_id_and_token(user.id, access_token.token)
+              else
+                token = self.find_or_initialize_by_token(access_token.token)
+              end
             end
 
-            # set or update the secret
-            token.secret = secret
+            token = if new_token then set_details(new_token, access_token) else set_details(access_token, token) end
+
             token.save! if token.new_record? or token.changed?
+
+            token
+          end
+
+          # Set the details such as the secret, refresh token and expiration time to an instance of ConsumerToken
+          # @return [ConsumerToken] A ConsumerToken
+          def set_details(access_token, token)
+            secret = access_token.respond_to?(:secret) ? access_token.secret : nil
+            refresh_token = access_token.respond_to?(:refresh_token) ? access_token.refresh_token : nil
+            expires_in, expires_at = token.expiration_date(access_token) if token.class.ancestors.include?(Oauth2Token)
+
+            token.token = access_token.token
+            token.refresh_token = refresh_token
+            token.secret = secret
+            token.expires_at = expires_at
+            token.expires_in = expires_in
 
             token
           end
