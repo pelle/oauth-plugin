@@ -166,6 +166,13 @@ This generates OAuth and OAuth client controllers as well as the required models
 
 It requires an authentication framework such as acts_as_authenticated, restful_authentication or restful_open_id_authentication. It also requires Rails 2.0.
 
+=== INSTALL RACK FILTER (NEW)
+
+A big change over previous versions is that we now use a rack filter. You have to install this in your config/environment.rb file:
+
+  require 'oauth/rack/oauth_filter'
+  config.middleware.use OAuth::Rack::OAuthFilter
+
 === Generator Options
 
 By default the generator generates RSpec and ERB templates. The generator can instead create Test::Unit and/or HAML templates. To do this use the following options:
@@ -356,6 +363,10 @@ If you want to restrict consumers to the index and show methods of your controll
 If you have an action you only want used via oauth:
 
   before_filter :oauth_required
+
+You can also use this method in your controller:
+
+  oauthenticate :strategies => :token , :interactive => false
 
 All of these places the tokens user in current_user as you would expect. It also exposes the following methods:
 
