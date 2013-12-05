@@ -82,7 +82,7 @@ module OAuth
           value = signature.verify
           unless value == true
             request.env['oauth_errors'] ||= []
-            request.env['oauth_errors'] << ["Signature verification failed: expected=#{signature.signature} : based on=#{signature.signature_base_string}"]
+            request.env['oauth_errors'] << "Signature verification failed: expected=#{signature.signature} : based on=#{signature.signature_base_string}"
           end
           value
         rescue OAuth::Signature::UnknownSignatureMethod => e
