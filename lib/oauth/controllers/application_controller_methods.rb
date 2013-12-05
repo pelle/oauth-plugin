@@ -126,7 +126,7 @@ module OAuth
       end
 
       def invalid_oauth_response(code=401,message="Invalid OAuth Request")
-        render :json => {:reason=>self.env['oauth_errors'] || message}, :status => code
+        render :json => {:reason=>self.env['oauth_errors'] || [message]}, :status => code
         false
       end
 
