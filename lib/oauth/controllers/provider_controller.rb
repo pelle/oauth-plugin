@@ -141,6 +141,10 @@ module OAuth
           oauth2_error
           return
         end
+        if @verification_code.invalidated_at <= Time.now
+          oauth2_error
+          return
+        end
         @token = @verification_code.exchange!
         render :json=>@token
       end
