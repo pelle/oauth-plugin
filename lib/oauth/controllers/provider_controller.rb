@@ -137,7 +137,9 @@ module OAuth
           oauth2_error
           return
         end
-        if @verification_code.redirect_url != params[:redirect_uri]
+        if @verification_code.redirect_url != params[:redirect_uri] ||
+           (@verification_code.invalidated_at && @verification_code.invalidated_at <= Time.now) || 
+           @verification_code.expires_at <= Time.now
           oauth2_error
           return
         end
