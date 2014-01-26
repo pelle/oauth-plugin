@@ -10,3 +10,5 @@ pkg
 .rvmrc
 
 Gemfile.lock
+.ruby-version
+.ruby-gemset
