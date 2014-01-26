@@ -41,8 +41,8 @@ describe OAuth::Rack::OAuthFilter do
 
       it "should sign with oauth 1 access token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([AccessToken.new("my_token")])
+        ClientApplication.stub(:find_by_key).and_return(client_application)
+        client_application.tokens.stub(:where).and_return([AccessToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer", oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY", oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1295040394", oauth_token="my_token", oauth_version="1.0"'}
         last_response.should be_ok
         response = MultiJson.decode(last_response.body)
@@ -51,8 +51,8 @@ describe OAuth::Rack::OAuthFilter do
 
       it "should sign with oauth 1 request token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([RequestToken.new("my_token")])
+        ClientApplication.stub(:find_by_key).and_return(client_application)
+        client_application.tokens.stub(:where).and_return([RequestToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer", oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY", oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1295040394", oauth_token="my_token", oauth_version="1.0"'}
         last_response.should be_ok
         response = MultiJson.decode(last_response.body)
@@ -70,8 +70,8 @@ describe OAuth::Rack::OAuthFilter do
 
       it "should sign with oauth 1 access token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([AccessToken.new("my_token")])
+        ClientApplication.stub(:find_by_key).and_return(client_application)
+        client_application.tokens.stub(:where).and_return([AccessToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer",oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY",oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1295040394",oauth_token="my_token",oauth_version="1.0"'}
         last_response.should be_ok
         response = MultiJson.decode(last_response.body)
@@ -80,8 +80,8 @@ describe OAuth::Rack::OAuthFilter do
 
       it "should sign with oauth 1 request token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([RequestToken.new("my_token")])
+        ClientApplication.stub(:find_by_key).and_return(client_application)
+        client_application.tokens.stub(:where).and_return([RequestToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer",oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY",oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1295040394",oauth_token="my_token",oauth_version="1.0"'}
         last_response.should be_ok
         response = MultiJson.decode(last_response.body)
