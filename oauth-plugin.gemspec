@@ -24,13 +24,16 @@ Gem::Specification.new do |s|
   s.rubyforge_project = %q{oauth}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Ruby on Rails Plugin for OAuth Provider and Consumer}
+  
   s.add_development_dependency "opentransact"
-  s.add_development_dependency "rspec", "~> 2.4.0"
+  s.add_development_dependency "rspec", "~> 2.14.0"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "fuubar"
   s.add_development_dependency "guard-rspec"
   s.add_development_dependency "growl"
   s.add_development_dependency "rack-test"
+  s.add_development_dependency "sqlite3"
+  s.add_dependency("rails", ">= 2", "< 5")
 
   s.add_dependency "multi_json"
   s.add_dependency("oauth", ["~> 0.4.4"])

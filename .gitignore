@@ -12,3 +12,4 @@ pkg
 Gemfile.lock
 .ruby-version
 .ruby-gemset
+*.sqlite3

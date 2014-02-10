@@ -3,7 +3,6 @@ require 'rack/test'
 require 'oauth/rack/oauth_filter'
 require 'multi_json'
 require 'forwardable'
-require 'dummy_provider_models'
 
 class OAuthEcho
   def call(env)
@@ -24,6 +23,7 @@ describe OAuth::Rack::OAuthFilter do
   end
 
   it "should pass through without oauth" do
+    Oauth2Token.should_not_receive(:where)
     get '/'
     last_response.should be_ok
     response = MultiJson.decode(last_response.body)
@@ -94,6 +94,7 @@ describe OAuth::Rack::OAuthFilter do
     describe "token given through a HTTP Auth Header" do
       context "authorized and non-invalidated token" do
         it "authenticates" do
+          Oauth2Token.should_receive(:where).with(anything(), "valid_token").and_return([double("valid_token", :token => 'valid_token')])
           get '/', {}, { "HTTP_AUTHORIZATION" => "Bearer valid_token" }
           last_response.should be_ok
           response = MultiJson.decode(last_response.body)
@@ -103,6 +104,7 @@ describe OAuth::Rack::OAuthFilter do
 
       context "non-authorized token" do
         it "doesn't authenticate" do
+          Oauth2Token.should_receive(:where).with(anything(), "not_authorized").and_return([])
           get '/', {}, { "HTTP_AUTHORIZATION" => "Bearer not_authorized" }
           last_response.should be_ok
           response = MultiJson.decode(last_response.body)
@@ -112,6 +114,7 @@ describe OAuth::Rack::OAuthFilter do
 
       context "authorized and invalidated token" do
         it "doesn't authenticate with an invalidated token" do
+          Oauth2Token.should_receive(:where).with(anything(), "invalidated").and_return([])
           get '/', {}, { "HTTP_AUTHORIZATION" => "Bearer invalidated" }
           last_response.should be_ok
           response = MultiJson.decode(last_response.body)
@@ -124,6 +127,7 @@ describe OAuth::Rack::OAuthFilter do
       describe "token given through a HTTP Auth Header" do
         context "authorized and non-invalidated token" do
           it "authenticates" do
+            Oauth2Token.should_receive(:where).with(anything(), "valid_token").and_return([double("valid_token", :token => 'valid_token')])
             get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth valid_token" }
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -133,6 +137,7 @@ describe OAuth::Rack::OAuthFilter do
 
         context "non-authorized token" do
           it "doesn't authenticate" do
+            Oauth2Token.should_receive(:where).with(anything(), "not_authorized").and_return([])
             get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth not_authorized" }
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -142,6 +147,7 @@ describe OAuth::Rack::OAuthFilter do
 
         context "authorized and invalidated token" do
           it "doesn't authenticate with an invalidated token" do
+            Oauth2Token.should_receive(:where).with(anything(), "invalidated").and_return([])
             get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth invalidated" }
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -154,6 +160,7 @@ describe OAuth::Rack::OAuthFilter do
     describe "token given through a HTTP Auth Header following the OAuth2 pre draft" do
       context "authorized and non-invalidated token" do
         it "authenticates" do
+          Oauth2Token.should_receive(:where).with(anything(), "valid_token").and_return([double("valid_token", :token => 'valid_token')])
           get '/', {}, { "HTTP_AUTHORIZATION" => "Token valid_token" }
           last_response.should be_ok
           response = MultiJson.decode(last_response.body)
@@ -163,6 +170,7 @@ describe OAuth::Rack::OAuthFilter do
 
       context "non-authorized token" do
         it "doesn't authenticate" do
+          Oauth2Token.should_receive(:where).with(anything(), "not_authorized").and_return([])
           get '/', {}, { "HTTP_AUTHORIZATION" => "Token not_authorized" }
           last_response.should be_ok
           response = MultiJson.decode(last_response.body)
@@ -172,6 +180,7 @@ describe OAuth::Rack::OAuthFilter do
 
       context "authorized and invalidated token" do
         it "doesn't authenticate with an invalidated token" do
+          Oauth2Token.should_receive(:where).with(anything(), "invalidated").and_return([])
           get '/', {}, { "HTTP_AUTHORIZATION" => "Token invalidated" }
           last_response.should be_ok
           response = MultiJson.decode(last_response.body)
@@ -184,8 +193,8 @@ describe OAuth::Rack::OAuthFilter do
       describe "token given through the query parameter '#{name}'" do
         context "authorized and non-invalidated token" do
           it "authenticates" do
+            Oauth2Token.should_receive(:where).with(anything(), "valid_token").and_return([double("valid_token", :token => 'valid_token')])
             get "/?#{name}=valid_token"
-
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
             response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
@@ -194,6 +203,7 @@ describe OAuth::Rack::OAuthFilter do
 
         context "non-authorized token" do
           it "doesn't authenticate" do
+            Oauth2Token.should_receive(:where).with(anything(), "not_authorized").and_return([])
             get "/?#{name}=not_authorized"
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -203,6 +213,7 @@ describe OAuth::Rack::OAuthFilter do
 
         context "authorized and invalidated token" do
           it "doesn't authenticate with an invalidated token" do
+            Oauth2Token.should_receive(:where).with(anything(), "invalidated").and_return([])
             get "/?#{name}=invalidated"
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -214,6 +225,7 @@ describe OAuth::Rack::OAuthFilter do
       describe "token given through the post parameter '#{name}'" do
         context "authorized and non-invalidated token" do
           it "authenticates" do
+            Oauth2Token.should_receive(:where).with(anything(), "valid_token").and_return([double("valid_token", :token => 'valid_token')])
             post '/', name => 'valid_token'
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -223,6 +235,7 @@ describe OAuth::Rack::OAuthFilter do
 
         context "non-authorized token" do
           it "doesn't authenticate" do
+            Oauth2Token.should_receive(:where).with(anything(), "not_authorized").and_return([])
             post '/', name => 'not_authorized'
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
@@ -232,6 +245,7 @@ describe OAuth::Rack::OAuthFilter do
 
         context "authorized and invalidated token" do
           it "doesn't authenticate with an invalidated token" do
+            Oauth2Token.should_receive(:where).with(anything(), "invalidated").and_return([])
             post '/', name => 'invalidated'
             last_response.should be_ok
             response = MultiJson.decode(last_response.body)
