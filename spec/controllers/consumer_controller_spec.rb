@@ -105,4 +105,41 @@ describe OauthConsumersController do
       end
     end
   end
+  
+  describe "destroy" do
+    context "when not reconnecting" do
+      let(:user   ) { double("user", id: 1234) }
+      let(:service) { 'foo'           }
+      let(:token  ) do
+        token = double("token")
+        expect(token).to receive(:destroy)
+        token
+      end
+      before(:each) do
+        session[:user] = user
+        ConsumerToken.should_receive(:find).and_return(token)
+        get :destroy, :id => service
+      end
+      it 'should redirect to root' do
+        response.should redirect_to root_url
+      end
+    end
+    context "when reconnecting" do
+      let(:user   ) { double("user", id: 1234) }
+      let(:service) { 'foo'           }
+      let(:token  ) do
+        token = double("token")
+        expect(token).to receive(:destroy)
+        token
+      end
+      before(:each) do
+        session[:user] = user
+        ConsumerToken.should_receive(:find).and_return(token)
+        get :destroy, :id => service, :commit => 'Reconnect'
+      end
+      it 'should redirect to root' do
+        response.should redirect_to oauth_consumer_url('foo')
+      end
+    end
+  end
 end
