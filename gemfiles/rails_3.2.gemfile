@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 require 'rbconfig'
 
-gem 'rails',      '~> 4.0.2'
+gem 'rails',      '~> 3.2.16'
 gem 'rb-inotify', '>= 0.5.1'
 gem 'libnotify',  '~> 0.8.2'
 
