@@ -12,7 +12,7 @@ platforms :ruby do
   end
   if RbConfig::CONFIG['target_os'] =~ /linux/i
     gem 'rb-inotify', '>= 0.5.1'
-    gem 'libnotify',  '~> 0.1.3'
+    gem 'libnotify',  '~> 0.8.2'
   end
 end
 
@@ -22,6 +22,6 @@ platforms :jruby do
   end
   if RbConfig::CONFIG['target_os'] =~ /linux/i
     gem 'rb-inotify', '>= 0.5.1'
-    gem 'libnotify',  '~> 0.1.3'
+    gem 'libnotify',  '~> 0.8.2'
   end
 end
