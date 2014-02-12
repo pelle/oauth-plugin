@@ -19,6 +19,9 @@ describe OauthConsumersController do
       it 'should redirect to root' do
         response.should redirect_to root_url
       end
+      it 'should set the successfully connected flash message' do
+        expect(flash[:notice]).to eq "#{service.humanize} was successfully connected to your account"
+      end
     end
     context 'when not logged in' do
       let(:user    ) { nil   }
@@ -37,6 +40,9 @@ describe OauthConsumersController do
       it 'should redirect to root' do
         response.should redirect_to root_url
       end
+      it 'should set the logged in using service flash message' do
+        expect(flash[:notice]).to eq "You logged in with #{service.humanize}"
+      end
     end
     context 'when token cannot be retrieved' do
       let(:user    ) { double("user", id: 1234) }
@@ -51,6 +57,9 @@ describe OauthConsumersController do
       end
       it 'should redirect to the service page' do
         response.should redirect_to oauth_consumer_url('foo')
+      end
+      it 'should set an error flash message' do
+        expect(flash[:error]).to eq "An error happened, please try connecting again"
       end
     end
   end
@@ -70,6 +79,9 @@ describe OauthConsumersController do
       it 'should redirect to root' do
         response.should redirect_to root_url
       end
+      it 'should set the successfully connected flash message' do
+        expect(flash[:notice]).to eq "#{service.humanize} was successfully connected to your account"
+      end
     end
     context 'when not logged in' do
       let(:user    ) { nil   }
@@ -88,6 +100,9 @@ describe OauthConsumersController do
       it 'should redirect to root' do
         response.should redirect_to root_url
       end
+      it 'should set the logged in using service flash message' do
+        expect(flash[:notice]).to eq "You logged in with #{service.humanize}"
+      end
     end
     context 'when token cannot be retrieved' do
       let(:user    ) { double("user", id: 1234) }
@@ -102,6 +117,9 @@ describe OauthConsumersController do
       end
       it 'should redirect to the service page' do
         response.should redirect_to oauth_consumer_url('foo')
+      end
+      it 'should set an error flash message' do
+        expect(flash[:error]).to eq "An error happened, please try connecting again"
       end
     end
   end
@@ -122,6 +140,9 @@ describe OauthConsumersController do
       end
       it 'should redirect to root' do
         response.should redirect_to root_url
+      end
+      it 'should set the successfully disconnected flash message' do
+        expect(flash[:notice]).to eq "#{service.humanize} was successfully disconnected from your account"
       end
     end
     context "when reconnecting" do
