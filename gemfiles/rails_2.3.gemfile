@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+
+require 'rbconfig'
+
+gem 'rails',      '~> 2.3.18'
+gem 'rb-inotify', '>= 0.5.1'
+gem 'libnotify',  '~> 0.8.2'
+
+gemspec :path => '../'
