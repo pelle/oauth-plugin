@@ -25,3 +25,5 @@ platforms :jruby do
     gem 'libnotify',  '~> 0.8.2'
   end
 end
+
+gem 'rails', '>= 3.0.0', '< 5'
