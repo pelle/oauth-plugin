@@ -49,14 +49,14 @@ module Oauth
         if @token
           # Log user in
           if logged_in?
-            flash[:notice] = "#{params[:id].humanize} was successfully connected to your account"
+            set_flash_message :notice, "connected"
           else
             self.current_user = @token.user
-            flash[:notice] = "You logged in with #{params[:id].humanize}"
+            set_flash_message :notice, "logged_in"
           end
           go_back
         else
-          flash[:error] = "An error happened, please try connecting again"
+          set_flash_message :error, "error"
           redirect_to oauth_consumer_url(params[:id])
         end
 
@@ -71,14 +71,14 @@ module Oauth
           if @token
             # Log user in
             if logged_in?
-              flash[:notice] = "#{params[:id].humanize} was successfully connected to your account"
+              set_flash_message :notice, "connected"
             else
               self.current_user = @token.user
-              flash[:notice] = "You logged in with #{params[:id].humanize}"
+              set_flash_message :notice, "logged_in"
             end
             go_back
           else
-            flash[:error] = "An error happened, please try connecting again"
+            set_flash_message :error, "error"
             redirect_to oauth_consumer_url(params[:id])
           end
         end
@@ -111,7 +111,7 @@ module Oauth
         if params[:commit]=="Reconnect"
           redirect_to oauth_consumer_url(params[:id])
         else
-          flash[:notice] = "#{params[:id].humanize} was successfully disconnected from your account"
+          set_flash_message :notice, "disconnected"
 
           go_back
         end
@@ -146,6 +146,29 @@ module Oauth
       # Override this in you controller to deny user or redirect to login screen.
       def deny_access!
         head 401
+      end
+
+      # Sets the flash message with :key, using I18n. By default you are able
+      # to setup your messages using specific service scope, and if no one is
+      # found we look to default scope.
+      # Example (i18n locale file):
+      #
+      #   en:
+      #     oauth_plugin:
+      #       consumer:
+      #         #default_scope_messages - only if service_scope is not found
+      #         twitter:
+      #           #service_scope_messages
+      #
+      # Please refer to README or en.yml locale file to check what messages are
+      # available.
+      def set_flash_message(key, kind, options={})
+        options[:scope] = "oauth_plugin.#{controller_name}"
+        options[:default] = Array(options[:default]).unshift(kind.to_sym)
+        service_name = @token ? @token.service_name : ''
+        options[:service] = service_name.humanize
+        message = I18n.t("#{service_name}.#{kind}", options)
+        flash[key] = message if message.present?
       end
 
     end

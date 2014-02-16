@@ -26,4 +26,5 @@ platforms :jruby do
   end
 end
 
-gem 'rails', '>= 3.0.0', '< 5'
+gem 'rails',      '>= 3.0.0', '< 5'
+gem 'rails-i18n', '>= 3.0.0', '< 5'
