@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "opentransact"
   s.add_development_dependency "rspec", "~> 2.14.0"
   s.add_development_dependency "rspec-rails", "~> 2.14.0"
+  s.add_development_dependency "generator_spec", "~> 0.9.2"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "fuubar"
   s.add_development_dependency "guard-rspec"
