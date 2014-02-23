@@ -22,5 +22,3 @@ if Rails::VERSION::MAJOR >= 3
     end
   end
 end
-
-I18n.load_path += Dir[File.dirname(__FILE__) + '/oauth-plugin/locale/*.yml']

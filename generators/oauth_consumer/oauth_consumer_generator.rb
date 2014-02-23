@@ -12,12 +12,15 @@ class OauthConsumerGenerator < Rails::Generator::Base
       m.directory File.join('app/helpers')
       m.directory File.join('app/views', 'oauth_consumers')
       m.directory File.join('config/initializers')
+      m.directory File.join('config/locales')
 
       m.template 'oauth_config.rb',File.join('config/initializers', "oauth_consumers.rb")
       m.template 'consumer_token.rb',File.join('app/models',"consumer_token.rb")
 
       m.template 'controller.rb',File.join('app/controllers',"oauth_consumers_controller.rb")
       m.route_entry "map.resources :oauth_consumers,:member=>{:callback=>:get}"
+      
+      m.file "../../config/locales/en.yml", File.join('config/locales', "config/locales/oauth-plugin.en.yml")
 
       @template_extension= options[:haml] ? "haml" : ( options[:slim] ? "slim": "erb")
 

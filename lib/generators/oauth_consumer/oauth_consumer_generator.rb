@@ -14,6 +14,10 @@ class OauthConsumerGenerator < Rails::Generators::Base
     template 'controller.rb', File.join('app', 'controllers', 'oauth_consumers_controller.rb')
   end
 
+  def copy_locale
+    copy_file "../../../../config/locales/en.yml", "config/locales/oauth-plugin.en.yml"
+  end
+
   hook_for :template_engine
 
   def add_route

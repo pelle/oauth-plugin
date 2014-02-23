@@ -28,6 +28,9 @@ describe OauthConsumerGenerator, type: :generator do
       end
     }
   end
+  it "installs the locale file" do
+    assert_file "config/locales/oauth-plugin.en.yml"
+  end
 #  it "adds oauth_consumers routes" do
 #    #match = /resources :oauth_consumers do/
 #    #assert_file "config/routes.rb", match
