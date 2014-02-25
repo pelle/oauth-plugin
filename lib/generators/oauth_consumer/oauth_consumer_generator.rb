@@ -15,7 +15,7 @@ class OauthConsumerGenerator < Rails::Generators::Base
   end
 
   def copy_locale
-    copy_file "../../../../config/locales/en.yml", "config/locales/oauth-plugin.en.yml"
+    copy_file "../../../../config/locales/consumer.en.yml", "config/locales/oauth-plugin-consumer.en.yml"
   end
 
   hook_for :template_engine
