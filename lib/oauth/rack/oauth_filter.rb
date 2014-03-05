@@ -42,7 +42,7 @@ module OAuth
             client_application.token_callback_url = request_proxy.oauth_callback if request_proxy.oauth_callback
 
             if request_proxy.token
-              oauth_token = client_application.tokens.find(:all, :conditions=>'invalidated_at IS NULL AND authorized_at IS NOT NULL and token = ?', request_proxy.token]).first
+              oauth_token = client_application.tokens.find(:all, :conditions=>['invalidated_at IS NULL AND authorized_at IS NOT NULL and token = ?', request_proxy.token]).first
               if oauth_token.respond_to?(:provided_oauth_verifier=)
                 oauth_token.provided_oauth_verifier = request_proxy.oauth_verifier
               end
