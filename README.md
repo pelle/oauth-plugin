@@ -31,3 +31,7 @@ User Model
 Migration
 
     rake db:migrate
+
+applicatoin_controller.rb
+
+    oauthenticate :strategies => :token , :interactive => true
