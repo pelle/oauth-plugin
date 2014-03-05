@@ -1,7 +1,0 @@
-= OAuth Plugin
-
-This is a plugin for implementing OAuth Providers and Consumers in Rails applications.
-
-This is a fork to https://github.com/pelle/oauth-plugin/
-
-The fixes are to support rails 2.3
