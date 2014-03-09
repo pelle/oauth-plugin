@@ -10,3 +10,5 @@ gemfile:
 before_install:
   - gem install bundler -v '= 1.5.1'
   - "sudo apt-get install libnotify4"
+before_script:
+  - travis-scripts/database-setup.sh
