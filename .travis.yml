@@ -12,4 +12,3 @@ before_install:
   - "sudo apt-get install libnotify4"
 before_script:
   - RAILS_ENV=test bundle exec rake db:migrate --trace
-  - bundle exec rake db:test:prepare
