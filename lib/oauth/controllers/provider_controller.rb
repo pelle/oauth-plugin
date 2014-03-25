@@ -62,7 +62,15 @@ module OAuth
             redirect_to @authorizer.redirect_uri
           else
             @client_application = ClientApplication.find_by_key! params[:client_id]
-            render :action => "oauth2_authorize"
+            # check if current user has been authorized already
+            o2_tokens = Oauth2Token.find(
+            :all, :conditions => ["client_application_id=? and user_id=?", @client_application.id, current_user.id])
+            o2_tokens = o2_tokens.map{|o|o if (o.expires_at.nil? || (o.expires_at? && o.expires_at > Time.now))}.compact
+            if o2_token = o2_tokens.last
+              redirect_to o2_token.client_application.callback_url
+            else
+              render :action => "oauth2_authorize"
+            end
           end
         end
       end
