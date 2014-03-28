@@ -5,6 +5,7 @@ DummyApp::Application.routes.draw do
   get   '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token
   get   '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token
   match '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize,    :via => [:get, :post]
+  post  '/oauth/revoke',        :to => 'oauth#revoke',        :as => :revoke
   get   '/oauth',               :to => 'oauth#index',         :as => :oauth
   root :to => "home#index"
   
