@@ -5,14 +5,17 @@ require 'dummy_app/app/controllers/oauth_controller'
 describe OauthController do
   
   describe "revoke" do
+    let(:operation) { 'revoked' }
     before(:each) do
       session[:user] = user
       session['my_token'] = 'my_secret'
+      I18n.should_receive(:t).with("#{operation}", {:scope => 'oauth_plugin.oauth', :default => [operation.to_sym], :client_app_name => app_name}).and_call_original
     end
     context 'when logged in' do
-      let(:user_tokens) { double("user_tokens")                                                 }
-      let(:user       ) { double("user", id: 1234, tokens: user_tokens)                         }
-      let(:token      ) { double("token", client_application: double("app", name: "fancy-app")) }
+      let(:user_tokens) { double("user_tokens")                         }
+      let(:user       ) { double("user", id: 1234, tokens: user_tokens) }
+      let(:app_name   ) { 'fancy-app'                                   }
+      let(:token      ) { double("token", client_application: double("app", name: app_name)) }
       before(:each) do
         expect(token).to receive(:invalidate!)
         allow(user_tokens).to receive(:"find_by_token!").with('my_token') { token }

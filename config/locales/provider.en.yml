@@ -1,0 +1,4 @@
+en:
+    oauth_plugin:
+        oauth:
+            revoked: "You've revoked the token for %{client_app_name}"

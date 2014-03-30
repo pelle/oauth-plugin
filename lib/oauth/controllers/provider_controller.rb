@@ -71,7 +71,7 @@ module OAuth
         @token = current_user.tokens.find_by_token! params[:token]
         if @token
           @token.invalidate!
-          flash[:notice] = "You've revoked the token for #{@token.client_application.name}"
+          set_flash_message :notice, "revoked"
         end
         redirect_to oauth_clients_url
       end
@@ -174,6 +174,25 @@ module OAuth
 
       def oauth2_error(error="invalid_grant")
         render :json=>{:error=>error}.to_json, :status => 400
+      end
+
+      # Sets the flash message with :key, using I18n.
+      # Example (i18n locale file):
+      #
+      #   en:
+      #     oauth_plugin:
+      #       oauth:
+      #         #messages
+      #
+      # Please refer to README or en.yml locale file to check what messages are
+      # available.
+      def set_flash_message(key, kind, options={})
+        options[:scope] = "oauth_plugin.#{controller_name}"
+        options[:default] = Array(options[:default]).unshift(kind.to_sym)
+        client_app_name = @token ? @token.client_application.name : ''
+        options[:client_app_name] = client_app_name
+        message = I18n.t("#{kind}", options)
+        flash[key] = message if message.present?
       end
 
     end
