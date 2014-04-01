@@ -1,7 +1,0 @@
-en:
-    oauth_plugin:
-        oauth_consumers:
-            connected: "%{service} was successfully connected to your account"
-            logged_in: "You logged in with %{service}"
-            error: "An error happened, please try connecting again"
-            disconnected: "%{service} was successfully disconnected from your account"
