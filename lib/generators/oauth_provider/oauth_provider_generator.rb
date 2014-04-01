@@ -22,6 +22,10 @@ class OauthProviderGenerator < Rails::Generators::NamedBase
     template 'clients_controller.rb', File.join('app/controllers', class_path, "#{file_name}_clients_controller.rb")
   end
 
+  def copy_locale
+    copy_file "../../../../config/locales/provider.en.yml", "config/locales/oauth-plugin-provider.en.yml"
+  end
+
   hook_for :test_framework, :template_engine
 
   def add_routes

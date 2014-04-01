@@ -88,6 +88,8 @@ class OauthProviderGenerator < Rails::Generator::Base
         m.template 'clients_controller_test.rb',File.join('test/functional',controller_class_path,"#{controller_file_name}_clients_controller_test.rb")
       end
 
+      m.file "../../config/locales/provider.en.yml", File.join('config/locales', "oauth-plugin-provider.en.yml")
+
 
       @template_extension= options[:haml] ? "haml" : "erb"
 

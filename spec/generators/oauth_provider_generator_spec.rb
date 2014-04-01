@@ -37,6 +37,11 @@ describe OauthProviderGenerator, type: :generator do
     end
   end
   
+  it "installs the locale file" do
+    run_generator %w(monster)
+    assert_file "config/locales/oauth-plugin-provider.en.yml"
+  end
+  
 #  context "routes" do
 #    it "creates the client route" do
 #      assert_file "config/routes.rb", "resources :monster_clients"
