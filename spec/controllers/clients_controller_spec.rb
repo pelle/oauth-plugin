@@ -6,6 +6,9 @@ describe OauthClientsController do
   
   describe "create" do
     let(:operation) { 'created' }
+    def request
+      get :create
+    end
     before(:each) do
       session[:user]      = user
       session['my_token'] = 'my_secret'
@@ -40,6 +43,9 @@ describe OauthClientsController do
   
   describe "update" do
     let(:operation) { 'updated' }
+    def request
+      put :update, id: client_application_id
+    end
     before(:each) do
       session[:user]      = user
       session['my_token'] = 'my_secret'
@@ -54,7 +60,7 @@ describe OauthClientsController do
       context 'with a known client application' do
         before(:each) do
           expect(client_application).to receive(:update_attributes).with(nil) { update_result }
-          put :update, id: client_application_id 
+          request
         end
         context 'with valid client application attributes' do
           let(:client_application ) { double("client_application", id: client_application_id) }
@@ -78,11 +84,11 @@ describe OauthClientsController do
         let(:client_application ) { nil   }
         let(:update_result)       { false }
         it 'raises a NotFound error' do
-          expect { put :update, id: client_application_id }.to raise_error ActiveRecord::RecordNotFound
+          expect { request }.to raise_error ActiveRecord::RecordNotFound
         end
         it 'sets the not found flash error message' do
           begin
-            put :update, id: client_application_id
+            request
           rescue
           end
           expect(flash[:error]).to eq "Wrong application id"
