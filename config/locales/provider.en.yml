@@ -2,3 +2,9 @@ en:
     oauth_plugin:
         oauth:
             revoked: "You've revoked the token for %{client_app_name}"
+        oauth_clients:
+            created: "Registered the information successfully"
+            updated: "Updated the client information successfully"
+            destroyed: "Destroyed the client application registration"
+            error:
+              application_not_found: "Wrong application id"
