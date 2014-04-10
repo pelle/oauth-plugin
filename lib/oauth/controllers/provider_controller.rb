@@ -188,7 +188,6 @@ module OAuth
       # available.
       def set_flash_message(key, kind, options={})
         options[:scope] = "oauth_plugin.#{controller_name}"
-        options[:default] = Array(options[:default]).unshift(kind.to_sym)
         client_app_name = @token ? @token.client_application.name : ''
         options[:client_app_name] = client_app_name
         message = I18n.t("#{kind}", options)

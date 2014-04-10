@@ -9,7 +9,7 @@ describe OauthController do
     before(:each) do
       session[:user] = user
       session['my_token'] = 'my_secret'
-      I18n.should_receive(:t).with("#{operation}", {:scope => 'oauth_plugin.oauth', :default => [operation.to_sym], :client_app_name => app_name}).and_call_original
+      I18n.should_receive(:t).with("#{operation}", {:scope => 'oauth_plugin.oauth', :client_app_name => app_name}).and_call_original
     end
     context 'when logged in' do
       let(:user_tokens) { double("user_tokens")                         }
