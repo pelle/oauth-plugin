@@ -3,6 +3,7 @@ require 'dummy_app/app/controllers/application_controller'
 require 'dummy_app/app/controllers/oauth_consumers_controller'
 
 describe OauthConsumersController do
+  let(:token_class) { double("token_class", service_name: service)}
   
   describe "callback" do
     before(:each) do
@@ -11,10 +12,10 @@ describe OauthConsumersController do
       I18n.should_receive(:t).with("#{service}.#{operation}", {:scope => 'oauth_plugin.oauth_consumers', :default => [operation.to_sym], :service => service.humanize}).and_call_original
     end
     context 'when logged in' do
-      let(:user     ) { double("user", id: 1234) }
-      let(:service  ) { 'foo'           }
-      let(:token    ) { double("token", service_name: service) }
-      let(:operation) { 'connected' }
+      let(:user       ) { double("user", id: 1234) }
+      let(:service    ) { 'foo'           }
+      let(:token      ) { double("token", class: token_class) }
+      let(:operation  ) { 'connected' }
       before(:each) do
         ConsumerToken.should_receive(:find).and_return('a_token')
         FooToken.should_receive(:find_or_create_from_request_token).and_return(token)
@@ -28,11 +29,11 @@ describe OauthConsumersController do
       end
     end
     context 'when not logged in' do
-      let(:user     ) { nil   }
-      let(:service  ) { 'bar' }
-      let(:token    ) { double("token", service_name: service, user: new_user) }
-      let(:new_user ) { Object.new }
-      let(:operation) { 'logged_in' }
+      let(:user       ) { nil   }
+      let(:service    ) { 'bar' }
+      let(:token      ) { double("token", class: token_class, user: new_user) }
+      let(:new_user   ) { Object.new }
+      let(:operation  ) { 'logged_in' }
       before(:each) do
         BarToken.should_receive(:find_or_create_from_request_token).and_return(token)
         get :callback, :id => service, :oauth_token => 'my_token'
@@ -75,7 +76,7 @@ describe OauthConsumersController do
     context 'when logged in' do
       let(:user     ) { double("user", id: 1234) }
       let(:service  ) { 'foo'           }
-      let(:token    ) { double("token", service_name: service) }
+      let(:token    ) { double("token", class: token_class) }
       let(:operation) { 'connected' }
       before(:each) do
         ConsumerToken.should_receive(:find).and_return('a_token')
@@ -92,7 +93,7 @@ describe OauthConsumersController do
     context 'when not logged in' do
       let(:user     ) { nil   }
       let(:service  ) { 'bar' }
-      let(:token    ) { double("token", service_name: service, user: new_user) }
+      let(:token    ) { double("token", class: token_class, user: new_user) }
       let(:new_user ) { Object.new }
       let(:operation) { 'logged_in' }
       before(:each) do
@@ -136,7 +137,7 @@ describe OauthConsumersController do
       let(:user   ) { double("user", id: 1234) }
       let(:service) { 'foo'           }
       let(:token  ) do
-        token = double("token", service_name: service)
+        token = double("token", class: token_class)
         expect(token).to receive(:destroy)
         token
       end

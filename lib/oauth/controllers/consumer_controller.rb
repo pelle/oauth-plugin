@@ -165,7 +165,7 @@ module Oauth
       def set_flash_message(key, kind, options={})
         options[:scope] = "oauth_plugin.#{controller_name}"
         options[:default] = Array(options[:default]).unshift(kind.to_sym)
-        service_name = @token ? @token.service_name : ''
+        service_name = @token ? @token.class.service_name.to_s : ''
         options[:service] = service_name.humanize
         message = I18n.t("#{service_name}.#{kind}", options)
         flash[key] = message if message.present?
