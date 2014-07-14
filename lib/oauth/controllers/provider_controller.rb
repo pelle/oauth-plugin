@@ -57,11 +57,11 @@ module OAuth
           @token = ::RequestToken.find_by_token! params[:oauth_token]
           oauth1_authorize
         else
-          if request.post?
-            @authorizer = OAuth::Provider::Authorizer.new current_user, user_authorizes_token?, params
+          @client_application = ClientApplication.find_by_key! params[:client_id]
+          if request.post? || @client_application.internal?
+            @authorizer = OAuth::Provider::Authorizer.new current_user, (user_authorizes_token?|| @client_application.internal?), params
             redirect_to @authorizer.redirect_uri
           else
-            @client_application = ClientApplication.find_by_key! params[:client_id]
             render :action => "oauth2_authorize"
           end
         end
