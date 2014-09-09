@@ -80,6 +80,10 @@ module OAuth
           signature = OAuth::Signature.build(request, options, &block)
           return false unless OauthNonce.remember(signature.request.nonce, signature.request.timestamp)
           value = signature.verify
+          unless value == true
+            request.env['oauth_errors'] ||= []
+            request.env['oauth_errors'] << "Signature verification failed: expected=#{signature.signature} : based on=#{signature.signature_base_string}"
+          end
           value
         rescue OAuth::Signature::UnknownSignatureMethod => e
           false
