@@ -31,6 +31,8 @@ module OAuth
         def before(controller)
           Authenticator.new(controller,@strategies).allow?
         end
+
+        alias_method :filter, :before
       end
       
       class Authenticator
