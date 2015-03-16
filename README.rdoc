@@ -138,6 +138,11 @@ A big change over previous versions is that we now use a rack filter. You have t
   require 'oauth/rack/oauth_filter'
   config.middleware.use OAuth::Rack::OAuthFilter
 
+== Filter Options
+If you only want the middleware to operate on certain paths, you can supply a regex expression to whitelist certain paths.
+
+  require 'oauth/rack/oauth_filter'
+  config.middleware.use OAuth::Rack::OAuthFilter, '\/api\/*'
 
 === Generator Options
 

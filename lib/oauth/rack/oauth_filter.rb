@@ -15,63 +15,66 @@ module OAuth
     # config.middleware.use OAuth::Rack::OAuthFilter
 
     class OAuthFilter
-      def initialize(app)
+      def initialize(app, path = '\/')
         @app = app
+        @path = path
       end
 
       def call(env)
-        request = ::Rack::Request.new(env)
-        env["oauth_plugin"] = true
-        strategies = []
-        if token_string = oauth2_token(request)
-          if token = Oauth2Token.where('invalidated_at IS NULL and authorized_at IS NOT NULL and token = ?', token_string).first
-            env["oauth.token"]   = token
-            env["oauth.version"] = 2
-            strategies << :oauth20_token
-            strategies << :token
-          end
-
-        elsif oauth1_verify(request) do |request_proxy|
-          client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
-          env["oauth.client_application_candidate"] = client_application
-
-          oauth_token = nil
-
-          if client_application
-            # Store this temporarily in client_application object for use in request token generation
-            client_application.token_callback_url = request_proxy.oauth_callback if request_proxy.oauth_callback
-
-            if request_proxy.token
-              oauth_token = client_application.tokens.where('invalidated_at IS NULL AND authorized_at IS NOT NULL and token = ?', request_proxy.token).first
-              if oauth_token.respond_to?(:provided_oauth_verifier=)
-                oauth_token.provided_oauth_verifier = request_proxy.oauth_verifier
-              end
-              env["oauth.token_candidate"] = oauth_token
-            end
-          end
-
-          # return the token secret and the consumer secret
-          [(oauth_token.nil? ? nil : oauth_token.secret), (client_application.nil? ? nil : client_application.secret)]
-        end
-          if env["oauth.token_candidate"]
-            env["oauth.token"] = env["oauth.token_candidate"]
-            strategies << :oauth10_token
-            if env["oauth.token"].is_a?(::RequestToken)
-              strategies << :oauth10_request_token
-            elsif env["oauth.token"].is_a?(::AccessToken)
+        if env['PATH_INFO'].match(Regexp.new(@path))
+          request = ::Rack::Request.new(env)
+          env["oauth_plugin"] = true
+          strategies = []
+          if token_string = oauth2_token(request)
+            if token = Oauth2Token.where('invalidated_at IS NULL and authorized_at IS NOT NULL and token = ?', token_string).first
+              env["oauth.token"]   = token
+              env["oauth.version"] = 2
+              strategies << :oauth20_token
               strategies << :token
-              strategies << :oauth10_access_token
             end
-          else
-            strategies << :two_legged
-          end
-          env["oauth.client_application"] = env["oauth.client_application_candidate"]
-          env["oauth.version"] = 1
 
+          elsif oauth1_verify(request) do |request_proxy|
+            client_application = ClientApplication.find_by_key(request_proxy.consumer_key)
+            env["oauth.client_application_candidate"] = client_application
+
+            oauth_token = nil
+
+            if client_application
+              # Store this temporarily in client_application object for use in request token generation
+              client_application.token_callback_url = request_proxy.oauth_callback if request_proxy.oauth_callback
+
+              if request_proxy.token
+                oauth_token = client_application.tokens.where('invalidated_at IS NULL AND authorized_at IS NOT NULL and token = ?', request_proxy.token).first
+                if oauth_token.respond_to?(:provided_oauth_verifier=)
+                  oauth_token.provided_oauth_verifier = request_proxy.oauth_verifier
+                end
+                env["oauth.token_candidate"] = oauth_token
+              end
+            end
+
+            # return the token secret and the consumer secret
+            [(oauth_token.nil? ? nil : oauth_token.secret), (client_application.nil? ? nil : client_application.secret)]
+          end
+            if env["oauth.token_candidate"]
+              env["oauth.token"] = env["oauth.token_candidate"]
+              strategies << :oauth10_token
+              if env["oauth.token"].is_a?(::RequestToken)
+                strategies << :oauth10_request_token
+              elsif env["oauth.token"].is_a?(::AccessToken)
+                strategies << :token
+                strategies << :oauth10_access_token
+              end
+            else
+              strategies << :two_legged
+            end
+            env["oauth.client_application"] = env["oauth.client_application_candidate"]
+            env["oauth.version"] = 1
+
+          end
+          env["oauth.strategies"] = strategies unless strategies.empty?
+          env["oauth.client_application_candidate"] = nil
+          env["oauth.token_candidate"] = nil
         end
-        env["oauth.strategies"] = strategies unless strategies.empty?
-        env["oauth.client_application_candidate"] = nil
-        env["oauth.token_candidate"] = nil
         @app.call(env)
       end
 
