@@ -5,6 +5,8 @@ module Erb
     class OauthProviderGenerator < Erb::Generators::Base
       source_root File.expand_path('../oauth_provider_templates', __FILE__)
 
+      argument :name, :type => :string, :default => 'Oauth'
+
       def copy_view_files
         template '_form.html.erb',              File.join('app/views', class_path, 'oauth_clients', '_form.html.erb')
         template 'new.html.erb',                File.join('app/views', class_path, 'oauth_clients', 'new.html.erb')

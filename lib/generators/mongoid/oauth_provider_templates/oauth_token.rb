@@ -2,14 +2,14 @@ class OauthToken
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  field :token, :type => String
+  field :token_digest, :type => String
   field :secret, :type => String
   field :callback_url, :type => String
   field :verifier, :type => String
   field :scope, :type => String
   field :authorized_at, :type => Time
   field :invalidated_at, :type => Time
-  field :valid_to, :type => Time
+  field :expires_at, :type => Time
 
   index :token, :unique => true
 
@@ -38,7 +38,7 @@ class OauthToken
 
   protected
   def generate_keys
-    self.token = OAuth::Helper.generate_key(40)[0,40]
-    self.secret = OAuth::Helper.generate_key(40)[0,40]
+    self.token = SecureRandom.hex
+    self.secret = SecureRandom.hex
   end
 end

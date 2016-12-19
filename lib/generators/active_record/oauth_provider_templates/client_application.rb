@@ -15,15 +15,6 @@ class ClientApplication < ActiveRecord::Base
 
   attr_accessor :token_callback_url
 
-  def self.find_token(token_key)
-    token = OauthToken.find_by_token(token_key, :include => :client_application)
-    if token && token.authorized?
-      token
-    else
-      nil
-    end
-  end
-
   def self.verify_request(request, options = {}, &block)
     begin
       signature = OAuth::Signature.build(request, options, &block)
@@ -51,7 +42,7 @@ class ClientApplication < ActiveRecord::Base
 protected
 
   def generate_keys
-    self.key = OAuth::Helper.generate_key(40)[0,40]
-    self.secret = OAuth::Helper.generate_key(40)[0,40]
+    self.key = SecureRandom.hex
+    self.secret = SecureRandom.hex
   end
 end

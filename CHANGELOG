@@ -1,4 +1,58 @@
-  0.4.0
+0.5.0-rc2
+  - Remove support for Rails 2.x.x
+0.5.0-rc1
+  - First step at seperating consumer and provider. This branch contains provider
+0.4.1
+  - Security fix for OAuth1 provider. Please upgrade if you're using any 0.4 version. Thanks to [tomhughes]
+  - Limit index size in ConsumerToken migration to deal with very large tokens [devainandor]
+  - Accept ancient OAuth2 Token token=asfavasd like tokens. Just for complete compatibility. [pelle]
+  - oauth2 errors should return http 400 [pelle]
+0.4.0
+  - fix migrations to use expires_at instead of valid_to [pelle]
+  - add force parameter for forcing token refresh [afeld]
+  - make it work in rails 2x [Kimtaro]
+  - Use 0.5+ OAuth2 gem [kookster]
+  - prevent addition of ? marks to callback url when not needed [kookster]
+  - make .credentials accessible to TwitterToken [afeld]
+0.4.0-rc2
+  - Better OAuth2 support.
+  - Refactored authorizer into a Authorizer object which is now better tested
+0.4.0-rc1
+  PLEASE help test this so we can mark it as final
+  - Update to OAuth2 draft 22 which is likely the final release. [pelle] ACTION REQUIRED BY YOU, see README.
+  - Update forms to work with rails 3.1 [morgz]
+  - Allow nil callbacks for oob in OAuth 1.0a [Shaliko Usubov]
+  - OAuthFilter:oauth2_token to rejects headers that explicitly state oauth_version="1.0" [KentonWhite]
+0.4.0-pre7
+  - OAuth 1 requests using query or form encoded parameters where being interpreted as OAuth2 [pelleb]
+  - OAuth 2 requests were not checking for invalidated tokens. Please upgrade for this if you offer OAuth 2 [rymai]
+  - Handle case where credentials[:options] in consumer plugin was nil [marnen]
+  - Better facebook example [marnen]
+0.4.0-pre6
+  - fixes issue with erb generator in rails 3 [pelleb]
+  - various cleanups in generators [akonan]
+0.4.0-pre5
+  - protect oauth consumer relay with :expose configuration option. It's off by default. [pelle]
+  - Reenable twitter client. It is now configurable for twitter tokens. :client=>:twitter_gem or :oauth_gem [pelle]
+  - fix issues with new consumer tokens [afeld]
+  - More forgiving about oob callback values[chrisrhoden]
+  - Update Twitter consumer to use latest Twitter Gem [afeld]
+  - removed portable_contacts client from Google Token [p8]
+  - Fixes various mongoid issues [3en]
+  - Adds oauth2 consumer support
+  - Fixes oauth2 provider. parameter should be redirect_uri not redirect_url [Kimtaro]
+  - Most core OAuth functionality is being put into OAuthFilter. This means Rails 2.3 and above only
+  0.4.0-pre4
+  - Fixed bug when creating a new user from a new consumer token
+  - Fix typo in consumer token [krasio]
+  - Fix issue with mongoid not supporting find_by_x style queries. [3en]
+  0.4.0-pre3
+  - Experimental rack filter for OAuth 1.0a:
+    see lib/oauth/rack/oauth_filter.rb for details
+  0.4.0-pre2
+  - mongoid defaults to being embedded
+  - new :auto_login option in oauth_config.rb which lets you use eg. twitter as a primary authentication method
+  0.4.0-pre1
 	- mongoid support in rails 3 [Alexander Semyonov]
 	- OAUTH 2.0 authorization_code and password grant types
 	- Supports OAuth 2.0 draft 10 (Note this is incompatible with previous drafts)
@@ -19,7 +73,7 @@
   0.3.12
   - Added a simple PortableContacts adapter for GoogleToken
   - Added a SimpleClient wrapper to provide really simple wrapper for OAuth based json web services
-  - Increased token size in consumer_tokens table because of Yahoo's oversized tokens 
+  - Increased token size in consumer_tokens table because of Yahoo's oversized tokens
   - Added support for Yahoo
   - Added support for Google (Boon Low)
 9/26/2009
@@ -37,11 +91,11 @@
   - Added invalidate action to provider, which allows a token to invalidate itself /oauth/invalidate
   - Added capabilities action to provider. Lets you expand to allow auto discovery of permissions and services that token provides.
   - Can override how authorize form indicates an authorization. To get around ugly checkbox
-  
+
     def user_authorizes_token?
       params[:commit] == 'Authorize'
     end
-  
+
 7/23/2009
   0.3.8
   - Fixed Gem Plugins Loading

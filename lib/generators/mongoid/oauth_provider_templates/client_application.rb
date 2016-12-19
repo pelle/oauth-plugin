@@ -30,15 +30,6 @@ class ClientApplication
 
   attr_accessor :token_callback_url
 
-  def self.find_token(token_key)
-    token = OauthToken.where(:token => token_key)
-    if token && token.authorized?
-      token
-    else
-      nil
-    end
-  end
-
   def self.verify_request(request, options = {}, &block)
     begin
       signature = OAuth::Signature.build(request, options, &block)
