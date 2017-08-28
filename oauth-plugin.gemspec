@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rack-test"
 
   s.add_dependency "multi_json"
-  s.add_dependency("oauth", ["~> 0.4.4"])
+  s.add_dependency("oauth", ["~> 0.5.3"])
   s.add_dependency("rack")
   s.add_dependency("oauth2", '>= 0.5.0')
 end
