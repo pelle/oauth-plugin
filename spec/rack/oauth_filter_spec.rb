@@ -30,6 +30,14 @@ describe OAuth::Rack::OAuthFilter do
     response.should == {}
   end
 
+  it "should pass through when not on the whitelisted paths" do
+    @app ||= OAuth::Rack::OAuthFilter.new(OAuthEcho.new, '\/api/')
+    get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer", oauth_nonce="amrLDyFE2AMztx5fOYDD1OEqWps6Mc2mAR5qyO44Rj8", oauth_signature="KCSg0RUfVFUcyhrgJo580H8ey0c%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1295039581", oauth_version="1.0"'}
+    last_response.should be_ok
+    response = MultiJson.decode(last_response.body)
+    response.should == {}
+  end
+
   describe 'OAuth1' do
     describe 'with optional white space' do
       it "should sign with consumer" do
