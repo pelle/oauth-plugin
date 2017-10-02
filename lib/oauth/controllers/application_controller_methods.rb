@@ -28,9 +28,11 @@ module OAuth
           @strategies << :interactive if @options[:interactive]
         end
         
-        def filter(controller)
+        def before(controller)
           Authenticator.new(controller,@strategies).allow?
         end
+
+        alias_method :filter, :before
       end
       
       class Authenticator
