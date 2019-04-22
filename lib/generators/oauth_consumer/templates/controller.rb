@@ -4,8 +4,8 @@ class OauthConsumersController < ApplicationController
   # Replace this with the equivalent for your authentication framework
   # Eg. for devise
   #
-  #   before_filter :authenticate_user!, :only=>:index
-  before_filter :login_required, :only=>:index
+  #   before_action :authenticate_user!, :only=>:index
+  before_action :login_required, :only=>:index
 
   def index
     @consumer_tokens=ConsumerToken.all :conditions=>{:user_id=>current_user.id}
