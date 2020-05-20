@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
 
   s.homepage = %q{http://github.com/pelle/oauth-plugin}
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{oauth}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Ruby on Rails Plugin for OAuth Provider and Consumer}
   s.add_development_dependency "opentransact"
