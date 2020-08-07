@@ -17,7 +17,7 @@ module OAuth
       def request_token
         @token = current_client_application.create_request_token params
         if @token
-          render :text => @token.to_query
+          render :text => @token.to_query, :content_type => "application/x-www-form-urlencoded"
         else
           render :nothing => true, :status => 401
         end
@@ -26,7 +26,7 @@ module OAuth
       def access_token
         @token = current_token && current_token.exchange!
         if @token
-          render :text => @token.to_query
+          render :text => @token.to_query, :content_type => "application/x-www-form-urlencoded"
         else
           render :nothing => true, :status => 401
         end
