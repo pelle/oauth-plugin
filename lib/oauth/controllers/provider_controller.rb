@@ -5,11 +5,11 @@ module OAuth
     module ProviderController
       def self.included(controller)
         controller.class_eval do
+          before_action :login_required, only: [:authorize, :revoke]
           oauthenticate :only => [:test_request]
           oauthenticate :strategies => :token, :interactive => false, :only => [:invalidate,:capabilities]
           oauthenticate :strategies => :two_legged, :interactive => false, :only => [:request_token]
           oauthenticate :strategies => :oauth10_request_token, :interactive => false, :only => [:access_token]
-          before_action :login_required, only: [:authorize, :revoke]
           skip_before_action :verify_authenticity_token, only: [:request_token, :access_token, :invalidate, :test_request, :token]
         end
       end
