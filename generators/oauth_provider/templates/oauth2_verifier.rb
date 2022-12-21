@@ -20,7 +20,7 @@ class Oauth2Verifier < OauthToken
 
   def to_query
     q = "code=#{token}"
-    q << "&state=#{URI.escape(state)}" if @state
+    q << "&state=#{URI::RFC2396_Parser.new.escape(state)}" if @state
     q
   end
 
