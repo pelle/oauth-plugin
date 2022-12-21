@@ -108,7 +108,7 @@ module OAuth
             if user_authorizes_token?
               @token.authorize!(current_user)
               callback_url  = @token.oob? ? @token.client_application.callback_url : @token.callback_url
-              @redirect_url = URI::RFC2396_Parser.new.parse(callback_url) unless callback_url.blank?
+              @redirect_url = URI::DEFAULT_PARSER.parse(callback_url) unless callback_url.blank?
 
               unless @redirect_url.to_s.blank?
                 @redirect_url.query = @redirect_url.query.blank? ?

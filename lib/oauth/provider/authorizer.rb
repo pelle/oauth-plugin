@@ -68,16 +68,15 @@ module OAuth
       end
 
       def encode_response
-        parser = URI::RFC2396_Parser.new
         response.map do |k, v|
-          [parser.escape(k.to_s),parser.escape(v)] * "="
+          [URI::DEFAULT_PARSER.escape(k.to_s),URI::DEFAULT_PARSER.escape(v)] * "="
         end * "&"
       end
 
       protected
 
         def base_uri
-          URI::RFC2396_Parser.new.parse(params[:redirect_uri] || app.callback_url)
+          URI::DEFAULT_PARSER.parse(params[:redirect_uri] || app.callback_url)
         end
     end
   end

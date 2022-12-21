@@ -7,11 +7,10 @@ class Oauth2Token < AccessToken
   end
 
   def to_query
-    parser = URI::RFC2396_Parser.new
     q = "access_token=#{token}&token_type=bearer"
-    q << "&state=#{parser.escape(state)}" if @state
+    q << "&state=#{URI::DEFAULT_PARSER.escape(state)}" if @state
     q << "&expires_in=#{expires_in}" if expires_at
-    q << "&scope=#{parser.escape(scope)}" if scope
+    q << "&scope=#{URI::DEFAULT_PARSER.escape(scope)}" if scope
     q
   end
 
