@@ -81,7 +81,7 @@ module OAuth
           return false unless OauthNonce.remember(signature.request.nonce, signature.request.timestamp)
           value = signature.verify
           value
-        rescue OAuth::Signature::UnknownSignatureMethod => e
+        rescue OAuth::Signature::UnknownSignatureMethod
           false
         end
       end

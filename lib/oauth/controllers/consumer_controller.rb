@@ -3,8 +3,8 @@ module Oauth
     module ConsumerController
       def self.included(controller)
         controller.class_eval do
-          before_filter :load_consumer, :except=>:index
-          skip_before_filter :verify_authenticity_token,:only=>:callback
+          before_action :load_consumer, :except=>:index
+          skip_before_action :verify_authenticity_token,:only=>:callback
         end
       end
 

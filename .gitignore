@@ -8,5 +8,5 @@ pkg
 .swp
 .idea
 .rvmrc
+coverage
 
-Gemfile.lock

@@ -15,11 +15,11 @@ describe OAuth::Provider::Authorizer do
         @app  = double("app")
         @code = double("code", :token => "secret auth code")
 
-        ::ClientApplication.should_receive(:find_by_key!).with('client id').and_return(@app)
+        expect(::ClientApplication).to receive(:find_by_key!).with('client id').and_return(@app)
       end
 
       it "should allow" do
-        ::Oauth2Verifier.should_receive(:create!).with( :client_application=>@app,
+        expect(::Oauth2Verifier).to receive(:create!).with( :client_application=>@app,
                                                   :user=>@user,
                                                   :callback_url=>'http://mysite.com/callback',
                                                   :scope => 'a b').and_return(@code)
@@ -29,13 +29,13 @@ describe OAuth::Provider::Authorizer do
                                                       :client_id => 'client id',
                                                       :redirect_uri => 'http://mysite.com/callback'
 
-        @authorizer.redirect_uri.should == "http://mysite.com/callback?code=secret%20auth%20code"
-        @authorizer.should be_authorized
+        expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?code=secret%20auth%20code"
+        expect(@authorizer).to be_authorized
 
       end
 
       it "should include state" do
-        ::Oauth2Verifier.should_receive(:create!).with( :client_application=>@app,
+        expect(::Oauth2Verifier).to receive(:create!).with( :client_application=>@app,
                                                   :user=>@user,
                                                   :callback_url=>'http://mysite.com/callback',
                                                   :scope => 'a b').and_return(@code)
@@ -46,13 +46,13 @@ describe OAuth::Provider::Authorizer do
                                                       :client_id => 'client id',
                                                       :redirect_uri => 'http://mysite.com/callback'
 
-        @authorizer.redirect_uri.should == "http://mysite.com/callback?code=secret%20auth%20code&state=customer%20id"
-        @authorizer.should be_authorized
+        expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?code=secret%20auth%20code&state=customer%20id"
+        expect(@authorizer).to be_authorized
 
       end
 
       it "should allow query string in callback" do
-        ::Oauth2Verifier.should_receive(:create!).with( :client_application=>@app,
+        expect(::Oauth2Verifier).to receive(:create!).with( :client_application=>@app,
                                                   :user=>@user,
                                                   :callback_url=>'http://mysite.com/callback?this=one',
                                                   :scope => 'a b').and_return(@code)
@@ -61,8 +61,8 @@ describe OAuth::Provider::Authorizer do
                                                       :scope => "a b",
                                                       :client_id => 'client id',
                                                       :redirect_uri => 'http://mysite.com/callback?this=one'
-        @authorizer.should be_authorized
-        @authorizer.redirect_uri.should == "http://mysite.com/callback?this=one&code=secret%20auth%20code"
+        expect(@authorizer).to be_authorized
+        expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?this=one&code=secret%20auth%20code"
       end
     end
 
@@ -77,8 +77,8 @@ describe OAuth::Provider::Authorizer do
                                                     :client_id => 'client id',
                                                     :redirect_uri => 'http://mysite.com/callback'
 
-      @authorizer.redirect_uri.should == "http://mysite.com/callback?error=access_denied"
-      @authorizer.should_not be_authorized
+      expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?error=access_denied"
+      expect(@authorizer).not_to be_authorized
 
     end
 
@@ -89,8 +89,8 @@ describe OAuth::Provider::Authorizer do
                                                     :redirect_uri=>'http://mysite.com/callback?this=one',
                                                     :state => "my customer"
 
-      @authorizer.redirect_uri.should == "http://mysite.com/callback?this=one&error=access_denied&state=my%20customer"
-      @authorizer.should_not be_authorized
+      expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?this=one&error=access_denied&state=my%20customer"
+      expect(@authorizer).not_to be_authorized
 
     end
 
@@ -105,11 +105,11 @@ describe OAuth::Provider::Authorizer do
         @app  = double("app")
         @token = double("token", :token => "secret auth code")
 
-        ::ClientApplication.should_receive(:find_by_key!).with('client id').and_return(@app)
+        expect(::ClientApplication).to receive(:find_by_key!).with('client id').and_return(@app)
       end
 
       it "should allow" do
-        ::Oauth2Token.should_receive(:create!).with( :client_application=>@app,
+        expect(::Oauth2Token).to receive(:create!).with( :client_application=>@app,
                                                   :user=>@user,
                                                   :callback_url=>'http://mysite.com/callback',
                                                   :scope => 'a b').and_return(@token)
@@ -119,13 +119,13 @@ describe OAuth::Provider::Authorizer do
                                                       :client_id => 'client id',
                                                       :redirect_uri => 'http://mysite.com/callback'
 
-        @authorizer.redirect_uri.should == "http://mysite.com/callback#access_token=secret%20auth%20code"
-        @authorizer.should be_authorized
+        expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback#access_token=secret%20auth%20code"
+        expect(@authorizer).to be_authorized
 
       end
 
       it "should include state" do
-        ::Oauth2Token.should_receive(:create!).with( :client_application=>@app,
+        expect(::Oauth2Token).to receive(:create!).with( :client_application=>@app,
                                                   :user=>@user,
                                                   :callback_url=>'http://mysite.com/callback',
                                                   :scope => 'a b').and_return(@token)
@@ -136,13 +136,13 @@ describe OAuth::Provider::Authorizer do
                                                       :client_id => 'client id',
                                                       :redirect_uri => 'http://mysite.com/callback'
 
-        @authorizer.redirect_uri.should == "http://mysite.com/callback#access_token=secret%20auth%20code&state=customer%20id"
-        @authorizer.should be_authorized
+        expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback#access_token=secret%20auth%20code&state=customer%20id"
+        expect(@authorizer).to be_authorized
 
       end
 
       it "should allow query string in callback" do
-        ::Oauth2Token.should_receive(:create!).with( :client_application=>@app,
+        expect(::Oauth2Token).to receive(:create!).with( :client_application=>@app,
                                                   :user=>@user,
                                                   :callback_url=>'http://mysite.com/callback?this=one',
                                                   :scope => 'a b').and_return(@token)
@@ -151,8 +151,8 @@ describe OAuth::Provider::Authorizer do
                                                       :scope => "a b",
                                                       :client_id => 'client id',
                                                       :redirect_uri => 'http://mysite.com/callback?this=one'
-        @authorizer.should be_authorized
-        @authorizer.redirect_uri.should == "http://mysite.com/callback?this=one#access_token=secret%20auth%20code"
+        expect(@authorizer).to be_authorized
+        expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?this=one#access_token=secret%20auth%20code"
       end
     end
 
@@ -167,8 +167,8 @@ describe OAuth::Provider::Authorizer do
                                                     :client_id => 'client id',
                                                     :redirect_uri => 'http://mysite.com/callback'
 
-      @authorizer.redirect_uri.should == "http://mysite.com/callback#error=access_denied"
-      @authorizer.should_not be_authorized
+      expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback#error=access_denied"
+      expect(@authorizer).not_to be_authorized
 
     end
 
@@ -179,8 +179,8 @@ describe OAuth::Provider::Authorizer do
                                                     :redirect_uri=>'http://mysite.com/callback?this=one',
                                                     :state => "my customer"
 
-      @authorizer.redirect_uri.should == "http://mysite.com/callback?this=one#error=access_denied&state=my%20customer"
-      @authorizer.should_not be_authorized
+      expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback?this=one#error=access_denied&state=my%20customer"
+      expect(@authorizer).not_to be_authorized
 
     end
 
@@ -194,8 +194,8 @@ describe OAuth::Provider::Authorizer do
                                                   :client_id => 'client id',
                                                   :redirect_uri => 'http://mysite.com/callback'
 
-    @authorizer.redirect_uri.should == "http://mysite.com/callback#error=unsupported_response_type"
-    @authorizer.should_not be_authorized
+    expect(@authorizer.redirect_uri).to eq "http://mysite.com/callback#error=unsupported_response_type"
+    expect(@authorizer).not_to be_authorized
 
   end
 

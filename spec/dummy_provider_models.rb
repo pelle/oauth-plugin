@@ -43,7 +43,9 @@ end
 class Oauth2Token < OauthToken ; end
 class Oauth2Verifier < OauthToken ; end
 class AccessToken < OauthToken ; end
-class RequestToken < OauthToken ; end
+class RequestToken < OauthToken
+  attr_accessor :provided_oauth_verifier
+end
 
 class OauthNonce
   # Always remember

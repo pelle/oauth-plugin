@@ -18,4 +18,4 @@ You should also upgrade your oauth_consumer_controller as we no longer call logi
   class OauthConsumersController < ApplicationController
     include Oauth::Controllers::ConsumerController
     # Replace this with the equivalent for your authentication framework
-    before_filter :login_required, :only=>:index
+    before_action :login_required, :only=>:index

@@ -25,67 +25,68 @@ describe OAuth::Rack::OAuthFilter do
 
   it "should pass through without oauth" do
     get '/'
-    last_response.should be_ok
+    expect(last_response).to be_ok
     response = MultiJson.decode(last_response.body)
-    response.should == {}
+    expect(response).to eq({})
   end
 
   describe 'OAuth1' do
     describe 'with optional white space' do
       it "should sign with consumer" do
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer", oauth_nonce="amrLDyFE2AMztx5fOYDD1OEqWps6Mc2mAR5qyO44Rj8", oauth_signature="KCSg0RUfVFUcyhrgJo580H8ey0c%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1295039581", oauth_version="1.0"'}
-        last_response.should be_ok
+        expect(last_response).to be_ok
         response = MultiJson.decode(last_response.body)
-        response.should == {"client_application" => "my_consumer", "oauth_version"=>1, "strategies"=>["two_legged"]}
+        expect(response).to eq({"client_application" => "my_consumer", "oauth_version"=>1, "strategies"=>["two_legged"]})
       end
 
       it "should sign with oauth 1 access token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([AccessToken.new("my_token")])
+        allow(ClientApplication).to receive(:find_by_key).and_return(client_application)
+        allow(client_application.tokens).to receive(:where).and_return([AccessToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer", oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY", oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1295040394", oauth_token="my_token", oauth_version="1.0"'}
-        last_response.should be_ok
+        expect(last_response).to be_ok
         response = MultiJson.decode(last_response.body)
-        response.should == {"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","token","oauth10_access_token"]}
+        expect(response).to eq({"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","token","oauth10_access_token"]})
       end
 
-      it "should sign with oauth 1 request token" do
+      it "should sign with oauth 1 request token with verifier" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([RequestToken.new("my_token")])
+        allow(ClientApplication).to receive(:find_by_key).and_return(client_application)
+        request_token = RequestToken.new("my_token")
+        allow(client_application.tokens).to receive(:where).and_return([request_token])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer", oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY", oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1295040394", oauth_token="my_token", oauth_version="1.0"'}
-        last_response.should be_ok
+        expect(last_response).to be_ok
         response = MultiJson.decode(last_response.body)
-        response.should == {"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","oauth10_request_token"]}
+        expect(response).to eq({"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","oauth10_request_token"]})
       end
     end
 
     describe 'without optional white space' do
       it "should sign with consumer" do
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer",oauth_nonce="amrLDyFE2AMztx5fOYDD1OEqWps6Mc2mAR5qyO44Rj8",oauth_signature="KCSg0RUfVFUcyhrgJo580H8ey0c%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1295039581",oauth_version="1.0"'}
-        last_response.should be_ok
+        expect(last_response).to be_ok
         response = MultiJson.decode(last_response.body)
-        response.should == {"client_application" => "my_consumer", "oauth_version"=>1, "strategies"=>["two_legged"]}
+        expect(response).to eq({"client_application" => "my_consumer", "oauth_version"=>1, "strategies"=>["two_legged"]})
       end
 
       it "should sign with oauth 1 access token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([AccessToken.new("my_token")])
+        allow(ClientApplication).to receive(:find_by_key).and_return(client_application)
+        allow(client_application.tokens).to receive(:where).and_return([AccessToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer",oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY",oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1295040394",oauth_token="my_token",oauth_version="1.0"'}
-        last_response.should be_ok
+        expect(last_response).to be_ok
         response = MultiJson.decode(last_response.body)
-        response.should == {"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","token","oauth10_access_token"]}
+        expect(response).to eq({"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","token","oauth10_access_token"]})
       end
 
       it "should sign with oauth 1 request token" do
         client_application = ClientApplication.new "my_consumer"
-        ClientApplication.stub!(:find_by_key).and_return(client_application)
-        client_application.tokens.stub!(:where).and_return([RequestToken.new("my_token")])
+        allow(ClientApplication).to receive(:find_by_key).and_return(client_application)
+        allow(client_application.tokens).to receive(:where).and_return([RequestToken.new("my_token")])
         get '/',{},{"HTTP_AUTHORIZATION"=>'OAuth oauth_consumer_key="my_consumer",oauth_nonce="oiFHXoN0172eigBBUfgaZLdQg7ycGekv8iTdfkCStY",oauth_signature="y35B2DqTWaNlzNX0p4wv%2FJAGzg8%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1295040394",oauth_token="my_token",oauth_version="1.0"'}
-        last_response.should be_ok
+        expect(last_response).to be_ok
         response = MultiJson.decode(last_response.body)
-        response.should == {"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","oauth10_request_token"]}
+        expect(response).to eq({"client_application" => "my_consumer", "oauth_token"=>"my_token","oauth_version"=>1, "strategies"=>["oauth10_token","oauth10_request_token"]})
       end
     end
   end
@@ -95,27 +96,27 @@ describe OAuth::Rack::OAuthFilter do
       context "authorized and non-invalidated token" do
         it "authenticates" do
           get '/', {}, { "HTTP_AUTHORIZATION" => "Bearer valid_token" }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           response = MultiJson.decode(last_response.body)
-          response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+          expect(response).to eq({ "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] })
         end
       end
 
       context "non-authorized token" do
         it "doesn't authenticate" do
           get '/', {}, { "HTTP_AUTHORIZATION" => "Bearer not_authorized" }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           response = MultiJson.decode(last_response.body)
-          response.should == {}
+          expect(response).to eq({})
         end
       end
 
       context "authorized and invalidated token" do
         it "doesn't authenticate with an invalidated token" do
           get '/', {}, { "HTTP_AUTHORIZATION" => "Bearer invalidated" }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           response = MultiJson.decode(last_response.body)
-          response.should == {}
+          expect(response).to eq({})
         end
       end
     end
@@ -125,27 +126,27 @@ describe OAuth::Rack::OAuthFilter do
         context "authorized and non-invalidated token" do
           it "authenticates" do
             get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth valid_token" }
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+            expect(response).to eq({ "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] })
           end
         end
 
         context "non-authorized token" do
           it "doesn't authenticate" do
             get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth not_authorized" }
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == {}
+            expect(response).to eq({})
           end
         end
 
         context "authorized and invalidated token" do
           it "doesn't authenticate with an invalidated token" do
             get '/', {}, { "HTTP_AUTHORIZATION" => "OAuth invalidated" }
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == {}
+            expect(response).to eq({})
           end
         end
       end
@@ -155,27 +156,27 @@ describe OAuth::Rack::OAuthFilter do
       context "authorized and non-invalidated token" do
         it "authenticates" do
           get '/', {}, { "HTTP_AUTHORIZATION" => "Token valid_token" }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           response = MultiJson.decode(last_response.body)
-          response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+          expect(response).to eq({ "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] })
         end
       end
 
       context "non-authorized token" do
         it "doesn't authenticate" do
           get '/', {}, { "HTTP_AUTHORIZATION" => "Token not_authorized" }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           response = MultiJson.decode(last_response.body)
-          response.should == {}
+          expect(response).to eq({})
         end
       end
 
       context "authorized and invalidated token" do
         it "doesn't authenticate with an invalidated token" do
           get '/', {}, { "HTTP_AUTHORIZATION" => "Token invalidated" }
-          last_response.should be_ok
+          expect(last_response).to be_ok
           response = MultiJson.decode(last_response.body)
-          response.should == {}
+          expect(response).to eq({})
         end
       end
     end
@@ -186,27 +187,27 @@ describe OAuth::Rack::OAuthFilter do
           it "authenticates" do
             get "/?#{name}=valid_token"
 
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+            expect(response).to eq({ "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] })
           end
         end
 
         context "non-authorized token" do
           it "doesn't authenticate" do
             get "/?#{name}=not_authorized"
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == {}
+            expect(response).to eq({})
           end
         end
 
         context "authorized and invalidated token" do
           it "doesn't authenticate with an invalidated token" do
             get "/?#{name}=invalidated"
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == {}
+            expect(response).to eq({})
           end
         end
       end
@@ -215,27 +216,27 @@ describe OAuth::Rack::OAuthFilter do
         context "authorized and non-invalidated token" do
           it "authenticates" do
             post '/', name => 'valid_token'
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == { "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] }
+            expect(response).to eq({ "oauth_token" => "valid_token", "oauth_version" => 2, "strategies"=> ["oauth20_token", "token"] })
           end
         end
 
         context "non-authorized token" do
           it "doesn't authenticate" do
             post '/', name => 'not_authorized'
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == {}
+            expect(response).to eq({})
           end
         end
 
         context "authorized and invalidated token" do
           it "doesn't authenticate with an invalidated token" do
             post '/', name => 'invalidated'
-            last_response.should be_ok
+            expect(last_response).to be_ok
             response = MultiJson.decode(last_response.body)
-            response.should == {}
+            expect(response).to eq({})
           end
         end
       end

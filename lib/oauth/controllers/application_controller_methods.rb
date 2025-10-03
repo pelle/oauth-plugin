@@ -14,7 +14,7 @@ module OAuth
           filter_options = {}
           filter_options[:only]   = options.delete(:only) if options[:only]
           filter_options[:except] = options.delete(:except) if options[:except]
-          before_filter Filter.new(options), filter_options
+          before_action Filter.new(options), filter_options
         end
       end
 
@@ -115,12 +115,12 @@ module OAuth
         current_token
       end
 
-      # use in a before_filter. Note this is for compatibility purposes. Better to use oauthenticate now
+      # use in a before_action. Note this is for compatibility purposes. Better to use oauthenticate now
       def oauth_required
         Authenticator.new(self,[:oauth10_access_token]).allow?
       end
 
-      # use in before_filter. Note this is for compatibility purposes. Better to use oauthenticate now
+      # use in before_action. Note this is for compatibility purposes. Better to use oauthenticate now
       def login_or_oauth_required
         Authenticator.new(self,[:oauth10_access_token,:interactive]).allow?
       end
